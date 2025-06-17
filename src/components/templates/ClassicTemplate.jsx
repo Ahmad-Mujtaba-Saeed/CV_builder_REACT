@@ -1,6 +1,9 @@
 import React from 'react';
 
-const ClassicTemplate = ({ resumeData }) => (
+const ClassicTemplate = ({ resumeData }) => {
+  const customSections = resumeData.customSections;
+  console.log(customSections);
+  return (
   <div style={{ 
     fontFamily: "'Inter', sans-serif",
     lineHeight: '1.5',
@@ -226,8 +229,83 @@ const ClassicTemplate = ({ resumeData }) => (
           </section>
         </>
       )}
+      {customSections
+        .filter(section => section.type === 'description' || section.type === 'skills' || section.type === 'list' || section.type === 'entries')
+        .map((section, idx) => (
+          <section style={{
+            marginBottom: '25px',
+            backgroundColor: 'white',
+            padding: '15px',
+            borderRadius: '5px'
+          }} key={`right-${section.id}`}>
+            <h3 style={{
+          fontSize: '18px',
+          textTransform: 'uppercase',
+          color: '#000',
+          marginBottom: '10px',
+          background: '#c9af28',
+          padding: '10px 12px 8px',
+          borderRadius: '0px 50px 50px 0px',
+          fontWeight: '500',
+          width: 'fit-content'
+        }}>{section.title.toUpperCase()}</h3>
+              {section.type === 'description' && (
+                <p style={{
+                  paddingLeft: '40px',
+                  marginTop: '5px',
+                  marginBottom: '15px'
+                }}>{section.content}</p>
+              )}
+              {section.type === 'skills' && (
+                section.content.map((skill, skillIdx) => (
+                  <p style={{
+                    paddingLeft: '40px',
+                    marginTop: '5px',
+                    marginBottom: '15px'
+                  }} key={skillIdx}>{skill.name}: {skill.level}</p>
+                ))
+              )}
+              {section.type === 'list' && (
+                section.content.map((item, itemIdx) => (
+                  <p style={{
+                    paddingLeft: '40px',
+                    marginTop: '5px',
+                    marginBottom: '15px'
+                  }} key={itemIdx}>• {item}</p>
+                ))
+              )}
+              {section.type === 'entries' && (
+                  section.content.map((entry, entryIdx) => (
+<div key={entryIdx}>
+            <div style={{
+              fontWeight: '600',
+              marginBottom: '5px',
+              fontSize: '16px',
+              paddingLeft: '30px'
+            }}>
+              {entry.date}
+            </div>
+            <ul style={{
+              paddingLeft: '80px',
+              marginTop: '5px',
+              marginBottom: '15px'
+            }}>
+              <li style={{ marginBottom: '5px' }}>
+                <strong style={{ fontWeight: '600' }}>
+                  {entry.title}
+                </strong><br/>
+              </li>
+              <li style={{ marginBottom: '5px' }}>
+                {entry.description}
+              </li>
+            </ul>
+          </div>
+                  ))
+                )}
+          </section>
+        ))}
     </div>
   </div>
 );
-
+}
 export default ClassicTemplate;

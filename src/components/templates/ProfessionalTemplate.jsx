@@ -2,6 +2,8 @@ import React from 'react';
 import demo_profile from '../../assets/demo_profile.avif';
 
 const ProfessionalTemplate = ({ resumeData }) => {
+  const customSections = resumeData.customSections;
+  console.log(customSections);
   return (
     <div style={{
       display: 'flex',
@@ -22,7 +24,7 @@ const ProfessionalTemplate = ({ resumeData }) => {
         <div style={{ marginBottom: '30px' }}>
           <h3 style={sectionTitleStyle}>PROFILE SUMMARY</h3>
           <p style={infoTextStyle}>
-            {resumeData?.summary || 'Motivated software developer aiming to leverage strong problem-solving skills...'}
+            {resumeData?.summary || '...'}
           </p>
         </div>
 
@@ -43,6 +45,8 @@ const ProfessionalTemplate = ({ resumeData }) => {
             ))}
           </div>
         </div>
+
+
 
         <div>
           <h3 style={sectionTitleStyle}>CONTACT</h3>
@@ -66,28 +70,27 @@ const ProfessionalTemplate = ({ resumeData }) => {
         </h2>
         <p style={{ fontWeight: '500', color: '#b48c7a' }}>{resumeData?.headline}</p>
 
-{(resumeData?.profilePic || demo_profile) && (
-  <img
-    src={resumeData?.profilePic || demo_profile}
-    alt="Profile"
-    style={{
-      width: '107px',
-      height: '107px',
-      borderRadius: '50%',
-      objectFit: 'cover',
-      position: 'absolute',
-      top: '40px',
-      right: '40px',
-      boxShadow: '0px 0px 15px 3px #c1c1c1'
-    }}
-    onError={(e) => {
-      console.error('Error loading profile image:', e);
-      e.target.onerror = null;
-      e.target.src = demo_profile;
-    }}
-  />
-)}
-
+        {(resumeData?.profilePic || demo_profile) && (
+          <img
+            src={resumeData?.profilePic || demo_profile}
+            alt="Profile"
+            style={{
+              width: '107px',
+              height: '107px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              position: 'absolute',
+              top: '40px',
+              right: '40px',
+              boxShadow: '0px 0px 15px 3px #c1c1c1'
+            }}
+            onError={(e) => {
+              console.error('Error loading profile image:', e);
+              e.target.onerror = null;
+              e.target.src = demo_profile;
+            }}
+          />
+        )}
 
         <Section title="PROFESSIONAL EXPERIENCE">
           {(resumeData?.workExperience || []).map((job, index) => (
@@ -108,6 +111,40 @@ const ProfessionalTemplate = ({ resumeData }) => {
             </div>
           ))}
         </Section>
+
+                  {/* Custom sections in left panel */}
+        {customSections
+          .filter(section => section.type === 'description' || section.type === 'skills' || section.type === 'list' || section.type === 'entries')
+          .map((section, idx) => (
+            <div key={`right-${section.id}`} style={{ marginBottom: '30px' }}>
+              <Section title={section.title.toUpperCase()}>
+                {section.type === 'entries' && (
+                  section.content.map((entry, entryIdx) => (
+                    <div key={entryIdx} style={{ marginBottom: '20px' }}>
+                      <p style={{ fontWeight: '500', color: '#b48c7a' }}>{entry.title}</p>
+                      <p style={{ fontSize: '0.9em', marginBottom: '5px' }}>
+                        {entry.subtitle} | {entry.date}
+                      </p>
+                      <p>{entry.description}</p>
+                    </div>
+                  ))
+                )}
+                {section.type === 'description' && (
+                  <p>{section.content}</p>
+                )}
+                {section.type === 'skills' && (
+                  section.content.map((skill, skillIdx) => (
+                    <p key={skillIdx}>{skill.name}: {skill.level}</p>
+                  ))
+                )}
+                {section.type === 'list' && (
+                  section.content.map((item, itemIdx) => (
+                    <p key={itemIdx}>• {item}</p>
+                  ))
+                )}
+              </Section>
+            </div>
+          ))}
       </div>
     </div>
   );
