@@ -10,12 +10,14 @@ import jsPDF from "jspdf";
 import { ModernTemplate, ClassicTemplate } from "../../components/templates";
 import { ProfessionalTemplate } from "../../components/templates";
 import { ProfessionalTemplate2 } from "../../components/templates";
+import { Template5 } from "../../components/templates";
 
 const templates = {
   Modern: ModernTemplate,
   Classic: ClassicTemplate,
   Professional: ProfessionalTemplate,
-  Professional2: ProfessionalTemplate2
+  Professional2: ProfessionalTemplate2,
+  Template5: Template5
 };
 
 const DemoPage = () => {
@@ -455,13 +457,13 @@ const removeCustomListItem = (sectionId, itemIndex) => {
   clonedContent.style.fontSize = '12px';
   clonedContent.style.lineHeight = '1.4';
   
-  // Center all content elements
-  const centerElements = clonedContent.querySelectorAll('*');
-  centerElements.forEach(el => {
-    el.style.marginLeft = 'auto';
-    el.style.marginRight = 'auto';
-    el.style.maxWidth = '100%';
-  });
+  // // Center all content elements
+  // const centerElements = clonedContent.querySelectorAll('*');
+  // centerElements.forEach(el => {
+  //   el.style.marginLeft = 'auto';
+  //   el.style.marginRight = 'auto';
+  //   el.style.maxWidth = '100%';
+  // });
   
   // Adjust heading sizes
   const headings = clonedContent.querySelectorAll('h1, h2, h3, h4, h5, h6');

@@ -50,7 +50,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
       <div style={styles.main}>
         <div style={styles.section}>
           <h3 style={styles.mainSectionTitle}>Summary</h3>
-          <p>{resumeData?.summary || '...'}</p>
+        <p>{resumeData?.summary || '...'}</p>
         </div>
 
         <div style={styles.section}>
