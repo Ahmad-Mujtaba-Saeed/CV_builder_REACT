@@ -2,6 +2,9 @@ import React from 'react';
 import demo_profile from '../../assets/demo_profile.avif';
 
 const ProfessionalTemplate2 = ({ resumeData }) => {
+  console.log(resumeData);
+  const customSections = resumeData.customSections;
+  console.log(customSections);
   return (
     <div style={styles.container}>
       {/* Sidebar */}
@@ -47,7 +50,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
       <div style={styles.main}>
         <div style={styles.section}>
           <h3 style={styles.mainSectionTitle}>Summary</h3>
-          <p>{resumeData?.summary || 'A motivated individual with a strong passion for problem-solving and software development.'}</p>
+          <p>{resumeData?.summary || '...'}</p>
         </div>
 
         <div style={styles.section}>
@@ -70,6 +73,35 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
             </div>
           ))}
         </div>
+        {customSections
+          .filter(section => section.type === 'description' || section.type === 'skills' || section.type === 'list' || section.type === 'entries')
+          .map((section, idx) => (
+            <div style={styles.section} key={`right-${section.id}`}>
+              <h3 style={styles.mainSectionTitle}>{section.title}</h3>
+                {section.type === 'description' && (
+                  <p>{section.content}</p>
+                )}
+                {section.type === 'skills' && (
+                  section.content.map((skill, skillIdx) => (
+                    <p key={skillIdx}>{skill.name}: {skill.level}</p>
+                  ))
+                )}
+                {section.type === 'list' && (
+                  section.content.map((item, itemIdx) => (
+                    <p key={itemIdx}>• {item}</p>
+                  ))
+                )}
+                {section.type === 'entries' && (
+                  section.content.map((entry, entryIdx) => (
+                    <div key={entryIdx} style={styles.entry}>
+                      <strong>{entry.title}</strong><br />
+                      <em>{entry.subtitle} | {entry.date}</em>
+                      <p>{entry.description}</p>
+                    </div>
+                  ))
+                )}
+            </div>
+          ))}
       </div>
     </div>
   );

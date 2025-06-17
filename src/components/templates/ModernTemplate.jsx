@@ -1,8 +1,10 @@
-// src/components/templates/ModernTemplate.jsx
 import React from 'react';
 
-const ModernTemplate = ({ resumeData }) => (
-  <div className="modern-template" style={{ 
+const ModernTemplate = ({ resumeData }) => {
+  const customSections = resumeData.customSections;
+  console.log(customSections);
+  return (
+    <div className="modern-template" style={{ 
     fontFamily: "'Inter', sans-serif",
     maxWidth: '800px',
     margin: '0 auto',
@@ -125,9 +127,51 @@ const ModernTemplate = ({ resumeData }) => (
             </div>
           ))}
         </section>
+        {customSections
+          .filter(section => section.type === 'description' || section.type === 'skills' || section.type === 'list' || section.type === 'entries')
+          .map((section, idx) => (
+            <section key={`right-${section.id}`}>
+              <h3 style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: '#2c3e50',
+            borderBottom: '1px solid #eee',
+            paddingBottom: '5px',
+            marginBottom: '15px'
+          }}>{section.title.toUpperCase()}</h3>
+                {section.type === 'description' && (
+                  <p>{section.content}</p>
+                )}
+                {section.type === 'skills' && (
+                  section.content.map((skill, skillIdx) => (
+                    <p key={skillIdx}>{skill.name}: {skill.level}</p>
+                  ))
+                )}
+                {section.type === 'list' && (
+                  section.content.map((item, itemIdx) => (
+                    <p key={itemIdx}>• {item}</p>
+                  ))
+                )}
+                {section.type === 'entries' && (
+                  section.content.map((entry, entryIdx) => (
+<div key={entryIdx} style={{ marginBottom: '25px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <h4 style={{ fontWeight: '600' }}>{entry.title}</h4>
+                <span style={{ color: '#7f8c8d' }}>
+                  {entry.date}
+                </span>
+              </div>
+              <p style={{ lineHeight: '1.6' }}>{entry.description}</p>
+            </div>
+                  ))
+                )}
+            </section>
+          ))}
       </div>
     </div>
   </div>
+
 );
+}
 
 export default ModernTemplate;
