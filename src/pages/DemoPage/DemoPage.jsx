@@ -1,4 +1,4 @@
-import React, {useState,useEffect , useRef , useCallback} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Container, Row, Col, Button, Card, Alert, Form, ProgressBar } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import jsPDF from "jspdf";
 import { ModernTemplate, ClassicTemplate } from "../../components/templates";
 import { ProfessionalTemplate } from "../../components/templates";
 import { ProfessionalTemplate2 } from "../../components/templates";
+import './DemoPage.css';
 
 const templates = {
   Modern: ModernTemplate,
@@ -31,7 +32,7 @@ const DemoPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const fileInputRef = useRef(null);
   const cvRef = useRef();
-  
+
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -43,7 +44,7 @@ const DemoPage = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
@@ -164,16 +165,16 @@ const DemoPage = () => {
       certifications: [],
       languages: []
     };
-  
+
     // Clear file first
     setFile(null);
     setUploadProgress(0);
     setIsParsing(false);
-    
+
     // Then set the empty resume
     setParsedResume(emptyResume);
     setSelectedTemplate("Modern");
-    
+
     // Set success message after a small delay to ensure it shows
     setTimeout(() => {
       setUploadStatus({
@@ -181,7 +182,7 @@ const DemoPage = () => {
         message: "Empty resume created successfully! Start editing your CV."
       });
     }, 100);
-    
+
     setCurrentPage(1);
     setTotalPages(1);
     setAiSuggestions([]);
@@ -211,7 +212,7 @@ const DemoPage = () => {
         newResume[path] = value;
         return newResume;
       }
-      
+
       const [_, key, index, subKey] = pathParts;
       if (index && subKey) {
         if (!newResume[key]) newResume[key] = [];
@@ -229,11 +230,11 @@ const DemoPage = () => {
 
   const calculatePages = () => {
     if (!cvRef.current) return 1;
-    
+
     const a4HeightPx = 1123; // A4 height in pixels at 96 DPI
     const contentHeight = cvRef.current.scrollHeight;
     const calculatedPages = Math.ceil(contentHeight / a4HeightPx);
-    
+
     // Check if the last page has meaningful content (at least 20% filled)
     const lastPageContent = contentHeight % a4HeightPx;
     if (calculatedPages > 1 && lastPageContent < (a4HeightPx * 0.2)) {
@@ -256,118 +257,118 @@ const DemoPage = () => {
     }
   }, [parsedResume, currentPage]);
 
- // Improved PDF generation that matches preview
- const handleDownloadPDF = async () => {
-  if (!cvRef.current) return;
-  
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const a4Width = 210; // A4 width in mm
-  const a4Height = 297; // A4 height in mm
-  const a4WidthPx = 794; // A4 width in pixels at 96 DPI
-  const a4HeightPx = 1123; // A4 height in pixels at 96 DPI
-  const padding = 40; // Padding in pixels
-  
-  // Create a temporary container for the entire content
-  const tempContainer = document.createElement('div');
-  tempContainer.style.position = 'absolute';
-  tempContainer.style.left = '-9999px';
-  tempContainer.style.width = `${a4WidthPx}px`;
-  tempContainer.style.backgroundColor = '#ffffff';
-  tempContainer.style.padding = `${padding}px`;
-  tempContainer.style.boxSizing = 'border-box';
-  
-  // Clone the CV content
-  const clonedContent = cvRef.current.cloneNode(true);
-  
-  // Apply PDF-specific styles to center the content
-  clonedContent.style.width = `${a4WidthPx - 2 * padding}px`; // Account for padding on both sides
-  clonedContent.style.margin = '0 auto'; // Center horizontally
-  clonedContent.style.padding = '0';
-  clonedContent.style.fontSize = '12px';
-  clonedContent.style.lineHeight = '1.4';
-  
-  // Center all content elements
-  const centerElements = clonedContent.querySelectorAll('*');
-  centerElements.forEach(el => {
-    el.style.marginLeft = 'auto';
-    el.style.marginRight = 'auto';
-    el.style.maxWidth = '100%';
-  });
-  
-  // Adjust heading sizes
-  const headings = clonedContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-  headings.forEach(heading => {
-    const currentSize = window.getComputedStyle(heading).fontSize;
-    const newSize = parseFloat(currentSize) * 0.8;
-    heading.style.fontSize = `${newSize}px`;
-    heading.style.marginBottom = '8px';
-    heading.style.marginTop = '12px';
-  });
-  
-  // Center sections
-  const sections = clonedContent.querySelectorAll('section, .section');
-  sections.forEach(section => {
-    section.style.marginLeft = 'auto';
-    section.style.marginRight = 'auto';
-    section.style.maxWidth = '100%';
-  });
-  
-  tempContainer.appendChild(clonedContent);
-  document.body.appendChild(tempContainer);
-  
-  try {
-    const totalPages = calculatePages();
-    
-    for (let i = 0; i < totalPages; i++) {
-      const canvas = await html2canvas(clonedContent, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        width: a4WidthPx,
-        height: a4HeightPx,
-        scrollY: i * a4HeightPx,
-        windowHeight: a4HeightPx,
-        y: i * a4HeightPx,
-      });
+  // Improved PDF generation that matches preview
+  const handleDownloadPDF = async () => {
+    if (!cvRef.current) return;
 
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      
-      if (i > 0) {
-        pdf.addPage();
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const a4Width = 210; // A4 width in mm
+    const a4Height = 297; // A4 height in mm
+    const a4WidthPx = 794; // A4 width in pixels at 96 DPI
+    const a4HeightPx = 1123; // A4 height in pixels at 96 DPI
+    const padding = 40; // Padding in pixels
+
+    // Create a temporary container for the entire content
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.width = `${a4WidthPx}px`;
+    tempContainer.style.backgroundColor = '#ffffff';
+    tempContainer.style.padding = `${padding}px`;
+    tempContainer.style.boxSizing = 'border-box';
+
+    // Clone the CV content
+    const clonedContent = cvRef.current.cloneNode(true);
+
+    // Apply PDF-specific styles to center the content
+    clonedContent.style.width = `${a4WidthPx - 2 * padding}px`; // Account for padding on both sides
+    clonedContent.style.margin = '0 auto'; // Center horizontally
+    clonedContent.style.padding = '0';
+    clonedContent.style.fontSize = '12px';
+    clonedContent.style.lineHeight = '1.4';
+
+    // Center all content elements
+    const centerElements = clonedContent.querySelectorAll('*');
+    centerElements.forEach(el => {
+      el.style.marginLeft = 'auto';
+      el.style.marginRight = 'auto';
+      el.style.maxWidth = '100%';
+    });
+
+    // Adjust heading sizes
+    const headings = clonedContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach(heading => {
+      const currentSize = window.getComputedStyle(heading).fontSize;
+      const newSize = parseFloat(currentSize) * 0.8;
+      heading.style.fontSize = `${newSize}px`;
+      heading.style.marginBottom = '8px';
+      heading.style.marginTop = '12px';
+    });
+
+    // Center sections
+    const sections = clonedContent.querySelectorAll('section, .section');
+    sections.forEach(section => {
+      section.style.marginLeft = 'auto';
+      section.style.marginRight = 'auto';
+      section.style.maxWidth = '100%';
+    });
+
+    tempContainer.appendChild(clonedContent);
+    document.body.appendChild(tempContainer);
+
+    try {
+      const totalPages = calculatePages();
+
+      for (let i = 0; i < totalPages; i++) {
+        const canvas = await html2canvas(clonedContent, {
+          scale: 2,
+          logging: false,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          width: a4WidthPx,
+          height: a4HeightPx,
+          scrollY: i * a4HeightPx,
+          windowHeight: a4HeightPx,
+          y: i * a4HeightPx,
+        });
+
+        const imgData = canvas.toDataURL('image/png', 1.0);
+
+        if (i > 0) {
+          pdf.addPage();
+        }
+
+        // Center the image on the PDF page
+        const imgWidth = a4Width;
+        const imgHeight = (canvas.height * a4Width) / canvas.width;
+
+        // Calculate vertical position to center content
+        const yPos = (a4Height - imgHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', 0, yPos > 0 ? yPos : 0, imgWidth, imgHeight);
       }
-      
-      // Center the image on the PDF page
-      const imgWidth = a4Width;
-      const imgHeight = (canvas.height * a4Width) / canvas.width;
-      
-      // Calculate vertical position to center content
-      const yPos = (a4Height - imgHeight) / 2;
-      
-      pdf.addImage(imgData, 'PNG', 0, yPos > 0 ? yPos : 0, imgWidth, imgHeight);
+
+      pdf.save('professional_cv.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      document.body.removeChild(tempContainer);
     }
-    
-    pdf.save('professional_cv.pdf');
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-  } finally {
-    document.body.removeChild(tempContainer);
-  }
-};
+  };
   // Create a ref for the scrollable container
   const previewContainerRef = useRef(null);
 
   const scrollToPage = useCallback((pageNumber) => {
     if (!cvRef.current || !previewContainerRef.current || pageNumber < 1 || pageNumber > totalPages) return;
-    
+
     const pageHeight = cvRef.current.scrollHeight / totalPages;
     const scrollPosition = (pageNumber - 1) * pageHeight;
-    
+
     previewContainerRef.current.scrollTo({
       top: scrollPosition,
       behavior: 'smooth'
     });
-    
+
     setCurrentPage(pageNumber);
   }, [totalPages]);
 
@@ -377,26 +378,26 @@ const DemoPage = () => {
   }, [scrollToPage]);
 
   return (
-    <Container fluid className="my-4">
+    <Container fluid className="mb-4 cv-uploder-container mt-5">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-center mb-2">Mypathfinder</h1>
+        <h1 className="text-center mb-2">Smart Cv Builder, tailored for the Modren Job Market</h1>
         <p className="text-center text-muted mb-4">
-          Create, enhance, and perfect your professional resume
+          MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
         </p>
       </motion.div>
 
       {!parsedResume ? (
         <Row className="justify-content-center">
-          <Col md={8} lg={6}>
+          <Col md={8} lg={8}>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Card className={`dropzone-card ${isDragging ? "dragging" : ""}`}>
                 <div {...getRootProps({ className: "dropzone" })}>
                   <input {...getInputProps()} />
-                  <Card.Body className="text-center p-4">
+                  <Card.Body className="text-center p-4 upload-section">
                     {file ? (
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         <FiFileText size={48} className="mb-3 text-blue-600" />
@@ -424,10 +425,16 @@ const DemoPage = () => {
                       </motion.div>
                     ) : (
                       <>
-                        <FiUpload size={48} className="mb-3 text-blue-600" />
-                        <h4>Drag & Drop your CV here</h4>
-                        <p className="text-muted">or click to browse files</p>
-                        <small className="text-muted">Supported format: PDF (Max 5MB)</small>
+                        <div className="icon-content-uploder d-flex justify-content-center align-items-center mb-3 gap-3">
+                          <FiUpload size={30} className=" text-blue-600" />
+
+                          <h4 className="m-0">Upload Existing CV</h4>
+                        </div>
+                        <p className="text-muted m-0">Please upload your file in one of the following formats: PDF, DOC, or DOCX.</p>
+                        <p className="text-muted my-1">Ensure that your file does not exceed the maximum allowed size of [insert size limit, e.g., 10MB].</p>
+                        <p className="text-muted m-0">Files outside of these formats or limits may not be accepted.</p>
+
+                        {/* <small className="text-muted">Supported format: PDF (Max 5MB)</small> */}
                       </>
                     )}
                   </Card.Body>
@@ -455,23 +462,23 @@ const DemoPage = () => {
               <div className="d-flex justify-content-center gap-3">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    variant="primary"
+                    // variant="primary"
                     size="lg"
                     onClick={handleManualCV}
-                    className="d-flex align-items-center gap-2"
+                    className="d-flex align-items-center gap-2 cv-build-from-scratch-btn"
                   >
-                    <FiEdit2 /> Make CV Manually
+                    <FiEdit2 /> Build from scratch
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                  disabled={true}
-                    variant="success"
+                    disabled={true}
+                    // variant="success"
                     size="lg"
                     onClick={handleAICV}
-                    className="d-flex align-items-center gap-2"
+                    className="d-flex align-items-center gap-2 cv-with-ai-btn"
                   >
-                    <FiCpu /> Make CV with AI
+                    <FiCpu /> Build my CV with AI
                   </Button>
                 </motion.div>
               </div>
@@ -499,10 +506,10 @@ const DemoPage = () => {
                         </Button>
                       ))}
                     </div>
-                    <Button 
-                      variant="success" 
+                    <Button
+                      variant="success"
                       size="sm"
-                      onClick={handleDownloadPDF} 
+                      onClick={handleDownloadPDF}
                       className="d-flex align-items-center gap-2"
                     >
                       <FiDownload /> Download PDF
@@ -525,52 +532,52 @@ const DemoPage = () => {
                     {/* Personal Information */}
                     <div className="mb-4">
                       <h6 className="text-primary mb-3">Personal Information</h6>
-                      
+
                       {/* Profile Picture Upload */}
-                      {(selectedTemplate === "Professional" || selectedTemplate === "Professional2" ) && (
-                      <div className="text-center mb-3">
-                        <div className="position-relative d-inline-block">
-                          <div 
-                            className="rounded-circle overflow-hidden border border-2 border-primary" 
-                            style={{
-                              width: '120px', 
-                              height: '120px',
-                              cursor: 'pointer',
-                              background: '#f8f9fa',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                            onClick={triggerFileInput}
-                          >
-                            {profilePic || (parsedResume?.profilePic) ? (
-                              <img 
-                                src={profilePic || parsedResume.profilePic} 
-                                alt="Profile" 
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover'
-                                }}
-                              />
-                            ) : (
-                              <div className="text-muted">
-                                <i className="bi bi-person-circle" style={{ fontSize: '3rem' }}></i>
-                                <div className="small mt-1">Click to upload</div>
-                              </div>
-                            )}
+                      {(selectedTemplate === "Professional" || selectedTemplate === "Professional2") && (
+                        <div className="text-center mb-3">
+                          <div className="position-relative d-inline-block">
+                            <div
+                              className="rounded-circle overflow-hidden border border-2 border-primary"
+                              style={{
+                                width: '120px',
+                                height: '120px',
+                                cursor: 'pointer',
+                                background: '#f8f9fa',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              onClick={triggerFileInput}
+                            >
+                              {profilePic || (parsedResume?.profilePic) ? (
+                                <img
+                                  src={profilePic || parsedResume.profilePic}
+                                  alt="Profile"
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                  }}
+                                />
+                              ) : (
+                                <div className="text-muted">
+                                  <i className="bi bi-person-circle" style={{ fontSize: '3rem' }}></i>
+                                  <div className="small mt-1">Click to upload</div>
+                                </div>
+                              )}
+                            </div>
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              onChange={handleProfilePicChange}
+                              accept="image/*"
+                              className="d-none"
+                            />
                           </div>
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleProfilePicChange}
-                            accept="image/*"
-                            className="d-none"
-                          />
                         </div>
-                      </div>
                       )}
-                      
+
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold">Full Name</Form.Label>
                         <Form.Control
@@ -582,7 +589,7 @@ const DemoPage = () => {
                           }])}
                         />
                       </Form.Group>
-                      
+
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold">Headline/Title</Form.Label>
                         <Form.Control
@@ -591,7 +598,7 @@ const DemoPage = () => {
                           onChange={(e) => updateField("headline", e.target.value)}
                         />
                       </Form.Group>
-                      
+
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold">Summary</Form.Label>
                         <Form.Control
@@ -617,7 +624,7 @@ const DemoPage = () => {
                           }])}
                         />
                       </Form.Group>
-                      
+
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold">Email</Form.Label>
                         <Form.Control
@@ -627,7 +634,7 @@ const DemoPage = () => {
                           onChange={(e) => updateField("email", [e.target.value])}
                         />
                       </Form.Group>
-                      
+
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold">Location</Form.Label>
                         <Form.Control
@@ -645,8 +652,8 @@ const DemoPage = () => {
                     <div className="mb-4">
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <h6 className="text-primary mb-0">Work Experience</h6>
-                        <Button 
-                          variant="outline-primary" 
+                        <Button
+                          variant="outline-primary"
                           size="sm"
                           onClick={() => {
                             const newExp = {
@@ -666,8 +673,8 @@ const DemoPage = () => {
                         <div key={index} className="mb-3 p-3 border rounded bg-light">
                           <div className="d-flex justify-content-between align-items-center mb-2">
                             <small className="fw-bold text-muted">Experience #{index + 1}</small>
-                            <Button 
-                              variant="outline-danger" 
+                            <Button
+                              variant="outline-danger"
                               size="sm"
                               onClick={() => {
                                 const updatedExp = [...parsedResume.workExperience];
@@ -686,7 +693,7 @@ const DemoPage = () => {
                               onChange={(e) => updateField(`workExperience[${index}].workExperienceJobTitle`, e.target.value)}
                             />
                           </Form.Group>
-                          
+
                           <Form.Group className="mb-2">
                             <Form.Label className="small fw-bold">Company</Form.Label>
                             <Form.Control
@@ -695,7 +702,7 @@ const DemoPage = () => {
                               onChange={(e) => updateField(`workExperience[${index}].workExperienceOrganization`, e.target.value)}
                             />
                           </Form.Group>
-                          
+
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-2">
@@ -722,7 +729,7 @@ const DemoPage = () => {
                               </Form.Group>
                             </Col>
                           </Row>
-                          
+
                           <Form.Group className="mb-2">
                             <Form.Label className="small fw-bold">Description</Form.Label>
                             <Form.Control
@@ -741,8 +748,8 @@ const DemoPage = () => {
                     <div className="mb-4">
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <h6 className="text-primary mb-0">Education</h6>
-                        <Button 
-                          variant="outline-primary" 
+                        <Button
+                          variant="outline-primary"
                           size="sm"
                           onClick={() => {
                             const newEdu = {
@@ -761,8 +768,8 @@ const DemoPage = () => {
                         <div key={index} className="mb-3 p-3 border rounded bg-light">
                           <div className="d-flex justify-content-between align-items-center mb-2">
                             <small className="fw-bold text-muted">Education #{index + 1}</small>
-                            <Button 
-                              variant="outline-danger" 
+                            <Button
+                              variant="outline-danger"
                               size="sm"
                               onClick={() => {
                                 const updatedEdu = [...parsedResume.education];
@@ -781,7 +788,7 @@ const DemoPage = () => {
                               onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
                             />
                           </Form.Group>
-                          
+
                           <Form.Group className="mb-2">
                             <Form.Label className="small fw-bold">Institution</Form.Label>
                             <Form.Control
@@ -790,7 +797,7 @@ const DemoPage = () => {
                               onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
                             />
                           </Form.Group>
-                          
+
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-2">
@@ -866,76 +873,76 @@ const DemoPage = () => {
                 </Card.Body>
               </Card>
             </Col>
-            
+
             {/* Right Side - CV Preview */}
             <Col lg={7} className="mb-4">
-      <Card className="h-100 border-0 shadow-sm">
-        <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">CV Preview</h5>
-          {totalPages > 1 && (
-            <div className="d-flex align-items-center gap-2">
-              <Button 
-                variant="outline-secondary" 
-                size="sm" 
-                disabled={currentPage === 1}
-                onClick={() => goToPage(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              <span className="mx-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button 
-                variant="outline-secondary" 
-                size="sm" 
-                disabled={currentPage === totalPages}
-                onClick={() => goToPage(currentPage + 1)}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </Card.Header>
-        <div 
-          ref={previewContainerRef}
-          style={{ 
-            maxHeight: '800px', 
-            overflowY: 'auto',
-            position: 'relative',
-            scrollBehavior: 'smooth'
-          }}
-        >
-          <div 
-            ref={cvRef}
-            style={{ 
-              background: 'white',
-              padding: '40px',
-              minHeight: `${Math.max(1, totalPages) * 1123}px`,
-            }}
-          >
-            {React.createElement(templates[selectedTemplate], {
-              resumeData: parsedResume
-            })}
-          </div>
-          
-          {/* Only show page dividers if we have multiple pages with content */}
-          {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
-            <div 
-              key={index}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: `${(index + 1) * 1123}px`,
-                borderTop: '2px dashed #ccc',
-                pointerEvents: 'none'
-              }}
-            />
-          ))}
-        </div>
-      </Card>
-    </Col>
-    
+              <Card className="h-100 border-0 shadow-sm">
+                <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">CV Preview</h5>
+                  {totalPages > 1 && (
+                    <div className="d-flex align-items-center gap-2">
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        disabled={currentPage === 1}
+                        onClick={() => goToPage(currentPage - 1)}
+                      >
+                        Previous
+                      </Button>
+                      <span className="mx-2">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        disabled={currentPage === totalPages}
+                        onClick={() => goToPage(currentPage + 1)}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  )}
+                </Card.Header>
+                <div
+                  ref={previewContainerRef}
+                  style={{
+                    maxHeight: '800px',
+                    overflowY: 'auto',
+                    position: 'relative',
+                    scrollBehavior: 'smooth'
+                  }}
+                >
+                  <div
+                    ref={cvRef}
+                    style={{
+                      background: 'white',
+                      padding: '40px',
+                      minHeight: `${Math.max(1, totalPages) * 1123}px`,
+                    }}
+                  >
+                    {React.createElement(templates[selectedTemplate], {
+                      resumeData: parsedResume
+                    })}
+                  </div>
+
+                  {/* Only show page dividers if we have multiple pages with content */}
+                  {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: `${(index + 1) * 1123}px`,
+                        borderTop: '2px dashed #ccc',
+                        pointerEvents: 'none'
+                      }}
+                    />
+                  ))}
+                </div>
+              </Card>
+            </Col>
+
           </Row>
         </>
       )}
