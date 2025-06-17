@@ -97,7 +97,7 @@ const ProfessionalTemplate = ({ resumeData }) => {
             <div key={index} style={{ marginBottom: '20px' }}>
               <p style={{ fontWeight: '500', color: '#b48c7a' }}>{job.workExperienceJobTitle}</p>
               <p style={{ fontSize: '0.9em', marginBottom: '5px' }}>
-                {job.workExperienceOrganization} | {job.workExperienceStartDate} – {job.workExperienceEndDate || 'Present'}
+                {job.workExperienceOrganization} | {job.workExperienceDates?.start?.date} – {job.workExperienceDates?.end?.date || 'Present'}
               </p>
               <p>{job.workExperienceDescription}</p>
             </div>
@@ -107,7 +107,7 @@ const ProfessionalTemplate = ({ resumeData }) => {
         <Section title="EDUCATION">
           {(resumeData?.education || []).map((edu, index) => (
             <div key={index} style={{ marginBottom: '15px' }}>
-              <p>{edu.educationAccreditation}<br />{edu.educationOrganization} | {edu.educationStartDate} – {edu.educationEndDate}</p>
+              <p>{edu.educationAccreditation}<br />{edu.educationOrganization} | {edu.educationDates?.start?.date} – {edu.educationDates?.end?.date}</p>
             </div>
           ))}
         </Section>

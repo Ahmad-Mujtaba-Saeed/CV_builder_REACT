@@ -163,7 +163,7 @@ const Template5 = ({ resumeData }) => {
               <div key={idx} style={styles.jobEntry}>
                 <p style={styles.jobTitle}>
                   {job.workExperienceJobTitle}
-                  <span style={styles.period}>{job.workExperienceStartDate} – {job.workExperienceEndDate || 'Present'}</span>
+                  <span style={styles.period}>{job.workExperienceDates?.start?.date} – {job.workExperienceDates?.end?.date || 'Present'}</span>
                 </p>
                 <p style={styles.company}>{job.workExperienceOrganization}</p>
                 <p style={styles.sectionText}>{job.workExperienceDescription}</p>
@@ -178,7 +178,7 @@ const Template5 = ({ resumeData }) => {
               <div key={idx} style={styles.jobEntry}>
                 <p style={styles.jobTitle}>
                   {edu.educationAccreditation}
-                  <span style={styles.period}>{edu.educationStartDate} – {edu.educationEndDate}</span>
+                  <span style={styles.period}>{edu.educationDates?.start?.date} – {edu.educationDates?.end?.date}</span>
                 </p>
                 <p style={styles.company}>{edu.educationOrganization}</p>
                 <p style={styles.sectionText}>{edu.educationDescription}</p>

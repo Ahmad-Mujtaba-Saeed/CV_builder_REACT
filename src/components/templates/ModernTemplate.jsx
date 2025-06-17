@@ -68,7 +68,7 @@ const ModernTemplate = ({ resumeData }) => {
               <h4 style={{ fontWeight: '600', marginBottom: '5px' }}>{edu.educationAccreditation}</h4>
               <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>{edu.educationOrganization}</p>
               <p style={{ fontSize: '14px', color: '#7f8c8d' }}>
-                {edu.educationStartDate} - {edu.educationEndDate}
+                {edu.educationDates?.start?.date} - {edu.educationDates?.end?.date}
               </p>
             </div>
           ))}
@@ -119,7 +119,7 @@ const ModernTemplate = ({ resumeData }) => {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                 <h4 style={{ fontWeight: '600' }}>{exp.workExperienceJobTitle}</h4>
                 <span style={{ color: '#7f8c8d' }}>
-                  {exp.workExperienceStartDate} - {exp.workExperienceEndDate || 'Present'}
+                  {exp.workExperienceDates?.start?.date} - {exp.workExperienceDates?.end?.date || 'Present'}
                 </span>
               </div>
               <p style={{ fontStyle: 'italic', marginBottom: '10px' }}>{exp.workExperienceOrganization}</p>

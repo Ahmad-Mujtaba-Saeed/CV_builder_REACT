@@ -58,7 +58,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
           {(resumeData?.workExperience || []).map((exp, idx) => (
             <div key={idx} style={styles.entry}>
               <strong>{exp.workExperienceJobTitle}</strong><br />
-              <em>{exp.workExperienceOrganization} | {exp.workExperienceStartDate} – {exp.workExperienceEndDate || 'Present'}</em>
+              <em>{exp.workExperienceOrganization} | {exp.workExperienceDates?.start?.date} – {exp.workExperienceDates?.end?.date || 'Present'}</em>
               <p>{exp.workExperienceDescription}</p>
             </div>
           ))}
@@ -69,7 +69,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
           {(resumeData?.education || []).map((edu, idx) => (
             <div key={idx} style={styles.entry}>
               <strong>{edu.educationAccreditation}</strong><br />
-              <em>{edu.educationOrganization} | {edu.educationStartDate} – {edu.educationEndDate}</em>
+              <em>{edu.educationOrganization} | {edu.educationDates?.start?.date} – {edu.educationDates?.end?.date}</em>
             </div>
           ))}
         </div>

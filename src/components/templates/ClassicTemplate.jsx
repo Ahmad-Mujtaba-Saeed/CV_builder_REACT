@@ -116,7 +116,7 @@ const ClassicTemplate = ({ resumeData }) => {
               fontSize: '16px',
               paddingLeft: '30px'
             }}>
-              {edu.educationStartDate} - {edu.educationEndDate}
+              {edu.educationDates?.start?.date} - {edu.educationDates?.end?.date}
             </div>
             <ul style={{
               paddingLeft: '80px',
@@ -168,7 +168,7 @@ const ClassicTemplate = ({ resumeData }) => {
               fontSize: '16px',
               paddingLeft: '30px'
             }}>
-              {exp.workExperienceStartDate} - {exp.workExperienceEndDate || 'Present'}
+              {exp.workExperienceDates?.start?.date} - {exp.workExperienceDates?.end?.date || 'Present'}
             </div>
             <ul style={{
               paddingLeft: '80px',

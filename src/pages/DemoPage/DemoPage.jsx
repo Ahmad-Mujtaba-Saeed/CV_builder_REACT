@@ -830,8 +830,14 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                             const newExp = {
                               workExperienceJobTitle: '',
                               workExperienceOrganization: '',
-                              workExperienceStartDate: '',
-                              workExperienceEndDate: '',
+                              workExperienceDates: {
+                                start: {
+                                  date: ''
+                                },
+                                end: {
+                                  date: ''
+                                }
+                              },
                               workExperienceDescription: ''
                             };
                             updateField("workExperience", [...(parsedResume.workExperience || []), newExp]);
@@ -882,8 +888,21 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                                   type="text"
                                   size="sm"
                                   placeholder="2020"
-                                  value={exp.workExperienceStartDate || ''}
-                                  onChange={(e) => updateField(`workExperience[${index}].workExperienceStartDate`, e.target.value)}
+                                  value={exp.workExperienceDates?.start?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedWork = [...parsedResume.workExperience];
+                                    updatedWork[index] = {
+                                      ...updatedWork[index],
+                                      workExperienceDates: {
+                                        ...(updatedWork[index].workExperienceDates || {}),
+                                        start: {
+                                          ...(updatedWork[index].workExperienceDates?.start || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("workExperience", updatedWork);
+                                  }}
                                 />
                               </Form.Group>
                             </Col>
@@ -894,8 +913,21 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                                   type="text"
                                   size="sm"
                                   placeholder="2021 or Present"
-                                  value={exp.workExperienceEndDate || ''}
-                                  onChange={(e) => updateField(`workExperience[${index}].workExperienceEndDate`, e.target.value)}
+                                  value={exp.workExperienceDates?.end?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedWork = [...parsedResume.workExperience];
+                                    updatedWork[index] = {
+                                      ...updatedWork[index],
+                                      workExperienceDates: {
+                                        ...(updatedWork[index].workExperienceDates || {}),
+                                        end: {
+                                          ...(updatedWork[index].workExperienceDates?.end || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("workExperience", updatedWork);
+                                  }}
                                 />
                               </Form.Group>
                             </Col>
@@ -926,8 +958,15 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                             const newEdu = {
                               educationAccreditation: '',
                               educationOrganization: '',
-                              educationStartDate: '',
-                              educationEndDate: ''
+                              educationDates: {
+                                start: {
+                                  date: ''
+                                },
+                                end: {
+                                  date: ''
+                                }
+                              },
+                              educationDescription: ''
                             };
                             updateField("education", [...(parsedResume.education || []), newEdu]);
                           }}
@@ -977,8 +1016,21 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                                   type="text"
                                   size="sm"
                                   placeholder="2017"
-                                  value={edu.educationStartDate || ''}
-                                  onChange={(e) => updateField(`education[${index}].educationStartDate`, e.target.value)}
+                                  value={edu.educationDates?.start?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedEdu = [...parsedResume.education];
+                                    updatedEdu[index] = {
+                                      ...updatedEdu[index],
+                                      educationDates: {
+                                        ...(updatedEdu[index].educationDates || {}),
+                                        start: {
+                                          ...(updatedEdu[index].educationDates?.start || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("education", updatedEdu);
+                                  }}
                                 />
                               </Form.Group>
                             </Col>
@@ -989,8 +1041,21 @@ const removeCustomListItem = (sectionId, itemIndex) => {
                                   type="text"
                                   size="sm"
                                   placeholder="2018"
-                                  value={edu.educationEndDate || ''}
-                                  onChange={(e) => updateField(`education[${index}].educationEndDate`, e.target.value)}
+                                  value={edu.educationDates?.end?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedEdu = [...parsedResume.education];
+                                    updatedEdu[index] = {
+                                      ...updatedEdu[index],
+                                      educationDates: {
+                                        ...(updatedEdu[index].educationDates || {}),
+                                        end: {
+                                          ...(updatedEdu[index].educationDates?.end || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("education", updatedEdu);
+                                  }}
                                 />
                               </Form.Group>
                             </Col>
