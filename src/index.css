@@ -1,5 +1,7 @@
 @import "./bootstrap.css";
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,6 +15,13 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --primary-color: #b767ec;
+  --primary-hover-color: #b767ec2b;
+}
+
+body {
+  font-family: "Inter" !important;
 }
 
 a {
@@ -28,16 +37,16 @@ a:hover {
 .cv-uploder-container {
   border: 1px solid rgb(212 216 219);
   border-radius: 10px;
-  padding: 32px;
+  padding: 70px 36px 50px;
 }
 
 .cv-with-ai-btn {
-  background-color: #B767EC !important;
+  background-color: var(--primary-color) !important;
   border: none;
 }
 
 .cv-build-from-scratch-btn {
-  background-color: #F6F7FB !important;
+  background-color: #f6f7fb !important;
   color: black;
   border-color: rgb(212 216 219);
 
@@ -45,7 +54,6 @@ a:hover {
     color: black;
     border-color: rgb(212 216 219);
   }
-
 }
 
 @media (min-width: 1350px) {
@@ -53,7 +61,54 @@ a:hover {
     width: 80%;
   }
 
-  .cv-builder-container{
+  .cv-builder-container {
     width: calc(100% - 180px);
   }
+}
+
+.fw-100 {
+  font-weight: 100 !important;
+}
+
+.fw-200 {
+  font-weight: 200 !important;
+}
+
+.fw-300 {
+  font-weight: 300 !important;
+}
+
+.fw-400 {
+  font-weight: 400 !important;
+}
+
+.fw-500 {
+  font-weight: 500 !important;
+}
+
+.fw-600 {
+  font-weight: 600 !important;
+}
+
+.fw-700 {
+  font-weight: 700 !important;
+}
+
+.fw-800 {
+  font-weight: 800 !important;
+}
+
+.fw-900 {
+  font-weight: 900 !important;
+}
+
+.heading-text {
+  font-size: 16px;
+  font-weight: 300;
+  color: #a7a7a7 !important;
+}
+
+
+.custom-button{
+  padding: 10px 26px;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Container, Row, Col, Button, Card, Alert, Form, ProgressBar, Nav, Tab, } from "react-bootstrap";
+import { Container, Row, Col, Button, Card, Alert, Form, ProgressBar, Nav, Tab, Accordion } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
 import { FiPlus, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -555,33 +555,24 @@ const DemoPage = () => {
   const renderTabContent = () => {
     if (activeTab === 'Preview') {
       return (
-        <Card className="border-0 shadow-sm">
-          <Card.Header className="bg-white border-bottom sticky-top">
-            <h5 className="mb-0">Edit Your CV</h5>
-          </Card.Header>
-          <Card.Body>
-            <Form>
-              {/* Personal Information */}
-              <div className="mb-4">
-                <h6 className="text-primary mb-3">Personal Information</h6>
-
-                {/* Profile Picture Upload */}
-                {(selectedTemplate === "Professional" || selectedTemplate === "Professional2") && (
-                  <div className="text-center mb-3">
-                    <div className="position-relative d-inline-block">
-                      <div
-                        className="rounded-circle overflow-hidden border border-2 border-primary"
-                        style={{
-                          width: '120px',
-                          height: '120px',
-                          cursor: 'pointer',
-                          background: '#f8f9fa',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                        onClick={triggerFileInput}
-                      >
+        <>
+          <Accordion defaultActiveKey="0">
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>
+                Personal details
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+                  <Row className="mb-3 g-3">
+                    <Col md={2}>
+                      <div className="photo-upload border d-flex flex-column justify-content-center align-items-center overflow-hidden"
+                        onClick={triggerFileInput}>
                         {profilePic || (parsedResume?.profilePic) ? (
                           <img
                             src={profilePic || parsedResume.profilePic}
@@ -598,220 +589,210 @@ const DemoPage = () => {
                             <div className="small mt-1">Click to upload</div>
                           </div>
                         )}
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleProfilePicChange}
+                          accept="image/*"
+                          className="d-none"
+                        />
                       </div>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleProfilePicChange}
-                        accept="image/*"
-                        className="d-none"
-                      />
-                    </div>
-                  </div>
-                )}
+                    </Col>
+                    <Col md={10}>
+                      <Row className="g-3">
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>First Name</Form.Label>
+                            <Form.Control type="text"
+                              value={`${parsedResume?.candidateName?.[0]?.firstName || ''} ${parsedResume?.candidateName?.[0]?.familyName || ''}`}
+                              onChange={(e) => updateField("candidateName", [{
+                                firstName: e.target.value.split(' ')[0],
+                                familyName: e.target.value.split(' ').slice(1).join(' ')
+                              }])} />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Last name</Form.Label>
+                            <Form.Control type="text" />
+                          </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                          <Form.Group>
+                            <Form.Label>Headline</Form.Label>
+                            <Form.Control type="text"
+                              value={parsedResume?.headline || ''}
+                              onChange={(e) => updateField("headline", e.target.value)} />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Full Name</Form.Label>
-                  <Form.Control
-                    size="sm"
-                    value={`${parsedResume?.candidateName?.[0]?.firstName || ''} ${parsedResume?.candidateName?.[0]?.familyName || ''}`}
-                    onChange={(e) => updateField("candidateName", [{
-                      firstName: e.target.value.split(' ')[0],
-                      familyName: e.target.value.split(' ').slice(1).join(' ')
-                    }])}
-                  />
-                </Form.Group>
+                  <Row className="mb-3 g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email"
+                          value={parsedResume?.email?.[0] || ''}
+                          onChange={(e) => updateField("email", [e.target.value])} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>Phone number</Form.Label>
+                        <Form.Control type="text"
+                          value={parsedResume?.phoneNumber?.[0]?.formattedNumber || ''}
+                          onChange={(e) => updateField("phoneNumber", [{
+                            formattedNumber: e.target.value
+                          }])} />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Headline/Title</Form.Label>
-                  <Form.Control
-                    size="sm"
-                    value={parsedResume?.headline || ''}
-                    onChange={(e) => updateField("headline", e.target.value)}
-                  />
-                </Form.Group>
+                  <Row className="mb-3 g-3">
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control type="text"
+                          value={parsedResume?.location?.formatted || ''}
+                          onChange={(e) => updateField("location", {
+                            ...parsedResume?.location,
+                            formatted: e.target.value
+                          })} />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Summary</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    size="sm"
-                    value={parsedResume?.summary || ''}
-                    onChange={(e) => updateField("summary", e.target.value)}
-                  />
-                </Form.Group>
-              </div>
+                  <Row className="mb-3 g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>Post code</Form.Label>
+                        <Form.Control type="text" />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>City</Form.Label>
+                        <Form.Control type="text" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-              {/* Contact Information */}
-              <div className="mb-4">
-                <h6 className="text-primary mb-3">Contact Information</h6>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Phone</Form.Label>
-                  <Form.Control
-                    size="sm"
-                    value={parsedResume?.phoneNumber?.[0]?.formattedNumber || ''}
-                    onChange={(e) => updateField("phoneNumber", [{
-                      formattedNumber: e.target.value
-                    }])}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    size="sm"
-                    value={parsedResume?.email?.[0] || ''}
-                    onChange={(e) => updateField("email", [e.target.value])}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Location</Form.Label>
-                  <Form.Control
-                    size="sm"
-                    value={parsedResume?.location?.formatted || ''}
-                    onChange={(e) => updateField("location", {
-                      ...parsedResume?.location,
-                      formatted: e.target.value
-                    })}
-                  />
-                </Form.Group>
-              </div>
-
-              {/* Work Experience */}
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h6 className="text-primary mb-0">Work Experience</h6>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => {
-                      const newExp = {
-                        workExperienceJobTitle: '',
-                        workExperienceOrganization: '',
-                        workExperienceDates: {
-                          start: {
-                            date: ''
-                          },
-                          end: {
-                            date: ''
-                          }
-                        },
-                        workExperienceDescription: ''
-                      };
-                      updateField("workExperience", [...(parsedResume.workExperience || []), newExp]);
-                    }}
-                  >
-                    + Add
-                  </Button>
-                </div>
-                {parsedResume?.workExperience?.map((exp, index) => (
-                  <div key={index} className="mb-3 p-3 border rounded bg-light">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <small className="fw-bold text-muted">Experience #{index + 1}</small>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => {
-                          const updatedExp = [...parsedResume.workExperience];
-                          updatedExp.splice(index, 1);
-                          updateField("workExperience", updatedExp);
-                        }}
-                      >
-                        ×
+                  {/* Addable Fields */}
+                  <div className="d-flex flex-wrap gap-2 mt-3">
+                    {[
+                      'Date of birth', 'Place of birth', "Driver's license", 'Gender',
+                      'Nationality', 'Civil status', 'Website', 'LinkedIn', 'Custom field'
+                    ].map((label, idx) => (
+                      <Button key={idx} variant="outline-secondary" size="sm" className="field-button">
+                        + {label}
                       </Button>
-                    </div>
-                    <Form.Group className="mb-2">
-                      <Form.Label className="small fw-bold">Job Title</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={exp.workExperienceJobTitle || ''}
-                        onChange={(e) => updateField(`workExperience[${index}].workExperienceJobTitle`, e.target.value)}
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-2">
-                      <Form.Label className="small fw-bold">Company</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={exp.workExperienceOrganization || ''}
-                        onChange={(e) => updateField(`workExperience[${index}].workExperienceOrganization`, e.target.value)}
-                      />
-                    </Form.Group>
-
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-2">
-                          <Form.Label className="small fw-bold">Start</Form.Label>
-                          <Form.Control
-                            type="text"
-                            size="sm"
-                            placeholder="2020"
-                            value={exp.workExperienceDates?.start?.date || ''}
-                            onChange={(e) => {
-                              const updatedWork = [...parsedResume.workExperience];
-                              updatedWork[index] = {
-                                ...updatedWork[index],
-                                workExperienceDates: {
-                                  ...(updatedWork[index].workExperienceDates || {}),
-                                  start: {
-                                    ...(updatedWork[index].workExperienceDates?.start || {}),
-                                    date: e.target.value
-                                  }
-                                }
-                              };
-                              updateField("workExperience", updatedWork);
-                            }}
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group className="mb-2">
-                          <Form.Label className="small fw-bold">End</Form.Label>
-                          <Form.Control
-                            type="text"
-                            size="sm"
-                            placeholder="2021 or Present"
-                            value={exp.workExperienceDates?.end?.date || ''}
-                            onChange={(e) => {
-                              const updatedWork = [...parsedResume.workExperience];
-                              updatedWork[index] = {
-                                ...updatedWork[index],
-                                workExperienceDates: {
-                                  ...(updatedWork[index].workExperienceDates || {}),
-                                  end: {
-                                    ...(updatedWork[index].workExperienceDates?.end || {}),
-                                    date: e.target.value
-                                  }
-                                }
-                              };
-                              updateField("workExperience", updatedWork);
-                            }}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-
-                    <Form.Group className="mb-2">
-                      <Form.Label className="small fw-bold">Description</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={2}
-                        size="sm"
-                        value={exp.workExperienceDescription || ''}
-                        onChange={(e) => updateField(`workExperience[${index}].workExperienceDescription`, e.target.value)}
-                      />
-                    </Form.Group>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>
+                Education
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+                  {parsedResume?.education?.map((edu, index) => (
+                    <div key={index} className="mb-3 p-3 border rounded">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="fw-bold text-muted">Education #{index + 1}</small>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => {
+                            const updatedEdu = [...parsedResume.education];
+                            updatedEdu.splice(index, 1);
+                            updateField("education", updatedEdu);
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="">Degree/Qualification</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={edu.educationAccreditation || ''}
+                          onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
+                        />
+                      </Form.Group>
 
-              {/* Education */}
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h6 className="text-primary mb-0">Education</h6>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="">Institution</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={edu.educationOrganization || ''}
+                          onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="">Start</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2017"
+                              value={edu.educationDates?.start?.date || ''}
+                              onChange={(e) => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu[index] = {
+                                  ...updatedEdu[index],
+                                  educationDates: {
+                                    ...(updatedEdu[index].educationDates || {}),
+                                    start: {
+                                      ...(updatedEdu[index].educationDates?.start || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("education", updatedEdu);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="">End</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2018"
+                              value={edu.educationDates?.end?.date || ''}
+                              onChange={(e) => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu[index] = {
+                                  ...updatedEdu[index],
+                                  educationDates: {
+                                    ...(updatedEdu[index].educationDates || {}),
+                                    end: {
+                                      ...(updatedEdu[index].educationDates?.end || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("education", updatedEdu);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
                   <Button
                     variant="outline-primary"
                     size="sm"
@@ -834,388 +815,736 @@ const DemoPage = () => {
                   >
                     + Add
                   </Button>
-                </div>
-                {parsedResume?.education?.map((edu, index) => (
-                  <div key={index} className="mb-3 p-3 border rounded bg-light">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <small className="fw-bold text-muted">Education #{index + 1}</small>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => {
-                          const updatedEdu = [...parsedResume.education];
-                          updatedEdu.splice(index, 1);
-                          updateField("education", updatedEdu);
-                        }}
-                      >
-                        ×
-                      </Button>
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>
+                Employement
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="3">
+              <Accordion.Header>
+                Skills
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="4">
+              <Accordion.Header>
+                Languages
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="5">
+              <Accordion.Header>
+                Hobiles
+                <span className="add-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                </span>
+                <span className="down-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg>
+                </span>
+              </Accordion.Header>
+              <Accordion.Body>
+                <Card className="border-0">
+
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+          <Card className="border-0 shadow-sm mt-5">
+            <Card.Header className="bg-white border-bottom sticky-top">
+              <h5 className="mb-0">Edit Your CV</h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                {/* Personal Information */}
+                <div className="mb-4">
+                  <h6 className="text-primary mb-3">Personal Information</h6>
+
+                  {/* Profile Picture Upload */}
+                  {(selectedTemplate === "Professional" || selectedTemplate === "Professional2") && (
+                    <div className="text-center mb-3">
+                      <div className="position-relative d-inline-block">
+                        <div
+                          className="rounded-circle overflow-hidden border border-2 border-primary"
+                          style={{
+                            width: '120px',
+                            height: '120px',
+                            cursor: 'pointer',
+                            background: '#f8f9fa',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          onClick={triggerFileInput}
+                        >
+                          {profilePic || (parsedResume?.profilePic) ? (
+                            <img
+                              src={profilePic || parsedResume.profilePic}
+                              alt="Profile"
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                              }}
+                            />
+                          ) : (
+                            <div className="text-muted">
+                              <i className="bi bi-person-circle" style={{ fontSize: '3rem' }}></i>
+                              <div className="small mt-1">Click to upload</div>
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleProfilePicChange}
+                          accept="image/*"
+                          className="d-none"
+                        />
+                      </div>
                     </div>
-                    <Form.Group className="mb-2">
-                      <Form.Label className="small fw-bold">Degree/Qualification</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={edu.educationAccreditation || ''}
-                        onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
-                      />
-                    </Form.Group>
+                  )}
 
-                    <Form.Group className="mb-2">
-                      <Form.Label className="small fw-bold">Institution</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={edu.educationOrganization || ''}
-                        onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
-                      />
-                    </Form.Group>
-
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-2">
-                          <Form.Label className="small fw-bold">Start</Form.Label>
-                          <Form.Control
-                            type="text"
-                            size="sm"
-                            placeholder="2017"
-                            value={edu.educationDates?.start?.date || ''}
-                            onChange={(e) => {
-                              const updatedEdu = [...parsedResume.education];
-                              updatedEdu[index] = {
-                                ...updatedEdu[index],
-                                educationDates: {
-                                  ...(updatedEdu[index].educationDates || {}),
-                                  start: {
-                                    ...(updatedEdu[index].educationDates?.start || {}),
-                                    date: e.target.value
-                                  }
-                                }
-                              };
-                              updateField("education", updatedEdu);
-                            }}
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group className="mb-2">
-                          <Form.Label className="small fw-bold">End</Form.Label>
-                          <Form.Control
-                            type="text"
-                            size="sm"
-                            placeholder="2018"
-                            value={edu.educationDates?.end?.date || ''}
-                            onChange={(e) => {
-                              const updatedEdu = [...parsedResume.education];
-                              updatedEdu[index] = {
-                                ...updatedEdu[index],
-                                educationDates: {
-                                  ...(updatedEdu[index].educationDates || {}),
-                                  end: {
-                                    ...(updatedEdu[index].educationDates?.end || {}),
-                                    date: e.target.value
-                                  }
-                                }
-                              };
-                              updateField("education", updatedEdu);
-                            }}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </div>
-                ))}
-              </div>
-
-              {/* Skills */}
-              <div className="mb-4">
-                <h6 className="text-primary mb-3">Skills</h6>
-                <Form.Group>
-                  <Form.Label className="small fw-bold">Add Skills (one per line)</Form.Label>
-                  <div className="d-flex align-items-center mb-2">
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Full Name</Form.Label>
                     <Form.Control
-                      type="text"
                       size="sm"
-                      value={currentSkill}
-                      onChange={(e) => setCurrentSkill(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
+                      value={`${parsedResume?.candidateName?.[0]?.firstName || ''} ${parsedResume?.candidateName?.[0]?.familyName || ''}`}
+                      onChange={(e) => updateField("candidateName", [{
+                        firstName: e.target.value.split(' ')[0],
+                        familyName: e.target.value.split(' ').slice(1).join(' ')
+                      }])}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Headline/Title</Form.Label>
+                    <Form.Control
+                      size="sm"
+                      value={parsedResume?.headline || ''}
+                      onChange={(e) => updateField("headline", e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Summary</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      size="sm"
+                      value={parsedResume?.summary || ''}
+                      onChange={(e) => updateField("summary", e.target.value)}
+                    />
+                  </Form.Group>
+                </div>
+
+                {/* Contact Information */}
+                <div className="mb-4">
+                  <h6 className="text-primary mb-3">Contact Information</h6>
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Phone</Form.Label>
+                    <Form.Control
+                      size="sm"
+                      value={parsedResume?.phoneNumber?.[0]?.formattedNumber || ''}
+                      onChange={(e) => updateField("phoneNumber", [{
+                        formattedNumber: e.target.value
+                      }])}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      size="sm"
+                      value={parsedResume?.email?.[0] || ''}
+                      onChange={(e) => updateField("email", [e.target.value])}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Location</Form.Label>
+                    <Form.Control
+                      size="sm"
+                      value={parsedResume?.location?.formatted || ''}
+                      onChange={(e) => updateField("location", {
+                        ...parsedResume?.location,
+                        formatted: e.target.value
+                      })}
+                    />
+                  </Form.Group>
+                </div>
+
+                {/* Work Experience */}
+                <div className="mb-4">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h6 className="text-primary mb-0">Work Experience</h6>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        const newExp = {
+                          workExperienceJobTitle: '',
+                          workExperienceOrganization: '',
+                          workExperienceDates: {
+                            start: {
+                              date: ''
+                            },
+                            end: {
+                              date: ''
+                            }
+                          },
+                          workExperienceDescription: ''
+                        };
+                        updateField("workExperience", [...(parsedResume.workExperience || []), newExp]);
+                      }}
+                    >
+                      + Add
+                    </Button>
+                  </div>
+                  {parsedResume?.workExperience?.map((exp, index) => (
+                    <div key={index} className="mb-3 p-3 border rounded bg-light">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="fw-bold text-muted">Experience #{index + 1}</small>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => {
+                            const updatedExp = [...parsedResume.workExperience];
+                            updatedExp.splice(index, 1);
+                            updateField("workExperience", updatedExp);
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-bold">Job Title</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={exp.workExperienceJobTitle || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceJobTitle`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-bold">Company</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={exp.workExperienceOrganization || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceOrganization`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="small fw-bold">Start</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2020"
+                              value={exp.workExperienceDates?.start?.date || ''}
+                              onChange={(e) => {
+                                const updatedWork = [...parsedResume.workExperience];
+                                updatedWork[index] = {
+                                  ...updatedWork[index],
+                                  workExperienceDates: {
+                                    ...(updatedWork[index].workExperienceDates || {}),
+                                    start: {
+                                      ...(updatedWork[index].workExperienceDates?.start || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("workExperience", updatedWork);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="small fw-bold">End</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2021 or Present"
+                              value={exp.workExperienceDates?.end?.date || ''}
+                              onChange={(e) => {
+                                const updatedWork = [...parsedResume.workExperience];
+                                updatedWork[index] = {
+                                  ...updatedWork[index],
+                                  workExperienceDates: {
+                                    ...(updatedWork[index].workExperienceDates || {}),
+                                    end: {
+                                      ...(updatedWork[index].workExperienceDates?.end || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("workExperience", updatedWork);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-bold">Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={2}
+                          size="sm"
+                          value={exp.workExperienceDescription || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceDescription`, e.target.value)}
+                        />
+                      </Form.Group>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Education */}
+                <div className="mb-4">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h6 className="text-primary mb-0">Education</h6>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        const newEdu = {
+                          educationAccreditation: '',
+                          educationOrganization: '',
+                          educationDates: {
+                            start: {
+                              date: ''
+                            },
+                            end: {
+                              date: ''
+                            }
+                          },
+                          educationDescription: ''
+                        };
+                        updateField("education", [...(parsedResume.education || []), newEdu]);
+                      }}
+                    >
+                      + Add
+                    </Button>
+                  </div>
+                  {parsedResume?.education?.map((edu, index) => (
+                    <div key={index} className="mb-3 p-3 border rounded bg-light">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="fw-bold text-muted">Education #{index + 1}</small>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => {
+                            const updatedEdu = [...parsedResume.education];
+                            updatedEdu.splice(index, 1);
+                            updateField("education", updatedEdu);
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-bold">Degree/Qualification</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={edu.educationAccreditation || ''}
+                          onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-2">
+                        <Form.Label className="small fw-bold">Institution</Form.Label>
+                        <Form.Control
+                          size="sm"
+                          value={edu.educationOrganization || ''}
+                          onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="small fw-bold">Start</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2017"
+                              value={edu.educationDates?.start?.date || ''}
+                              onChange={(e) => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu[index] = {
+                                  ...updatedEdu[index],
+                                  educationDates: {
+                                    ...(updatedEdu[index].educationDates || {}),
+                                    start: {
+                                      ...(updatedEdu[index].educationDates?.start || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("education", updatedEdu);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="small fw-bold">End</Form.Label>
+                            <Form.Control
+                              type="text"
+                              size="sm"
+                              placeholder="2018"
+                              value={edu.educationDates?.end?.date || ''}
+                              onChange={(e) => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu[index] = {
+                                  ...updatedEdu[index],
+                                  educationDates: {
+                                    ...(updatedEdu[index].educationDates || {}),
+                                    end: {
+                                      ...(updatedEdu[index].educationDates?.end || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("education", updatedEdu);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Skills */}
+                <div className="mb-4">
+                  <h6 className="text-primary mb-3">Skills</h6>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold">Add Skills (one per line)</Form.Label>
+                    <div className="d-flex align-items-center mb-2">
+                      <Form.Control
+                        type="text"
+                        size="sm"
+                        value={currentSkill}
+                        onChange={(e) => setCurrentSkill(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            if (currentSkill.trim()) {
+                              const currentSkills = parsedResume?.skill || [];
+                              updateField("skill", [...currentSkills, { name: currentSkill.trim() }]);
+                              setCurrentSkill('');
+                            }
+                          }
+                        }}
+                        placeholder="Type a skill and press Enter to add it"
+                        className="me-2"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline-primary"
+                        onClick={() => {
                           if (currentSkill.trim()) {
                             const currentSkills = parsedResume?.skill || [];
                             updateField("skill", [...currentSkills, { name: currentSkill.trim() }]);
                             setCurrentSkill('');
                           }
-                        }
-                      }}
-                      placeholder="Type a skill and press Enter to add it"
-                      className="me-2"
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline-primary"
-                      onClick={() => {
-                        if (currentSkill.trim()) {
-                          const currentSkills = parsedResume?.skill || [];
-                          updateField("skill", [...currentSkills, { name: currentSkill.trim() }]);
-                          setCurrentSkill('');
-                        }
-                      }}
-                    >
-                      Add
-                    </Button>
-                  </div>
-                  <div className="mt-2">
-                    {parsedResume?.skill?.map((skill, index) => (
-                      <span key={index} className="badge bg-primary me-2 mb-2 d-inline-flex align-items-center">
-                        {skill.name}
-                        <button
-                          type="button"
-                          className="btn-close btn-close-white ms-2"
-                          aria-label="Remove"
-                          onClick={() => {
-                            const updatedSkills = [...parsedResume.skill];
-                            updatedSkills.splice(index, 1);
-                            updateField("skill", updatedSkills);
-                          }}
-                        />
-                      </span>
-                    ))}
-                  </div>
-                  <Form.Text className="text-muted">
-                    Type a skill and press Enter or click Add
-                  </Form.Text>
-                </Form.Group>
-              </div>
-
-              {/* Custom Sections */}
-              <div className="mb-4">
-                <h6 className="text-primary mb-3">Custom Sections</h6>
-                <div className="mb-3">
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => addCustomSection('description')}
-                  >
-                    <FiPlus /> Add Description Section
-                  </Button>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => addCustomSection('entries')}
-                  >
-                    <FiPlus /> Add Entries Section
-                  </Button>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => addCustomSection('skills')}
-                  >
-                    <FiPlus /> Add Skills Section
-                  </Button>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => addCustomSection('list')}
-                  >
-                    <FiPlus /> Add List Section
-                  </Button>
-                </div>
-
-                {customSections.map((section) => (
-                  <div key={section.id} className="mb-4 p-3 border rounded bg-light">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                      <Form.Control
-                        type="text"
-                        size="sm"
-                        value={section.title}
-                        onChange={(e) => updateCustomSection(section.id, 'title', e.target.value)}
-                        className="me-2"
-                        style={{ width: 'auto' }}
-                      />
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => removeCustomSection(section.id)}
+                        }}
                       >
-                        <FiTrash2 />
+                        Add
                       </Button>
                     </div>
-
-                    {section.type === 'description' && (
-                      <Form.Group>
-                        <Form.Control
-                          as="textarea"
-                          rows={3}
-                          size="sm"
-                          value={section.content}
-                          onChange={(e) => updateCustomSection(section.id, 'content', e.target.value)}
-                        />
-                      </Form.Group>
-                    )}
-
-                    {section.type === 'entries' && (
-                      <div>
-                        {section.content.map((entry, index) => (
-                          <div key={index} className="mb-3 p-3 border rounded bg-white">
-                            <div className="d-flex justify-content-between align-items-center mb-2">
-                              <small className="fw-bold text-muted">Entry #{index + 1}</small>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeCustomEntry(section.id, index)}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Title</Form.Label>
-                              <Form.Control
-                                size="sm"
-                                value={entry.title}
-                                onChange={(e) => updateCustomEntry(section.id, index, 'title', e.target.value)}
-                              />
-                            </Form.Group>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Subtitle</Form.Label>
-                              <Form.Control
-                                size="sm"
-                                value={entry.subtitle}
-                                onChange={(e) => updateCustomEntry(section.id, index, 'subtitle', e.target.value)}
-                              />
-                            </Form.Group>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Date</Form.Label>
-                              <Form.Control
-                                size="sm"
-                                value={entry.date}
-                                onChange={(e) => updateCustomEntry(section.id, index, 'date', e.target.value)}
-                              />
-                            </Form.Group>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Description</Form.Label>
-                              <Form.Control
-                                as="textarea"
-                                rows={2}
-                                size="sm"
-                                value={entry.description}
-                                onChange={(e) => updateCustomEntry(section.id, index, 'description', e.target.value)}
-                              />
-                            </Form.Group>
-                          </div>
-                        ))}
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => addCustomEntry(section.id)}
-                        >
-                          <FiPlus /> Add Entry
-                        </Button>
-                      </div>
-                    )}
-
-                    {section.type === 'skills' && (
-                      <div>
-                        {section.content.map((skill, index) => (
-                          <div key={index} className="mb-3 p-3 border rounded bg-white">
-                            <div className="d-flex justify-content-between align-items-center mb-2">
-                              <small className="fw-bold text-muted">Skill #{index + 1}</small>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeCustomSkill(section.id, index)}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Skill Name</Form.Label>
-                              <Form.Control
-                                size="sm"
-                                value={skill.name}
-                                onChange={(e) => updateCustomSkill(section.id, index, 'name', e.target.value)}
-                              />
-                            </Form.Group>
-                            <Form.Group className="mb-2">
-                              <Form.Label className="small fw-bold">Skill Level</Form.Label>
-                              <Form.Select
-                                size="sm"
-                                value={skill.level}
-                                onChange={(e) => updateCustomSkill(section.id, index, 'level', e.target.value)}
-                              >
-                                <option value="Beginner">Beginner</option>
-                                <option value="Moderate">Moderate</option>
-                                <option value="Good">Good</option>
-                                <option value="Very Good">Very Good</option>
-                                <option value="Excellent">Excellent</option>
-                              </Form.Select>
-                            </Form.Group>
-                          </div>
-                        ))}
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => addCustomSkill(section.id)}
-                        >
-                          <FiPlus /> Add Skill
-                        </Button>
-                      </div>
-                    )}
-
-                    {section.type === 'list' && (
-                      <div>
-                        {section.content.map((item, index) => (
-                          <div key={index} className="mb-3 p-3 border rounded bg-white">
-                            <div className="d-flex justify-content-between align-items-center">
-                              <Form.Control
-                                size="sm"
-                                value={item}
-                                onChange={(e) => updateCustomListItem(section.id, index, e.target.value)}
-                                className="me-2"
-                              />
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeCustomListItem(section.id, index)}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => addCustomListItem(section.id)}
-                        >
-                          <FiPlus /> Add List Item
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* AI Suggestions */}
-              {aiSuggestions.length > 0 && (
-                <div className="mb-4">
-                  <h6 className="text-warning mb-3">💡 AI Suggestions</h6>
-                  <div className="bg-light p-3 rounded">
-                    {aiSuggestions.slice(0, 3).map((suggestion, index) => (
-                      <div key={index} className="mb-2">
-                        <small className="text-muted">• {suggestion}</small>
-                      </div>
-                    ))}
-                    {aiSuggestions.length > 3 && (
-                      <small className="text-muted">+ {aiSuggestions.length - 3} more suggestions</small>
-                    )}
-                  </div>
+                    <div className="mt-2">
+                      {parsedResume?.skill?.map((skill, index) => (
+                        <span key={index} className="badge bg-primary me-2 mb-2 d-inline-flex align-items-center">
+                          {skill.name}
+                          <button
+                            type="button"
+                            className="btn-close btn-close-white ms-2"
+                            aria-label="Remove"
+                            onClick={() => {
+                              const updatedSkills = [...parsedResume.skill];
+                              updatedSkills.splice(index, 1);
+                              updateField("skill", updatedSkills);
+                            }}
+                          />
+                        </span>
+                      ))}
+                    </div>
+                    <Form.Text className="text-muted">
+                      Type a skill and press Enter or click Add
+                    </Form.Text>
+                  </Form.Group>
                 </div>
-              )}
-            </Form>
-          </Card.Body>
-        </Card>
+
+                {/* Custom Sections */}
+                <div className="mb-4">
+                  <h6 className="text-primary mb-3">Custom Sections</h6>
+                  <div className="mb-3">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => addCustomSection('description')}
+                    >
+                      <FiPlus /> Add Description Section
+                    </Button>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => addCustomSection('entries')}
+                    >
+                      <FiPlus /> Add Entries Section
+                    </Button>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => addCustomSection('skills')}
+                    >
+                      <FiPlus /> Add Skills Section
+                    </Button>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => addCustomSection('list')}
+                    >
+                      <FiPlus /> Add List Section
+                    </Button>
+                  </div>
+
+                  {customSections.map((section) => (
+                    <div key={section.id} className="mb-4 p-3 border rounded bg-light">
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <Form.Control
+                          type="text"
+                          size="sm"
+                          value={section.title}
+                          onChange={(e) => updateCustomSection(section.id, 'title', e.target.value)}
+                          className="me-2"
+                          style={{ width: 'auto' }}
+                        />
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => removeCustomSection(section.id)}
+                        >
+                          <FiTrash2 />
+                        </Button>
+                      </div>
+
+                      {section.type === 'description' && (
+                        <Form.Group>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            size="sm"
+                            value={section.content}
+                            onChange={(e) => updateCustomSection(section.id, 'content', e.target.value)}
+                          />
+                        </Form.Group>
+                      )}
+
+                      {section.type === 'entries' && (
+                        <div>
+                          {section.content.map((entry, index) => (
+                            <div key={index} className="mb-3 p-3 border rounded bg-white">
+                              <div className="d-flex justify-content-between align-items-center mb-2">
+                                <small className="fw-bold text-muted">Entry #{index + 1}</small>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => removeCustomEntry(section.id, index)}
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Title</Form.Label>
+                                <Form.Control
+                                  size="sm"
+                                  value={entry.title}
+                                  onChange={(e) => updateCustomEntry(section.id, index, 'title', e.target.value)}
+                                />
+                              </Form.Group>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Subtitle</Form.Label>
+                                <Form.Control
+                                  size="sm"
+                                  value={entry.subtitle}
+                                  onChange={(e) => updateCustomEntry(section.id, index, 'subtitle', e.target.value)}
+                                />
+                              </Form.Group>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Date</Form.Label>
+                                <Form.Control
+                                  size="sm"
+                                  value={entry.date}
+                                  onChange={(e) => updateCustomEntry(section.id, index, 'date', e.target.value)}
+                                />
+                              </Form.Group>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Description</Form.Label>
+                                <Form.Control
+                                  as="textarea"
+                                  rows={2}
+                                  size="sm"
+                                  value={entry.description}
+                                  onChange={(e) => updateCustomEntry(section.id, index, 'description', e.target.value)}
+                                />
+                              </Form.Group>
+                            </div>
+                          ))}
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => addCustomEntry(section.id)}
+                          >
+                            <FiPlus /> Add Entry
+                          </Button>
+                        </div>
+                      )}
+
+                      {section.type === 'skills' && (
+                        <div>
+                          {section.content.map((skill, index) => (
+                            <div key={index} className="mb-3 p-3 border rounded bg-white">
+                              <div className="d-flex justify-content-between align-items-center mb-2">
+                                <small className="fw-bold text-muted">Skill #{index + 1}</small>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => removeCustomSkill(section.id, index)}
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Skill Name</Form.Label>
+                                <Form.Control
+                                  size="sm"
+                                  value={skill.name}
+                                  onChange={(e) => updateCustomSkill(section.id, index, 'name', e.target.value)}
+                                />
+                              </Form.Group>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="small fw-bold">Skill Level</Form.Label>
+                                <Form.Select
+                                  size="sm"
+                                  value={skill.level}
+                                  onChange={(e) => updateCustomSkill(section.id, index, 'level', e.target.value)}
+                                >
+                                  <option value="Beginner">Beginner</option>
+                                  <option value="Moderate">Moderate</option>
+                                  <option value="Good">Good</option>
+                                  <option value="Very Good">Very Good</option>
+                                  <option value="Excellent">Excellent</option>
+                                </Form.Select>
+                              </Form.Group>
+                            </div>
+                          ))}
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => addCustomSkill(section.id)}
+                          >
+                            <FiPlus /> Add Skill
+                          </Button>
+                        </div>
+                      )}
+
+                      {section.type === 'list' && (
+                        <div>
+                          {section.content.map((item, index) => (
+                            <div key={index} className="mb-3 p-3 border rounded bg-white">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <Form.Control
+                                  size="sm"
+                                  value={item}
+                                  onChange={(e) => updateCustomListItem(section.id, index, e.target.value)}
+                                  className="me-2"
+                                />
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => removeCustomListItem(section.id, index)}
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => addCustomListItem(section.id)}
+                          >
+                            <FiPlus /> Add List Item
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* AI Suggestions */}
+                {aiSuggestions.length > 0 && (
+                  <div className="mb-4">
+                    <h6 className="text-warning mb-3">💡 AI Suggestions</h6>
+                    <div className="bg-light p-3 rounded">
+                      {aiSuggestions.slice(0, 3).map((suggestion, index) => (
+                        <div key={index} className="mb-2">
+                          <small className="text-muted">• {suggestion}</small>
+                        </div>
+                      ))}
+                      {aiSuggestions.length > 3 && (
+                        <small className="text-muted">+ {aiSuggestions.length - 3} more suggestions</small>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </Form>
+            </Card.Body>
+          </Card>
+        </>
       );
     }
 
@@ -1267,14 +1596,14 @@ const DemoPage = () => {
   };
 
   return !parsedResume ? (
-    <Container fluid className="mb-4 cv-uploder-container mt-5">
+    <Container fluid className="mb-4 cv-uploder-container">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-center mb-2">Upload existing CV or build a new one with Mypathfinder</h1>
-        <p className="text-center text-muted mb-4">
+        <h1 className="text-center mb-2 display-5 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
+        <p className="text-center text-muted mb-4 heading-text">
           MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
         </p>
       </motion.div>
@@ -1317,9 +1646,9 @@ const DemoPage = () => {
 
                         <h4 className="m-0">Upload Existing CV</h4>
                       </div>
-                      <p className="text-muted m-0">Please upload your file in one of the following formats: PDF, DOC, or DOCX.</p>
-                      <p className="text-muted my-1">Ensure that your file does not exceed the maximum allowed size of [insert size limit, e.g., 10MB].</p>
-                      <p className="text-muted m-0">Files outside of these formats or limits may not be accepted.</p>
+                      <p className="text-muted m-0 heading-text">Please upload your file in one of the following formats: PDF, DOC, or DOCX.</p>
+                      <p className="text-muted my-1 heading-text">Ensure that your file does not exceed the maximum allowed size of [insert size limit, e.g., 10MB].</p>
+                      <p className="text-muted m-0 heading-text">Files outside of these formats or limits may not be accepted.</p>
 
                       {/* <small className="text-muted">Supported format: PDF (Max 5MB)</small> */}
                     </>
@@ -1350,9 +1679,8 @@ const DemoPage = () => {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   // variant="primary"
-                  size="lg"
                   onClick={handleManualCV}
-                  className="d-flex align-items-center gap-2 cv-build-from-scratch-btn"
+                  className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button"
                 >
                   <FiEdit2 /> Build from scratch
                 </Button>
@@ -1361,9 +1689,8 @@ const DemoPage = () => {
                 <Button
                   disabled={true}
                   // variant="success"
-                  size="lg"
                   onClick={handleAICV}
-                  className="d-flex align-items-center gap-2 cv-with-ai-btn"
+                  className="d-flex align-items-center gap-2 cv-with-ai-btn custom-button"
                 >
                   <FiCpu /> Build my CV with AI
                 </Button>
@@ -1380,8 +1707,8 @@ const DemoPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-center mb-2">Smart CV Builder, tailored for the Modern Job Market.</h1>
-        <p className="text-center text-muted mb-4">
+        <h1 className="text-center mb-2 display-5 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
+        <p className="text-center text-muted mb-4 heading-text">
           MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
         </p>
       </motion.div>

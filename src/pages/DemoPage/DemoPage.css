@@ -4,6 +4,12 @@
   border-radius: 10px;
   transition: all 0.3s ease;
   cursor: pointer;
+  padding: 20px;
+
+  & h4 {
+    font-size: 24px;
+    font-weight: 400;
+  }
 }
 
 .dropzone-card:hover {
@@ -48,20 +54,143 @@
   font-weight: 500;
 }
 
-.cv-uplodaer-tabs{
+.cv-uplodaer-tabs {
   border-bottom: 1px solid #d09cf3;
 }
-.nav-underline .nav-link.active, .nav-underline .show>.nav-link { 
+.nav-underline .nav-link.active,
+.nav-underline .show > .nav-link {
   color: #d09cf3;
   border-bottom-color: #d09cf3;
 }
 
-.nav-underline .nav-link, .nav-underline .show>.nav-link { 
-  color: #000000; 
+.nav-underline .nav-link,
+.nav-underline .show > .nav-link {
+  color: #000000;
 }
-.nav-underline .nav-link:hover, .nav-underline .show>.nav-link { 
-  color: #d09cf3; 
+.nav-underline .nav-link:hover,
+.nav-underline .show > .nav-link {
+  color: #d09cf3;
 }
 /* .upload-section{
     border: 1px dashed rgb(249, 13, 13) !important;
   } */
+
+.photo-upload {
+  height: 144px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #888;
+}
+
+.form-control {
+  background-color: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  box-shadow: none;
+}
+
+.form-control:focus {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.field-button {
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.form-label {
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+
+.form-control {
+  background-color: #f4f4f4;
+  border: 1px solid #f4f4f4;
+  box-shadow: none;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  outline: none;
+  background-color: #f4f4f4;
+  border: 1px solid #f4f4f4;
+}
+
+.accordion {
+  margin-top: 30px;
+}
+
+.accordion-item {
+  border: none;
+  border-bottom: 1px solid #e3e3e3;
+  border-radius: 0px;
+
+  & .accordion-body {
+    padding: 24px 1rem 30px;
+  }
+
+  & .accordion-button {
+    background: #fff !important;
+    border: none;
+    box-shadow: none;
+    padding: 24px 64px 24px 16px;
+    font-size: 18px;
+    font-weight: 500;
+    position: relative;
+
+    & .add-btn,
+    & .down-btn {
+      position: absolute;
+      right: 16px;
+      top: 19px;
+      border: 1px solid #8f8e8e;
+      border-radius: 6px;
+      padding: 3px;
+
+      & svg {
+        stroke: #8f8e8e;
+      }
+    }
+
+    & .add-btn {
+      display: none;
+    }
+
+    & .down-btn {
+      display: block;
+    }
+
+    &::after {
+      content: unset;
+    }
+
+    &:hover {
+      & .add-btn,
+      & .down-btn {
+        border: 1px solid var(--primary-color);
+        background-color: var(--primary-hover-color);
+
+        & svg {
+          stroke: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  & .accordion-button.collapsed {
+    & .add-btn {
+      display: block;
+    }
+
+    & .down-btn {
+      display: none;
+    }
+  }
+}
+
+.accordion-item:first-child {
+  border-top: 1px solid #e3e3e3;
+}
