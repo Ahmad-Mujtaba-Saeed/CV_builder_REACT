@@ -48,9 +48,20 @@
   font-weight: 500;
 }
 
+.cv-uplodaer-tabs{
+  border-bottom: 1px solid #d09cf3;
+}
+.nav-underline .nav-link.active, .nav-underline .show>.nav-link { 
+  color: #d09cf3;
+  border-bottom-color: #d09cf3;
+}
 
-
-
+.nav-underline .nav-link, .nav-underline .show>.nav-link { 
+  color: #000000; 
+}
+.nav-underline .nav-link:hover, .nav-underline .show>.nav-link { 
+  color: #d09cf3; 
+}
 /* .upload-section{
     border: 1px dashed rgb(249, 13, 13) !important;
   } */

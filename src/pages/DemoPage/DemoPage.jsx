@@ -1424,7 +1424,7 @@ const DemoPage = () => {
           <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
             <Row>
               <Col>
-                <Nav variant="underline" className="mb-3">
+                <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
                   {tabs.map((tab) => (
                     <Nav.Item key={tab}>
                       <Nav.Link eventKey={tab} className="text-capitalize">
