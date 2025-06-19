@@ -16,7 +16,8 @@ import DemoPage from "../pages/DemoPage/DemoPage.jsx"
 
 const userRoutes = [
  
-  { path: "/", component: <DemoPage /> },
+  { path: "/", component: <UploadPage /> },
+  { path: "/cv-builder", component: <CVBuilder /> },
 ]
 
 const authRoutes = [
