@@ -32,7 +32,7 @@ const UploadPage = () => {
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const response = await fetch(`http://localhost:8000/api/parse-resume`, {
+            const response = await fetch(`https://deepskyblue-donkey-692108.hostingersite.com/api/parse-resume`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
