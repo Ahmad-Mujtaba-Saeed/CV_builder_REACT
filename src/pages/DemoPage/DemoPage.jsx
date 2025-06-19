@@ -13,6 +13,9 @@ import { ProfessionalTemplate2 } from "../../components/templates";
 import './DemoPage.css';
 import { Template5 } from "../../components/templates";
 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const tabs = ['Preview', 'Design', 'Analysis', 'Job Matching', 'Cover Letter'];
 
 const templates = {
@@ -38,10 +41,19 @@ const DemoPage = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [educationEditModes, setEducationEditModes] = useState([]); // New state
   const fileInputRef = useRef(null);
   const cvRef = useRef();
 
   const [activeTab, setActiveTab] = useState('Preview');
+
+  useEffect(() => {
+    if (parsedResume?.education) {
+      setEducationEditModes(new Array(parsedResume.education.length).fill(true)); // Initialize all to true (edit mode)
+    } else {
+      setEducationEditModes([]);
+    }
+  }, [parsedResume?.education]);
 
 
 
@@ -685,8 +697,9 @@ const DemoPage = () => {
                       'Date of birth', 'Place of birth', "Driver's license", 'Gender',
                       'Nationality', 'Civil status', 'Website', 'LinkedIn', 'Custom field'
                     ].map((label, idx) => (
-                      <Button key={idx} variant="outline-secondary" size="sm" className="field-button">
-                        + {label}
+                      <Button key={idx} variant="outline-secondary" className="field-button small-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                        {label}
                       </Button>
                     ))}
                   </div>
@@ -709,111 +722,186 @@ const DemoPage = () => {
                     <div key={index} className="mb-3 p-3 border rounded">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <small className="fw-bold text-muted">Education #{index + 1}</small>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => {
-                            const updatedEdu = [...parsedResume.education];
-                            updatedEdu.splice(index, 1);
-                            updateField("education", updatedEdu);
-                          }}
-                        >
-                          ×
-                        </Button>
                       </div>
-                      <Form.Group className="mb-2">
-                        <Form.Label className="">Degree/Qualification</Form.Label>
-                        <Form.Control
-                          size="sm"
-                          value={edu.educationAccreditation || ''}
-                          onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
-                        />
-                      </Form.Group>
 
-                      <Form.Group className="mb-2">
-                        <Form.Label className="">Institution</Form.Label>
-                        <Form.Control
-                          size="sm"
-                          value={edu.educationOrganization || ''}
-                          onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
-                        />
-                      </Form.Group>
-
-                      <Row>
-                        <Col md={6}>
+                      {educationEditModes[index] ? (
+                        // Edit Mode
+                        <>
                           <Form.Group className="mb-2">
-                            <Form.Label className="">Start</Form.Label>
+                            <Form.Label className="">Degree/Qualification</Form.Label>
                             <Form.Control
-                              type="text"
-                              size="sm"
-                              placeholder="2017"
-                              value={edu.educationDates?.start?.date || ''}
-                              onChange={(e) => {
-                                const updatedEdu = [...parsedResume.education];
-                                updatedEdu[index] = {
-                                  ...updatedEdu[index],
-                                  educationDates: {
-                                    ...(updatedEdu[index].educationDates || {}),
-                                    start: {
-                                      ...(updatedEdu[index].educationDates?.start || {}),
-                                      date: e.target.value
-                                    }
-                                  }
-                                };
-                                updateField("education", updatedEdu);
-                              }}
+                              value={edu.educationAccreditation || ''}
+                              onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
                             />
                           </Form.Group>
-                        </Col>
-                        <Col md={6}>
+
                           <Form.Group className="mb-2">
-                            <Form.Label className="">End</Form.Label>
+                            <Form.Label className="">Institution</Form.Label>
                             <Form.Control
-                              type="text"
-                              size="sm"
-                              placeholder="2018"
-                              value={edu.educationDates?.end?.date || ''}
-                              onChange={(e) => {
-                                const updatedEdu = [...parsedResume.education];
-                                updatedEdu[index] = {
-                                  ...updatedEdu[index],
-                                  educationDates: {
-                                    ...(updatedEdu[index].educationDates || {}),
-                                    end: {
-                                      ...(updatedEdu[index].educationDates?.end || {}),
-                                      date: e.target.value
-                                    }
-                                  }
-                                };
-                                updateField("education", updatedEdu);
-                              }}
+                              value={edu.educationOrganization || ''}
+                              onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
                             />
                           </Form.Group>
-                        </Col>
-                      </Row>
+
+                          <Row>
+                            <Col md={6}>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="">Start Date</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  placeholder="2017"
+                                  value={edu.educationDates?.start?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedEduData = [...parsedResume.education];
+                                    updatedEduData[index] = {
+                                      ...updatedEduData[index],
+                                      educationDates: {
+                                        ...(updatedEduData[index].educationDates || {}),
+                                        start: {
+                                          ...(updatedEduData[index].educationDates?.start || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("education", updatedEduData);
+                                  }}
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                              <Form.Group className="mb-2">
+                                <Form.Label className="">End Date</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  placeholder="2018"
+                                  value={edu.educationDates?.end?.date || ''}
+                                  onChange={(e) => {
+                                    const updatedEduData = [...parsedResume.education];
+                                    updatedEduData[index] = {
+                                      ...updatedEduData[index],
+                                      educationDates: {
+                                        ...(updatedEduData[index].educationDates || {}),
+                                        end: {
+                                          ...(updatedEduData[index].educationDates?.end || {}),
+                                          date: e.target.value
+                                        }
+                                      }
+                                    };
+                                    updateField("education", updatedEduData);
+                                  }}
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <div className="d-flex align-items-center justify-content-end gap-2 mt-2">
+                            <Button
+                              variant="outline-danger"
+                              className="content-del-btn"
+                              onClick={() => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu.splice(index, 1);
+                                updateField("education", updatedEdu);
+                                // Update edit modes
+                                setEducationEditModes(prevModes => {
+                                  const newModes = [...prevModes];
+                                  newModes.splice(index, 1);
+                                  return newModes;
+                                });
+                              }}
+                            >
+                              <FiTrash2 />
+                            </Button>
+                            <Button
+                              variant="outline-secondary" className="content-confirm-btn"
+                              onClick={() => {
+                                const currentEdu = parsedResume.education[index];
+                                if (
+                                  currentEdu.educationAccreditation &&
+                                  currentEdu.educationOrganization &&
+                                  currentEdu.educationDates?.start?.date &&
+                                  currentEdu.educationDates?.end?.date
+                                ) {
+                                  setEducationEditModes(prevModes => {
+                                    const newModes = [...prevModes];
+                                    newModes[index] = false;
+                                    return newModes;
+                                  });
+                                } else {
+                                  toast.error("Please fill in all education fields."); // Changed from alert to toast.error
+                                }
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                              Done
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        // View Mode
+                        <>
+                          <h6 className="edu-degree">
+                            {edu.educationAccreditation || ''}
+                          </h6>
+                          <h6 className="edu-institute">{edu.educationOrganization || 'N/A'}</h6>
+                          <small className="edu-time"><em>
+                            {edu.educationDates?.start?.date || 'N/A'} / {edu.educationDates?.end?.date || 'N/A'}
+                          </em></small>
+                          <div className="d-flex justify-content-end align-items-center gap-2">
+                            <Button
+                              variant="outline-danger"
+                              className="content-del-btn"
+                              onClick={() => {
+                                const updatedEdu = [...parsedResume.education];
+                                updatedEdu.splice(index, 1);
+                                updateField("education", updatedEdu);
+                                // Update edit modes
+                                setEducationEditModes(prevModes => {
+                                  const newModes = [...prevModes];
+                                  newModes.splice(index, 1);
+                                  return newModes;
+                                });
+                              }}
+                            >
+                              <FiTrash2 />
+                            </Button>
+                            <Button
+                              variant="outline-secondary"
+                              className="content-confirm-btn"
+                              onClick={() => {
+                                setEducationEditModes(prevModes => {
+                                  const newModes = [...prevModes];
+                                  newModes[index] = true;
+                                  return newModes;
+                                });
+                              }}
+                            >
+                              <FiEdit2 /> Edit
+                            </Button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
+
                   <Button
-                    variant="outline-primary"
-                    size="sm"
+                    variant="outline-secondary"
+                    className="small-btn mt-2"
                     onClick={() => {
                       const newEdu = {
                         educationAccreditation: '',
                         educationOrganization: '',
                         educationDates: {
-                          start: {
-                            date: ''
-                          },
-                          end: {
-                            date: ''
-                          }
+                          start: { date: '' },
+                          end: { date: '' }
                         },
                         educationDescription: ''
                       };
                       updateField("education", [...(parsedResume.education || []), newEdu]);
+                      // Add new education item in edit mode
+                      setEducationEditModes(prevModes => [...prevModes, false]);
                     }}
                   >
-                    + Add
+                    <FiPlus /> Add Education
                   </Button>
                 </Card>
               </Accordion.Body>
@@ -830,7 +918,138 @@ const DemoPage = () => {
               </Accordion.Header>
               <Accordion.Body>
                 <Card className="border-0">
+                  {parsedResume?.workExperience?.map((exp, index) => (
+                    <div key={index} className="mb-3 p-3 border rounded">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="fw-bold text-muted">Experience #{index + 1}</small>
+                      </div>
+                      <Form.Group className="mb-2">
+                        <Form.Label className="">Job Title</Form.Label>
+                        <Form.Control
 
+                          value={exp.workExperienceJobTitle || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceJobTitle`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-2">
+                        <Form.Label className="">Company</Form.Label>
+                        <Form.Control
+
+                          value={exp.workExperienceOrganization || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceOrganization`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="">Start Date</Form.Label>
+                            <Form.Control
+                              type="text"
+
+                              placeholder="2020"
+                              value={exp.workExperienceDates?.start?.date || ''}
+                              onChange={(e) => {
+                                const updatedWork = [...parsedResume.workExperience];
+                                updatedWork[index] = {
+                                  ...updatedWork[index],
+                                  workExperienceDates: {
+                                    ...(updatedWork[index].workExperienceDates || {}),
+                                    start: {
+                                      ...(updatedWork[index].workExperienceDates?.start || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("workExperience", updatedWork);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-2">
+                            <Form.Label className="">End Date</Form.Label>
+                            <Form.Control
+                              type="text"
+
+                              placeholder="2021 or Present"
+                              value={exp.workExperienceDates?.end?.date || ''}
+                              onChange={(e) => {
+                                const updatedWork = [...parsedResume.workExperience];
+                                updatedWork[index] = {
+                                  ...updatedWork[index],
+                                  workExperienceDates: {
+                                    ...(updatedWork[index].workExperienceDates || {}),
+                                    end: {
+                                      ...(updatedWork[index].workExperienceDates?.end || {}),
+                                      date: e.target.value
+                                    }
+                                  }
+                                };
+                                updateField("workExperience", updatedWork);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+
+                      <Form.Group className="mb-2">
+                        <Form.Label className="">Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={5}
+
+                          value={exp.workExperienceDescription || ''}
+                          onChange={(e) => updateField(`workExperience[${index}].workExperienceDescription`, e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <div className="d-flex align-items-center justify-content-end gap-2 mt-2">
+                        <Button
+                          variant="outline-danger"
+                          className="content-del-btn"
+                          onClick={() => {
+                            const updatedExp = [...parsedResume.workExperience];
+                            updatedExp.splice(index, 1);
+                            updateField("workExperience", updatedExp);
+                          }}
+                        >
+                          <FiTrash2 />
+                        </Button>
+                        <Button
+                          variant="outline-secondary" className="content-confirm-btn"
+
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                          Done
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <Button
+                    variant="outline-secondary"
+                    className="small-btn mt-2"
+                    onClick={() => {
+                      const newExp = {
+                        workExperienceJobTitle: '',
+                        workExperienceOrganization: '',
+                        workExperienceDates: {
+                          start: {
+                            date: ''
+                          },
+                          end: {
+                            date: ''
+                          }
+                        },
+                        workExperienceDescription: ''
+                      };
+                      updateField("workExperience", [...(parsedResume.workExperience || []), newExp]);
+                    }}
+                  >
+                    <FiPlus /> Add Experience
+                  </Button>
                 </Card>
               </Accordion.Body>
             </Accordion.Item>
@@ -846,7 +1065,64 @@ const DemoPage = () => {
               </Accordion.Header>
               <Accordion.Body>
                 <Card className="border-0">
+                  <Form.Group className="border p-3 rounded">
+                    <Form.Label className="">Add Skills (one per line)</Form.Label>
+                    <Form.Control
+                      type="text"
 
+                      value={currentSkill}
+                      onChange={(e) => setCurrentSkill(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (currentSkill.trim()) {
+                            const currentSkills = parsedResume?.skill || [];
+                            updateField("skill", [...currentSkills, { name: currentSkill.trim() }]);
+                            setCurrentSkill('');
+                          }
+                        }
+                      }}
+                      placeholder="Type a skill and press Enter to add it"
+                      className="me-2"
+                    />
+                    <div className="d-flex justify-content-end">
+                      <Button
+                        variant="outline-secondary"
+                        className="small-btn mt-3"
+                        onClick={() => {
+                          if (currentSkill.trim()) {
+                            const currentSkills = parsedResume?.skill || [];
+                            updateField("skill", [...currentSkills, { name: currentSkill.trim() }]);
+                            setCurrentSkill('');
+                          }
+                        }}
+                      >
+                        <FiPlus /> Add Skill
+                      </Button>
+                    </div>
+                  </Form.Group>
+                  <div className="mt-3">
+                    {parsedResume?.skill?.map((skill, index) => (
+                      <span key={index} className="badge bg-secondary me-2 mb-2 d-inline-flex align-items-center skill-badge">
+                        {skill.name}
+                        <button
+                          type="button"
+                          className=""
+                          aria-label="Remove"
+                          onClick={() => {
+                            const updatedSkills = [...parsedResume.skill];
+                            updatedSkills.splice(index, 1);
+                            updateField("skill", updatedSkills);
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <small className="text-muted">
+                    Type a skill and press Enter or click Add
+                  </small>
                 </Card>
               </Accordion.Body>
             </Accordion.Item>
@@ -941,7 +1217,7 @@ const DemoPage = () => {
                   <Form.Group className="mb-3">
                     <Form.Label className="small fw-bold">Full Name</Form.Label>
                     <Form.Control
-                      size="sm"
+
                       value={`${parsedResume?.candidateName?.[0]?.firstName || ''} ${parsedResume?.candidateName?.[0]?.familyName || ''}`}
                       onChange={(e) => updateField("candidateName", [{
                         firstName: e.target.value.split(' ')[0],
@@ -953,7 +1229,7 @@ const DemoPage = () => {
                   <Form.Group className="mb-3">
                     <Form.Label className="small fw-bold">Headline/Title</Form.Label>
                     <Form.Control
-                      size="sm"
+
                       value={parsedResume?.headline || ''}
                       onChange={(e) => updateField("headline", e.target.value)}
                     />
@@ -964,7 +1240,7 @@ const DemoPage = () => {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      size="sm"
+
                       value={parsedResume?.summary || ''}
                       onChange={(e) => updateField("summary", e.target.value)}
                     />
@@ -977,7 +1253,7 @@ const DemoPage = () => {
                   <Form.Group className="mb-3">
                     <Form.Label className="small fw-bold">Phone</Form.Label>
                     <Form.Control
-                      size="sm"
+
                       value={parsedResume?.phoneNumber?.[0]?.formattedNumber || ''}
                       onChange={(e) => updateField("phoneNumber", [{
                         formattedNumber: e.target.value
@@ -989,7 +1265,7 @@ const DemoPage = () => {
                     <Form.Label className="small fw-bold">Email</Form.Label>
                     <Form.Control
                       type="email"
-                      size="sm"
+
                       value={parsedResume?.email?.[0] || ''}
                       onChange={(e) => updateField("email", [e.target.value])}
                     />
@@ -998,7 +1274,7 @@ const DemoPage = () => {
                   <Form.Group className="mb-3">
                     <Form.Label className="small fw-bold">Location</Form.Label>
                     <Form.Control
-                      size="sm"
+
                       value={parsedResume?.location?.formatted || ''}
                       onChange={(e) => updateField("location", {
                         ...parsedResume?.location,
@@ -1014,7 +1290,7 @@ const DemoPage = () => {
                     <h6 className="text-primary mb-0">Work Experience</h6>
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       onClick={() => {
                         const newExp = {
                           workExperienceJobTitle: '',
@@ -1041,7 +1317,7 @@ const DemoPage = () => {
                         <small className="fw-bold text-muted">Experience #{index + 1}</small>
                         <Button
                           variant="outline-danger"
-                          size="sm"
+
                           onClick={() => {
                             const updatedExp = [...parsedResume.workExperience];
                             updatedExp.splice(index, 1);
@@ -1054,7 +1330,7 @@ const DemoPage = () => {
                       <Form.Group className="mb-2">
                         <Form.Label className="small fw-bold">Job Title</Form.Label>
                         <Form.Control
-                          size="sm"
+
                           value={exp.workExperienceJobTitle || ''}
                           onChange={(e) => updateField(`workExperience[${index}].workExperienceJobTitle`, e.target.value)}
                         />
@@ -1063,7 +1339,7 @@ const DemoPage = () => {
                       <Form.Group className="mb-2">
                         <Form.Label className="small fw-bold">Company</Form.Label>
                         <Form.Control
-                          size="sm"
+
                           value={exp.workExperienceOrganization || ''}
                           onChange={(e) => updateField(`workExperience[${index}].workExperienceOrganization`, e.target.value)}
                         />
@@ -1075,7 +1351,7 @@ const DemoPage = () => {
                             <Form.Label className="small fw-bold">Start</Form.Label>
                             <Form.Control
                               type="text"
-                              size="sm"
+
                               placeholder="2020"
                               value={exp.workExperienceDates?.start?.date || ''}
                               onChange={(e) => {
@@ -1100,7 +1376,7 @@ const DemoPage = () => {
                             <Form.Label className="small fw-bold">End</Form.Label>
                             <Form.Control
                               type="text"
-                              size="sm"
+
                               placeholder="2021 or Present"
                               value={exp.workExperienceDates?.end?.date || ''}
                               onChange={(e) => {
@@ -1127,7 +1403,7 @@ const DemoPage = () => {
                         <Form.Control
                           as="textarea"
                           rows={2}
-                          size="sm"
+
                           value={exp.workExperienceDescription || ''}
                           onChange={(e) => updateField(`workExperience[${index}].workExperienceDescription`, e.target.value)}
                         />
@@ -1142,7 +1418,7 @@ const DemoPage = () => {
                     <h6 className="text-primary mb-0">Education</h6>
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       onClick={() => {
                         const newEdu = {
                           educationAccreditation: '',
@@ -1169,7 +1445,7 @@ const DemoPage = () => {
                         <small className="fw-bold text-muted">Education #{index + 1}</small>
                         <Button
                           variant="outline-danger"
-                          size="sm"
+
                           onClick={() => {
                             const updatedEdu = [...parsedResume.education];
                             updatedEdu.splice(index, 1);
@@ -1182,7 +1458,7 @@ const DemoPage = () => {
                       <Form.Group className="mb-2">
                         <Form.Label className="small fw-bold">Degree/Qualification</Form.Label>
                         <Form.Control
-                          size="sm"
+
                           value={edu.educationAccreditation || ''}
                           onChange={(e) => updateField(`education[${index}].educationAccreditation`, e.target.value)}
                         />
@@ -1191,7 +1467,7 @@ const DemoPage = () => {
                       <Form.Group className="mb-2">
                         <Form.Label className="small fw-bold">Institution</Form.Label>
                         <Form.Control
-                          size="sm"
+
                           value={edu.educationOrganization || ''}
                           onChange={(e) => updateField(`education[${index}].educationOrganization`, e.target.value)}
                         />
@@ -1203,7 +1479,7 @@ const DemoPage = () => {
                             <Form.Label className="small fw-bold">Start</Form.Label>
                             <Form.Control
                               type="text"
-                              size="sm"
+
                               placeholder="2017"
                               value={edu.educationDates?.start?.date || ''}
                               onChange={(e) => {
@@ -1228,7 +1504,7 @@ const DemoPage = () => {
                             <Form.Label className="small fw-bold">End</Form.Label>
                             <Form.Control
                               type="text"
-                              size="sm"
+
                               placeholder="2018"
                               value={edu.educationDates?.end?.date || ''}
                               onChange={(e) => {
@@ -1261,7 +1537,7 @@ const DemoPage = () => {
                     <div className="d-flex align-items-center mb-2">
                       <Form.Control
                         type="text"
-                        size="sm"
+
                         value={currentSkill}
                         onChange={(e) => setCurrentSkill(e.target.value)}
                         onKeyDown={(e) => {
@@ -1278,7 +1554,7 @@ const DemoPage = () => {
                         className="me-2"
                       />
                       <Button
-                        size="sm"
+
                         variant="outline-primary"
                         onClick={() => {
                           if (currentSkill.trim()) {
@@ -1288,7 +1564,7 @@ const DemoPage = () => {
                           }
                         }}
                       >
-                        Add
+                        Add Skill
                       </Button>
                     </div>
                     <div className="mt-2">
@@ -1320,7 +1596,7 @@ const DemoPage = () => {
                   <div className="mb-3">
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       className="me-2"
                       onClick={() => addCustomSection('description')}
                     >
@@ -1328,7 +1604,7 @@ const DemoPage = () => {
                     </Button>
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       className="me-2"
                       onClick={() => addCustomSection('entries')}
                     >
@@ -1336,7 +1612,7 @@ const DemoPage = () => {
                     </Button>
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       className="me-2"
                       onClick={() => addCustomSection('skills')}
                     >
@@ -1344,7 +1620,7 @@ const DemoPage = () => {
                     </Button>
                     <Button
                       variant="outline-primary"
-                      size="sm"
+
                       onClick={() => addCustomSection('list')}
                     >
                       <FiPlus /> Add List Section
@@ -1356,7 +1632,7 @@ const DemoPage = () => {
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <Form.Control
                           type="text"
-                          size="sm"
+
                           value={section.title}
                           onChange={(e) => updateCustomSection(section.id, 'title', e.target.value)}
                           className="me-2"
@@ -1364,7 +1640,7 @@ const DemoPage = () => {
                         />
                         <Button
                           variant="outline-danger"
-                          size="sm"
+
                           onClick={() => removeCustomSection(section.id)}
                         >
                           <FiTrash2 />
@@ -1376,7 +1652,7 @@ const DemoPage = () => {
                           <Form.Control
                             as="textarea"
                             rows={3}
-                            size="sm"
+
                             value={section.content}
                             onChange={(e) => updateCustomSection(section.id, 'content', e.target.value)}
                           />
@@ -1391,7 +1667,7 @@ const DemoPage = () => {
                                 <small className="fw-bold text-muted">Entry #{index + 1}</small>
                                 <Button
                                   variant="outline-danger"
-                                  size="sm"
+
                                   onClick={() => removeCustomEntry(section.id, index)}
                                 >
                                   ×
@@ -1400,7 +1676,7 @@ const DemoPage = () => {
                               <Form.Group className="mb-2">
                                 <Form.Label className="small fw-bold">Title</Form.Label>
                                 <Form.Control
-                                  size="sm"
+
                                   value={entry.title}
                                   onChange={(e) => updateCustomEntry(section.id, index, 'title', e.target.value)}
                                 />
@@ -1408,7 +1684,7 @@ const DemoPage = () => {
                               <Form.Group className="mb-2">
                                 <Form.Label className="small fw-bold">Subtitle</Form.Label>
                                 <Form.Control
-                                  size="sm"
+
                                   value={entry.subtitle}
                                   onChange={(e) => updateCustomEntry(section.id, index, 'subtitle', e.target.value)}
                                 />
@@ -1416,7 +1692,7 @@ const DemoPage = () => {
                               <Form.Group className="mb-2">
                                 <Form.Label className="small fw-bold">Date</Form.Label>
                                 <Form.Control
-                                  size="sm"
+
                                   value={entry.date}
                                   onChange={(e) => updateCustomEntry(section.id, index, 'date', e.target.value)}
                                 />
@@ -1426,7 +1702,7 @@ const DemoPage = () => {
                                 <Form.Control
                                   as="textarea"
                                   rows={2}
-                                  size="sm"
+
                                   value={entry.description}
                                   onChange={(e) => updateCustomEntry(section.id, index, 'description', e.target.value)}
                                 />
@@ -1435,7 +1711,7 @@ const DemoPage = () => {
                           ))}
                           <Button
                             variant="outline-primary"
-                            size="sm"
+
                             onClick={() => addCustomEntry(section.id)}
                           >
                             <FiPlus /> Add Entry
@@ -1451,7 +1727,7 @@ const DemoPage = () => {
                                 <small className="fw-bold text-muted">Skill #{index + 1}</small>
                                 <Button
                                   variant="outline-danger"
-                                  size="sm"
+
                                   onClick={() => removeCustomSkill(section.id, index)}
                                 >
                                   ×
@@ -1460,7 +1736,7 @@ const DemoPage = () => {
                               <Form.Group className="mb-2">
                                 <Form.Label className="small fw-bold">Skill Name</Form.Label>
                                 <Form.Control
-                                  size="sm"
+
                                   value={skill.name}
                                   onChange={(e) => updateCustomSkill(section.id, index, 'name', e.target.value)}
                                 />
@@ -1468,7 +1744,7 @@ const DemoPage = () => {
                               <Form.Group className="mb-2">
                                 <Form.Label className="small fw-bold">Skill Level</Form.Label>
                                 <Form.Select
-                                  size="sm"
+
                                   value={skill.level}
                                   onChange={(e) => updateCustomSkill(section.id, index, 'level', e.target.value)}
                                 >
@@ -1483,7 +1759,7 @@ const DemoPage = () => {
                           ))}
                           <Button
                             variant="outline-primary"
-                            size="sm"
+
                             onClick={() => addCustomSkill(section.id)}
                           >
                             <FiPlus /> Add Skill
@@ -1497,14 +1773,14 @@ const DemoPage = () => {
                             <div key={index} className="mb-3 p-3 border rounded bg-white">
                               <div className="d-flex justify-content-between align-items-center">
                                 <Form.Control
-                                  size="sm"
+
                                   value={item}
                                   onChange={(e) => updateCustomListItem(section.id, index, e.target.value)}
                                   className="me-2"
                                 />
                                 <Button
                                   variant="outline-danger"
-                                  size="sm"
+
                                   onClick={() => removeCustomListItem(section.id, index)}
                                 >
                                   ×
@@ -1514,7 +1790,7 @@ const DemoPage = () => {
                           ))}
                           <Button
                             variant="outline-primary"
-                            size="sm"
+
                             onClick={() => addCustomListItem(section.id)}
                           >
                             <FiPlus /> Add List Item
@@ -1595,255 +1871,274 @@ const DemoPage = () => {
     return null;
   };
 
-  return !parsedResume ? (
-    <Container fluid className="mb-4 cv-uploder-container">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-center mb-2 display-5 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
-        <p className="text-center text-muted mb-4 heading-text">
-          MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
-        </p>
-      </motion.div>
-      <Row className="justify-content-center">
-        <Col md={8} lg={8}>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Card className={`dropzone-card ${isDragging ? "dragging" : ""}`}>
-              <div {...getRootProps({ className: "dropzone" })}>
-                <input {...getInputProps()} />
-                <Card.Body className="text-center p-4 upload-section">
-                  {file ? (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <FiFileText size={48} className="mb-3 text-blue-600" />
-                      <h5>{file.name}</h5>
-                      <p className="text-muted">{Math.round(file.size / 1024)} KB</p>
-                      {uploadProgress < 100 || isParsing ? (
-                        <ProgressBar
-                          animated
-                          now={uploadProgress}
-                          label={`${uploadProgress}%`}
-                          className="my-3"
-                        />
-                      ) : (
-                        <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={removeFile}
-                            className="mt-2"
-                          >
-                            Change File
-                          </Button>
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  ) : (
-                    <>
-                      <div className="icon-content-uploder d-flex justify-content-center align-items-center mb-3 gap-3">
-                        <FiUpload size={30} className=" text-blue-600" />
-
-                        <h4 className="m-0">Upload Existing CV</h4>
-                      </div>
-                      <p className="text-muted m-0 heading-text">Please upload your file in one of the following formats: PDF, DOC, or DOCX.</p>
-                      <p className="text-muted my-1 heading-text">Ensure that your file does not exceed the maximum allowed size of [insert size limit, e.g., 10MB].</p>
-                      <p className="text-muted m-0 heading-text">Files outside of these formats or limits may not be accepted.</p>
-
-                      {/* <small className="text-muted">Supported format: PDF (Max 5MB)</small> */}
-                    </>
-                  )}
-                </Card.Body>
-              </div>
-            </Card>
-          </motion.div>
-
-          {uploadStatus && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <Alert
-                variant={uploadStatus.type == "success" ? "success" : "danger"}
-                className="mt-3"
-                dismissible
-                onClose={() => setUploadStatus(null)}
-              >
-                {uploadStatus.message}
-              </Alert>
-            </motion.div>
-          )}
-
-          <div className="text-center mt-4">
-            <p className="text-muted mb-3">
-              {file ? "Enhance your CV with our tools below" : ""}
-            </p>
-            <div className="d-flex justify-content-center gap-3">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  // variant="primary"
-                  onClick={handleManualCV}
-                  className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button"
-                >
-                  <FiEdit2 /> Build from scratch
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  disabled={true}
-                  // variant="success"
-                  onClick={handleAICV}
-                  className="d-flex align-items-center gap-2 cv-with-ai-btn custom-button"
-                >
-                  <FiCpu /> Build my CV with AI
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  ) : (
-    <Container fluid className="mb-4 cv-builder-container mt-5">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-center mb-2 display-5 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
-        <p className="text-center text-muted mb-4 heading-text">
-          MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
-        </p>
-      </motion.div>
-      {/* Template Selection */}
-      <Row className="mb-3">
-        <Col md={12}>
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="py-3">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex gap-2">
-                  <h5 className="mb-0 me-3">Template:</h5>
-                  {Object.keys(templates).map((template) => (
-                    <Button
-                      key={template}
-                      size="sm"
-                      variant={selectedTemplate === template ? "primary" : "outline-primary"}
-                      onClick={() => setSelectedTemplate(template)}
-                    >
-                      {template}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="success"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  className="d-flex align-items-center gap-2"
-                >
-                  <FiDownload /> Download PDF
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Main Content - Side by Side */}
-      <Row>
-        <Col lg={7}>
-          <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
-            <Row>
-              <Col>
-                <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
-                  {tabs.map((tab) => (
-                    <Nav.Item key={tab}>
-                      <Nav.Link eventKey={tab} className="text-capitalize">
-                        {tab}
-                      </Nav.Link>
-                    </Nav.Item>
-                  ))}
-                </Nav>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                {renderTabContent()}
-              </Col>
-            </Row>
-          </Tab.Container>
-        </Col>
-
-        {/* Right Side - CV Preview */}
-        <Col lg={5} className="mb-4">
-          <Card className="border-0 shadow-sm">
-            <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">CV Preview</h5>
-              {totalPages > 1 && (
-                <div className="d-flex align-items-center gap-2">
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    disabled={currentPage === 1}
-                    onClick={() => goToPage(currentPage - 1)}
-                  >
-                    Previous
-                  </Button>
-                  <span className="mx-2">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    disabled={currentPage === totalPages}
-                    onClick={() => goToPage(currentPage + 1)}
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </Card.Header>
-            <div
-              ref={previewContainerRef}
-              style={{
-                maxHeight: '800px',
-                overflowY: 'auto',
-                position: 'relative',
-                scrollBehavior: 'smooth'
-              }}
+  return (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {
+        !parsedResume ? (
+          <Container fluid className="mb-4 cv-uploder-container">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <div
-                ref={cvRef}
-                style={{
-                  background: 'white',
-                  padding: '40px',
-                  minHeight: `${Math.max(1, totalPages) * 1123}px`,
-                }}
-              >
-                {React.createElement(templates[selectedTemplate], {
-                  resumeData: { ...parsedResume, customSections }
-                })}
-              </div>
+              <h1 className="text-center mb-2 display-5 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
+              <p className="text-center text-muted mb-4 heading-text">
+                MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
+              </p>
+            </motion.div>
+            <Row className="justify-content-center">
+              <Col md={8} lg={8}>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Card className={`dropzone-card ${isDragging ? "dragging" : ""}`}>
+                    <div {...getRootProps({ className: "dropzone" })}>
+                      <input {...getInputProps()} />
+                      <Card.Body className="text-center p-4 upload-section">
+                        {file ? (
+                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                            <FiFileText size={48} className="mb-3 text-blue-600" />
+                            <h5>{file.name}</h5>
+                            <p className="text-muted">{Math.round(file.size / 1024)} KB</p>
+                            {uploadProgress < 100 || isParsing ? (
+                              <ProgressBar
+                                animated
+                                now={uploadProgress}
+                                label={`${uploadProgress}%`}
+                                className="my-3"
+                              />
+                            ) : (
+                              <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                                <Button
+                                  variant="outline-primary"
 
-              {/* Only show page dividers if we have multiple pages with content */}
-              {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    top: `${(index + 1) * 1123}px`,
-                    borderTop: '2px dashed #ccc',
-                    pointerEvents: 'none'
-                  }}
-                />
-              ))}
-            </div>
-          </Card>
-        </Col>
+                                  onClick={removeFile}
+                                  className="mt-2"
+                                >
+                                  Change File
+                                </Button>
+                              </motion.div>
+                            )}
+                          </motion.div>
+                        ) : (
+                          <>
+                            <div className="icon-content-uploder d-flex justify-content-center align-items-center mb-3 gap-3">
+                              <FiUpload size={30} className=" text-blue-600" />
 
-      </Row>
-    </Container>
+                              <h4 className="m-0">Upload Existing CV</h4>
+                            </div>
+                            <p className="text-muted m-0 heading-text">Please upload your file in one of the following formats: PDF, DOC, or DOCX.</p>
+                            <p className="text-muted my-1 heading-text">Ensure that your file does not exceed the maximum allowed size of [insert size limit, e.g., 10MB].</p>
+                            <p className="text-muted m-0 heading-text">Files outside of these formats or limits may not be accepted.</p>
 
-  );
+                            {/* <small className="text-muted">Supported format: PDF (Max 5MB)</small> */}
+                          </>
+                        )}
+                      </Card.Body>
+                    </div>
+                  </Card>
+                </motion.div>
+
+                {uploadStatus && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <Alert
+                      variant={uploadStatus.type == "success" ? "success" : "danger"}
+                      className="mt-3"
+                      dismissible
+                      onClose={() => setUploadStatus(null)}
+                    >
+                      {uploadStatus.message}
+                    </Alert>
+                  </motion.div>
+                )}
+
+                <div className="text-center mt-4">
+                  <p className="text-muted mb-3">
+                    {file ? "Enhance your CV with our tools below" : ""}
+                  </p>
+                  <div className="d-flex justify-content-center gap-3">
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        // variant="primary"
+                        onClick={handleManualCV}
+                        className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button"
+                      >
+                        <FiEdit2 /> Build from scratch
+                      </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        disabled={true}
+                        // variant="success"
+                        onClick={handleAICV}
+                        className="d-flex align-items-center gap-2 cv-with-ai-btn custom-button"
+                      >
+                        <FiCpu /> Build my CV with AI
+                      </Button>
+                    </motion.div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        ) : (
+          <Container fluid className="mb-4 cv-builder-container mt-5">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-center mb-2 display-5 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
+              <p className="text-center text-muted mb-4 heading-text">
+                MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
+              </p>
+            </motion.div>
+            {/* Template Selection */}
+            <Row className="mb-3">
+              <Col md={12}>
+                <Card className="border-0 shadow-sm">
+                  <Card.Body className="py-3">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex gap-2">
+                        <h5 className="mb-0 me-3">Template:</h5>
+                        {Object.keys(templates).map((template) => (
+                          <Button
+                            key={template}
+
+                            variant={selectedTemplate === template ? "primary" : "outline-primary"}
+                            onClick={() => setSelectedTemplate(template)}
+                          >
+                            {template}
+                          </Button>
+                        ))}
+                      </div>
+                      <Button
+                        variant="success"
+
+                        onClick={handleDownloadPDF}
+                        className="d-flex align-items-center gap-2"
+                      >
+                        <FiDownload /> Download PDF
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+
+            {/* Main Content - Side by Side */}
+            <Row>
+              <Col lg={7}>
+                <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
+                  <Row>
+                    <Col>
+                      <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
+                        {tabs.map((tab) => (
+                          <Nav.Item key={tab}>
+                            <Nav.Link eventKey={tab} className="text-capitalize">
+                              {tab}
+                            </Nav.Link>
+                          </Nav.Item>
+                        ))}
+                      </Nav>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col>
+                      {renderTabContent()}
+                    </Col>
+                  </Row>
+                </Tab.Container>
+              </Col>
+
+              {/* Right Side - CV Preview */}
+              <Col lg={5} className="mb-4">
+                <Card className="border-0 shadow-sm">
+                  <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">CV Preview</h5>
+                    {totalPages > 1 && (
+                      <div className="d-flex align-items-center gap-2">
+                        <Button
+                          variant="outline-secondary"
+
+                          disabled={currentPage === 1}
+                          onClick={() => goToPage(currentPage - 1)}
+                        >
+                          Previous
+                        </Button>
+                        <span className="mx-2">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <Button
+                          variant="outline-secondary"
+
+                          disabled={currentPage === totalPages}
+                          onClick={() => goToPage(currentPage + 1)}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    )}
+                  </Card.Header>
+                  <div
+                    ref={previewContainerRef}
+                    style={{
+                      maxHeight: '800px',
+                      overflowY: 'auto',
+                      position: 'relative',
+                      scrollBehavior: 'smooth'
+                    }}
+                  >
+                    <div
+                      ref={cvRef}
+                      style={{
+                        background: 'white',
+                        padding: '40px',
+                        minHeight: `${Math.max(1, totalPages) * 1123}px`,
+                      }}
+                    >
+                      {React.createElement(templates[selectedTemplate], {
+                        resumeData: { ...parsedResume, customSections }
+                      })}
+                    </div>
+
+                    {/* Only show page dividers if we have multiple pages with content */}
+                    {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          right: 0,
+                          top: `${(index + 1) * 1123}px`,
+                          borderTop: '2px dashed #ccc',
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </Card>
+              </Col>
+
+            </Row>
+          </Container>
+
+        )
+      }
+    </>
+  )
+
 };
 
 export default DemoPage;

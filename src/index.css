@@ -109,6 +109,86 @@ a:hover {
 }
 
 
-.custom-button{
+.custom-button {
   padding: 10px 26px;
+}
+
+.small-btn {
+  font-size: 14px !important;
+  display: flex;
+  padding: 6px 20px 6px 16px;
+  align-items: center;
+  gap: 4px;
+  max-width: fit-content;
+
+  & svg {
+    width: 16px;
+    height: 20px;
+  }
+}
+
+.content-del-btn {
+  font-size: 14px !important;
+  display: flex;
+  padding: 6px 10px;
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.content-confirm-btn {
+  display: flex;
+  gap: 4px;
+  font-size: 14px !important;
+  padding: 6px 20px 6px 16px;
+  align-items: center;
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.edu-degree {
+  margin-bottom: 4px;
+  font-size: 24px;
+  font-weight: 400;
+  color: #000;
+}
+
+.edu-institute {
+  font-size: 16px;
+  color: #686868;
+  font-weight: 400;
+  margin-bottom: 18px;
+}
+
+.edu-time {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.skill-badge {
+  padding: 7px 14px;
+  font-size: 12px !important;
+  font-weight: 500;
+  background: #e7e7e7 !important;
+  color: #000 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px;
+
+  & button {
+    background: #0000;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    padding: 0px;
+
+    & svg{
+      width: 18px !important;
+    }
+  }
 }
