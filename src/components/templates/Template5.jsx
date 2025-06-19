@@ -201,14 +201,25 @@ const Template5 = ({ resumeData }) => {
           {/* Languages */}
           <section style={styles.sidebarSection}>
             <h3 style={styles.sidebarTitle}>Languages</h3>
-            {resumeData?.languages?.map((lang, idx) => (
+            {resumeData?.languages?.map((lang, idx) => {
+              let width;
+              switch(lang.level) {
+                case 'Native': width = '90%'; break;
+                case 'Advanced': width = '70%'; break;
+                case 'Intermediate': width = '50%'; break;
+                case 'Beginner': width = '30%'; break;
+                default: width = '50%';
+              }
+              
+              return (
               <div key={idx} style={styles.languageBar}>
                 <span>{lang.name}</span>
                 <div style={styles.barBackground}>
-                  <div style={{ ...styles.barFill, width: `${lang.level}%` }}></div>
+                  <div style={{ ...styles.barFill, width: `${width}` }}></div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </section>
 
           {/* Qualities */}

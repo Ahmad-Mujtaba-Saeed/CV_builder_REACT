@@ -11,7 +11,7 @@ import { ModernTemplate, ClassicTemplate } from "../../components/templates";
 import { ProfessionalTemplate } from "../../components/templates";
 import { ProfessionalTemplate2 } from "../../components/templates";
 import './CVBuilder.css';
-import { Template5 } from "../../components/templates";
+import { Template5, Template6, Template7, Template8, Template9 } from "../../components/templates";
 import { useResume } from '../../context/ResumeContext';
 
 
@@ -26,7 +26,11 @@ const templates = {
     Classic: ClassicTemplate,
     Professional: ProfessionalTemplate,
     Professional2: ProfessionalTemplate2,
-    Template5: Template5
+    Template5: Template5,
+    Template6: Template6,
+    Template7: Template7,
+    Template8: Template8,
+    Template9: Template9
 };
 
 
