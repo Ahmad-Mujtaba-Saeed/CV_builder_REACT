@@ -2,6 +2,8 @@ import React from "react"
 import { Navigate } from "react-router-dom"
 
 import DemoPage from "../pages/DemoPage/DemoPage.jsx"
+import UploadPage from "../pages/UploadPage/UploadPage.jsx"
+import CVBuilder from "../pages/CVBuilder/CVBuilder.jsx"
 // import Login from "../pages/Authentication/Login"
 // import Logout from "../pages/Authentication/Logout"
 // import Register from "../pages/Authentication/Register"

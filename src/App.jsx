@@ -5,6 +5,7 @@ import { UserContext } from "./context/userContext"
 import { Route, Routes, Navigate } from "react-router-dom"
 // import { connect } from "react-redux"
 import axios from "axios"
+import { ResumeProvider } from './context/ResumeContext';
 
 // Import components and routes
 import { userRoutes, authRoutes } from "./routes/allRoutes"
@@ -70,7 +71,7 @@ const App = () => {
   // }
 
   return (
-    // <UserContext.Provider value={{ userData, loading, error, setUserData }}>
+    <ResumeProvider>
     <Routes>
       {/* Public routes */}
       {authRoutes.map((route, idx) => (
@@ -105,7 +106,7 @@ const App = () => {
           element={<Navigate to={"/"} />}
       />
     </Routes>
-    // </UserContext.Provider>
+    </ResumeProvider>
   )
 }
 

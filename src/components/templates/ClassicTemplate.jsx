@@ -220,7 +220,7 @@ const ClassicTemplate = ({ resumeData }) => {
               paddingLeft: '80px',
               marginTop: '5px'
             }}>
-              {resumeData.skill.map((skill, index) => (
+              {resumeData.skill.filter(skill => skill.selected).map((skill, index) => (
                 <li key={index} style={{ marginBottom: '5px' }}>
                   {skill.name}
                 </li>

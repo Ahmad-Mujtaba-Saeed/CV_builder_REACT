@@ -33,7 +33,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
 
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>Skills</h3>
-          {(resumeData?.skill || []).map((skill, idx) => (
+          {(resumeData?.skill || []).filter(skill => skill.selected).map((skill, idx) => (
             <p key={idx}>{skill.name}</p>
           ))}
         </div>
@@ -41,7 +41,7 @@ const ProfessionalTemplate2 = ({ resumeData }) => {
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>Languages</h3>
           {(resumeData?.languages || []).map((lang, idx) => (
-            <p key={idx}>{lang.language}: {lang.fluency}</p>
+            <p key={idx}>{lang.name}: {lang.fluency}</p>
           ))}
         </div>
       </div>

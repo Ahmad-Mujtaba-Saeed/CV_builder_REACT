@@ -84,7 +84,7 @@ const ModernTemplate = ({ resumeData }) => {
             marginBottom: '15px'
           }}>SKILLS</h3>
           <ul style={{ paddingLeft: '20px' }}>
-            {resumeData?.skill?.map((skill, index) => (
+            {resumeData?.skill?.filter(skill => skill.selected).map((skill, index) => (
               <li key={index} style={{ marginBottom: '8px' }}>{skill.name}</li>
             ))}
           </ul>
