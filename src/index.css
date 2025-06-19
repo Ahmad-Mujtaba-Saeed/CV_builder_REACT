@@ -108,7 +108,6 @@ a:hover {
   color: #a7a7a7 !important;
 }
 
-
 .custom-button {
   padding: 10px 26px;
 }
@@ -187,8 +186,30 @@ a:hover {
     outline: none;
     padding: 0px;
 
-    & svg{
+    & svg {
       width: 18px !important;
     }
+  }
+}
+
+.icon-span {
+  padding: 6px;
+  border: 1px solid #dbdada;
+  border-radius: 6px;
+
+  & svg {
+    width: 40px;
+    height: 40px;
+    stroke: #7a7676;
+  }
+}
+
+.Toastify__toast-container {
+  max-width: 400px !important;
+  width: 100% !important;
+
+  & .Toastify__toast {
+    width: 100%;
+    font-family: inherit;
   }
 }
