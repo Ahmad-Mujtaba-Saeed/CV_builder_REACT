@@ -4,8 +4,8 @@ import demo_profile from '../../assets/demo_profile.avif';
 const Template6 = ({ resumeData }) => {
   const styles = {
     container: {
-      width: '794px',
-      margin: '20px auto',
+      maxWidth: '850px',
+      margin: '0px auto',
       padding: '0px',
       boxSizing: 'border-box',
       border: '1px solid #e0e0e0',

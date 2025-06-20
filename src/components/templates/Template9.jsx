@@ -6,14 +6,15 @@ const Template9 = ({ resumeData }) => {
     container: {
       fontFamily: "'Arial', sans-serif",
       margin: 0,
-      padding: '40px 50px',
+      padding: '20px 30px',
       color: '#333',
       backgroundColor: '#fff',
       lineHeight: 1.4,
-      fontSize: '14px'
+      fontSize: '14px',
+      maxWidth: '850px',
+      margin: '0 auto'
     },
     wrapper: {
-      maxWidth: '700px',
       margin: '0 auto'
     },
     header: {

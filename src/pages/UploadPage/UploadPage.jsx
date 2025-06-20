@@ -188,7 +188,7 @@ const UploadPage = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5 }}
                         >
-                          <h1 className="text-center mb-2 display-5 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
+                          <h1 className="text-center mb-2 display-6 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
                           <p className="text-center text-muted mb-4 heading-text">
                             MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                           </p>

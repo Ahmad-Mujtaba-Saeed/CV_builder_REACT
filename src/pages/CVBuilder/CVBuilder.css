@@ -100,7 +100,8 @@
   color: #888;
 }
 
-.form-control,.form-select {
+.form-control,
+.form-select {
   background-color: #f4f4f4;
   border: 1px solid #e0e0e0;
   box-shadow: none;
@@ -133,7 +134,6 @@
 
 .form-control:focus,
 .form-select:focus {
-
   box-shadow: none;
   outline: none;
   background-color: #f4f4f4;
@@ -239,19 +239,117 @@
   flex-grow: 1;
 
   & img {
-    aspect-ratio: 8/9;
+    aspect-ratio: 9/12;
     width: 100%;
     border-bottom: 1px solid;
   }
 }
 
-
-.btn-primary{
+.btn-primary {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
 
-.btn-outline-primary{
+.btn-outline-primary {
   color: var(--primary-color);
   border-color: var(--primary-color);
+}
+
+.secondary-header {
+  width: 100%;
+  background: #f7f7f7;
+  padding: 20px;
+}
+
+body {
+  overflow: hidden !important;
+}
+
+.left-section {
+  overflow: auto;
+  height: calc(100vh - 118px);
+  padding: 24px 90px;
+}
+
+.right-section{
+  padding: 24px 40px 12px;
+  position: relative;
+  height: calc(100vh - 118px);
+}
+
+.cv-template-div{
+  max-height: calc(100vh - 268px);
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.shadow-custom{
+  box-shadow: 0 0 6px 0px #a3a3a3;
+  overflow: hidden;
+}
+
+.display-6{
+  font-size: 30px;
+}
+
+@media (max-width: 1450px) {
+  .left-section {
+    padding: 24px 70px ;
+  }
+  .right-section{
+    padding: 24px 40px 12px;
+  }
+}
+
+@media (max-width: 1170px) {
+  .left-section {
+    padding: 24px 40px ;
+  }
+  .right-section{
+    padding: 24px 40px 12px;
+  }
+}
+
+@media (max-width: 1070px) {
+  .left-section {
+    padding: 24px 16px ;
+  }
+  .right-section{
+    padding: 24px 16px 12px;
+  }
+}
+
+@media(max-width: 991px){
+  body {
+    overflow: auto !important;
+  }
+  .left-section {
+    height: unset;
+    padding: 24px 120px ;
+  }
+  .right-section{
+    padding: 24px 120px 12px;
+  }
+}
+
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

@@ -27,15 +27,15 @@ import 'react-toastify/dist/ReactToastify.css';
 const tabs = ['Preview', 'Design', 'Analysis', 'Job Matching', 'Cover Letter'];
 
 const cardTemplate = [
-    { name: 'Template1', template: ModernTemplate, image: 'dummy.jpg' },
-    { name: 'Template2', template: ClassicTemplate, image: 'dummy.jpg' },
-    { name: 'Template3', template: ProfessionalTemplate, image: 'dummy.jpg' },
-    { name: 'Template4', template: ProfessionalTemplate2, image: 'dummy.jpg' },
-    { name: 'Template5', template: Template5, image: 'dummy.jpg' },
-    { name: 'Template6', template: Template6, image: 'dummy.jpg' },
-    { name: 'Template7', template: Template7, image: 'dummy.jpg' },
-    { name: 'Template8', template: Template8, image: 'dummy.jpg' },
-    { name: 'Template9', template: Template9, image: 'dummy.jpg' },
+    // { name: 'Template1', template: ModernTemplate, image: 'dummy.jpg' },
+    // { name: 'Template2', template: ClassicTemplate, image: 'dummy.jpg' },
+    // { name: 'Template3', template: ProfessionalTemplate, image: 'dummy.jpg' },
+    // { name: 'Template4', template: ProfessionalTemplate2, image: 'dummy.jpg' },
+    { name: 'Professional', template: Template5, image: 'professional.jpg' },
+    { name: 'Chrono', template: Template6, image: 'chrono.png' },
+    { name: 'Elegant', template: Template7, image: 'elegant.jpg' },
+    { name: 'Modern', template: Template8, image: 'modern.jpg' },
+    { name: 'Default', template: Template9, image: 'default.png' },
 ];
 
 const CVBuilder = () => {
@@ -49,7 +49,7 @@ const CVBuilder = () => {
     //   const [uploadStatus, setUploadStatus] = useState(null);
     //   const [parsedResume, setParsedResume] = useState(null);
     //   const [isParsing, setIsParsing] = useState(false);
-    const [selectedTemplate, setSelectedTemplate] = useState("Professional2");
+    const [selectedTemplate, setSelectedTemplate] = useState("Default");
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [profilePic, setProfilePic] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -1234,7 +1234,7 @@ const CVBuilder = () => {
                                                         />
                                                     </Form.Group>
 
-                                                    <div className="d-flex align-items-center justify-content-end gap-2 mt-2">
+                                                    <div className="d-flex align-items-center justify-content-end gap-2 mt-3">
                                                         {parsedResume?.workExperience.length > 1 && (
                                                             <Button
                                                                 variant="outline-danger"
@@ -1667,24 +1667,138 @@ const CVBuilder = () => {
                 theme="light"
             />
             {
+                // cv-builder-container
                 parsedResume && (
-                    <Container fluid className="mb-4 cv-builder-container mt-5">
+                    <main className="mb-4">
+
                         <motion.div
+                            className="secondary-header"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-center mb-2 display-5 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
-                            <p className="text-center text-muted mb-4 heading-text">
+                            <h1 className="text-center mb-2 display-6 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
+                            <p className="text-center text-muted mb-2 heading-text">
                                 MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                             </p>
                         </motion.div>
-                        {/* Template Selection */}
-                        <Row className="mb-3">
-                            <Col md={12}>
-                                <Card className="border-0 shadow-sm">
-                                    <Card.Body className="py-3">
-                                        <div className="d-flex justify-content-between align-items-center">
+
+                        <Container fluid className="">
+                            <Row>
+                                <Col lg={7} xxl={6} className='left-section'>
+                                    <Tab.Container className='cv-builder-container' activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
+                                        <Row>
+                                            <Col>
+                                                <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
+                                                    {tabs.map((tab) => (
+                                                        <Nav.Item key={tab}>
+                                                            <Nav.Link eventKey={tab} className="text-capitalize">
+                                                                {tab}
+                                                            </Nav.Link>
+                                                        </Nav.Item>
+                                                    ))}
+                                                </Nav>
+                                            </Col>
+                                        </Row>
+
+                                        <Row>
+                                            <Col>
+                                                {renderTabContent()}
+                                            </Col>
+                                        </Row>
+                                    </Tab.Container>
+                                </Col>
+
+                                {/* Right Side - CV Preview */}
+                                <Col lg={5} xxl={6} className='right-section'>
+                                    <Card className="border-0 shadow-custom mb-3">
+                                        <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
+                                            <h5 className="mb-0 py-1" style={{ fontSize: '1rem' }}>CV Preview</h5>
+                                            {totalPages > 1 && (
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <Button
+                                                        variant="outline-secondary"
+                                                        disabled={currentPage === 1}
+                                                        onClick={() => goToPage(currentPage - 1)}
+                                                    >
+                                                        Previous
+                                                    </Button>
+                                                    <span className="mx-2">
+                                                        Page {currentPage} of {totalPages}
+                                                    </span>
+                                                    <Button
+                                                        variant="outline-secondary"
+                                                        disabled={currentPage === totalPages}
+                                                        onClick={() => goToPage(currentPage + 1)}
+                                                    >
+                                                        Next
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </Card.Header>
+                                        <div
+                                            ref={previewContainerRef}
+                                            className="cv-template-div"
+                                        >
+                                            <div
+                                                ref={cvRef}
+                                                style={{
+                                                    background: 'white',
+                                                    padding: '16px',
+                                                    minHeight: `${Math.max(1, totalPages) * 1080}px`,
+                                                }}
+                                            >
+                                                {(() => {
+                                                    const selectedTemplateData = cardTemplate.find(t => t.name === selectedTemplate);
+                                                    if (!selectedTemplateData) {
+                                                        return <div className="alert alert-warning">Please select a template</div>;
+                                                    }
+
+                                                    const TemplateComponent = selectedTemplateData.template;
+                                                    return (
+                                                        <TemplateComponent
+                                                            resumeData={{
+                                                                ...(parsedResume || {
+                                                                    candidateName: [{ firstName: '', familyName: '' }],
+                                                                    headline: '',
+                                                                    summary: '',
+                                                                    phoneNumber: [{ formattedNumber: '' }],
+                                                                    email: [''],
+                                                                    location: { formatted: '' },
+                                                                    workExperience: [],
+                                                                    education: [],
+                                                                    skill: [],
+                                                                    profilePic: null,
+                                                                    website: [''],
+                                                                    certifications: [],
+                                                                    languages: [],
+                                                                    hobbies: []
+                                                                }),
+                                                                customSections
+                                                            }}
+                                                        />
+                                                    );
+                                                })()}
+                                            </div>
+
+                                            {/* Only show page dividers if we have multiple pages with content */}
+                                            {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
+                                                <div
+                                                    key={index}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: 0,
+                                                        right: 0,
+                                                        top: `${(index + 1) * 1123}px`,
+                                                        borderTop: '2px dashed #ccc',
+                                                        pointerEvents: 'none'
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </Card>
+                                    <Card className="border-0 shadow-custom">
+                                        <Card.Body className="d-flex p-2 justify-content-center alight-items-center gap-2">
                                             <Button
                                                 variant="success"
                                                 onClick={handleDownloadPDF}
@@ -1692,135 +1806,13 @@ const CVBuilder = () => {
                                             >
                                                 <FiDownload /> Download PDF
                                             </Button>
-                                        </div>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
 
-                        {/* Main Content - Side by Side */}
-                        <Row>
-                            <Col lg={7}>
-                                <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
-                                    <Row>
-                                        <Col>
-                                            <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
-                                                {tabs.map((tab) => (
-                                                    <Nav.Item key={tab}>
-                                                        <Nav.Link eventKey={tab} className="text-capitalize">
-                                                            {tab}
-                                                        </Nav.Link>
-                                                    </Nav.Item>
-                                                ))}
-                                            </Nav>
-                                        </Col>
-                                    </Row>
-
-                                    <Row>
-                                        <Col>
-                                            {renderTabContent()}
-                                        </Col>
-                                    </Row>
-                                </Tab.Container>
-                            </Col>
-
-                            {/* Right Side - CV Preview */}
-                            <Col lg={5} className="mb-4">
-                                <Card className="border-0 shadow-sm">
-                                    <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
-                                        <h5 className="mb-0">CV Preview</h5>
-                                        {totalPages > 1 && (
-                                            <div className="d-flex align-items-center gap-2">
-                                                <Button
-                                                    variant="outline-secondary"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => goToPage(currentPage - 1)}
-                                                >
-                                                    Previous
-                                                </Button>
-                                                <span className="mx-2">
-                                                    Page {currentPage} of {totalPages}
-                                                </span>
-                                                <Button
-                                                    variant="outline-secondary"
-                                                    disabled={currentPage === totalPages}
-                                                    onClick={() => goToPage(currentPage + 1)}
-                                                >
-                                                    Next
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </Card.Header>
-                                    <div
-                                        ref={previewContainerRef}
-                                        style={{
-                                            maxHeight: '800px',
-                                            overflowY: 'auto',
-                                            position: 'relative',
-                                            scrollBehavior: 'smooth'
-                                        }}
-                                    >
-                                        <div
-                                            ref={cvRef}
-                                            style={{
-                                                background: 'white',
-                                                padding: '40px',
-                                                minHeight: `${Math.max(1, totalPages) * 1123}px`,
-                                            }}
-                                        >
-                                            {(() => {
-                                                const selectedTemplateData = cardTemplate.find(t => t.name === selectedTemplate);
-                                                if (!selectedTemplateData) {
-                                                    return <div className="alert alert-warning">Please select a template</div>;
-                                                }
-
-                                                const TemplateComponent = selectedTemplateData.template;
-                                                return (
-                                                    <TemplateComponent
-                                                        resumeData={{
-                                                            ...(parsedResume || {
-                                                                candidateName: [{ firstName: '', familyName: '' }],
-                                                                headline: '',
-                                                                summary: '',
-                                                                phoneNumber: [{ formattedNumber: '' }],
-                                                                email: [''],
-                                                                location: { formatted: '' },
-                                                                workExperience: [],
-                                                                education: [],
-                                                                skill: [],
-                                                                profilePic: null,
-                                                                website: [''],
-                                                                certifications: [],
-                                                                languages: [],
-                                                                hobbies: []
-                                                            }),
-                                                            customSections
-                                                        }}
-                                                    />
-                                                );
-                                            })()}
-                                        </div>
-
-                                        {/* Only show page dividers if we have multiple pages with content */}
-                                        {totalPages > 1 && Array.from({ length: totalPages - 1 }).map((_, index) => (
-                                            <div
-                                                key={index}
-                                                style={{
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    right: 0,
-                                                    top: `${(index + 1) * 1123}px`,
-                                                    borderTop: '2px dashed #ccc',
-                                                    pointerEvents: 'none'
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                </Card>
-                            </Col>
-
-                        </Row>
-                    </Container>
+                            </Row>
+                        </Container>
+                    </main>
                 )
             }
         </>
