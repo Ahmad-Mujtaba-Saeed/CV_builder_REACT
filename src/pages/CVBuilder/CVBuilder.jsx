@@ -21,10 +21,8 @@ import {
 } from "../../components/templates";
 import { useResume } from '../../context/ResumeContext';
 
-
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const tabs = ['Preview', 'Design', 'Analysis', 'Job Matching', 'Cover Letter'];
 
@@ -39,8 +37,6 @@ const cardTemplate = [
     { name: 'Template8', template: Template8, image: 'dummy.jpg' },
     { name: 'Template9', template: Template9, image: 'dummy.jpg' },
 ];
-
-
 
 const CVBuilder = () => {
     const { parsedResume, setParsedResume } = useResume();
@@ -67,7 +63,6 @@ const CVBuilder = () => {
     const [currentLanguage, setCurrentLanguage] = useState('');
     const [languageLevel, setLanguageLevel] = useState('Intermediate');
     const [currentHobby, setCurrentHobby] = useState('');
-
 
     useEffect(() => {
         if (parsedResume?.skill && parsedResume.skill.length > 0) {
