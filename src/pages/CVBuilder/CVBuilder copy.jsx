@@ -7,18 +7,11 @@ import { FiUpload, FiEdit2, FiCpu, FiFileText, FiDownload } from "react-icons/fi
 import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { ModernTemplate, ClassicTemplate } from "../../components/templates";
+import { ProfessionalTemplate } from "../../components/templates";
+import { ProfessionalTemplate2 } from "../../components/templates";
 import './CVBuilder.css';
-import {
-    ModernTemplate,
-    ClassicTemplate,
-    ProfessionalTemplate2,
-    ProfessionalTemplate,
-    Template5,
-    Template6,
-    Template7,
-    Template8,
-    Template9
-} from "../../components/templates";
+import { Template5, Template6, Template7, Template8, Template9 } from "../../components/templates";
 import { useResume } from '../../context/ResumeContext';
 
 
@@ -28,16 +21,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const tabs = ['Preview', 'Design', 'Analysis', 'Job Matching', 'Cover Letter'];
 
+const templates = {
+    Modern: ModernTemplate,
+    Classic: ClassicTemplate,
+    Professional: ProfessionalTemplate,
+    Professional2: ProfessionalTemplate2,
+    Template5: Template5,
+    Template6: Template6,
+    Template7: Template7,
+    Template8: Template8,
+    Template9: Template9
+};
+
 const cardTemplate = [
-    { name: 'Template1', template: ModernTemplate, image: 'dummy.jpg' },
-    { name: 'Template2', template: ClassicTemplate, image: 'dummy.jpg' },
-    { name: 'Template3', template: ProfessionalTemplate, image: 'dummy.jpg' },
-    { name: 'Template4', template: ProfessionalTemplate2, image: 'dummy.jpg' },
-    { name: 'Template5', template: Template5, image: 'dummy.jpg' },
-    { name: 'Template6', template: Template6, image: 'dummy.jpg' },
-    { name: 'Template7', template: Template7, image: 'dummy.jpg' },
-    { name: 'Template8', template: Template8, image: 'dummy.jpg' },
-    { name: 'Template9', template: Template9, image: 'dummy.jpg' },
+    { name: 'Modern', template: ModernTemplate, image: 'classic.jpg' },
+    { name: 'Classic', template: ClassicTemplate, image: 'classic.jpg' },
+    { name: 'Professional', template: ProfessionalTemplate, image: 'classic.jpg' },
+    { name: 'Professional2', template: ProfessionalTemplate2, image: 'classic.jpg' },
+    { name: 'Template5', template: Template5, image: 'classic.jpg' },
+    { name: 'Template6', template: Template6, image: 'classic.jpg' },
+    { name: 'Template7', template: Template7, image: 'classic.jpg' },
+    { name: 'Template8', template: Template8, image: 'classic.jpg' },
+    { name: 'Template9', template: Template9, image: 'classic.jpg' },
 ];
 
 
@@ -1599,11 +1604,11 @@ const CVBuilder = () => {
                         <h5>Template Designs</h5>
                         <Row className="g-3">
                             {cardTemplate.map((template) => (
-                                <Col xs={6} sm={4} md={3} lg={4} xl={3}  >
+                                <Col sm={6} lg={4} xl={3}>
                                     <Button
                                         key={template.name}
-                                        variant={selectedTemplate === template.name ? "primary" : "outline-primary"}
-                                        onClick={() => setSelectedTemplate(template.name)}
+                                        variant={selectedTemplate === template.template ? "secondary" : "outline-secondary"}
+                                        onClick={() => setSelectedTemplate(template.template)}
                                         className="d-flex flex-column align-items-center gap-2 cv-template-button"
                                     >
                                         <img
@@ -1690,8 +1695,22 @@ const CVBuilder = () => {
                                 <Card className="border-0 shadow-sm">
                                     <Card.Body className="py-3">
                                         <div className="d-flex justify-content-between align-items-center">
+                                            <div className="d-flex gap-2">
+                                                <h5 className="mb-0 me-3">Template:</h5>
+                                                {Object.keys(templates).map((template) => (
+                                                    <Button
+                                                        key={template}
+
+                                                        variant={selectedTemplate === template ? "primary" : "outline-primary"}
+                                                        onClick={() => setSelectedTemplate(template)}
+                                                    >
+                                                        {template}
+                                                    </Button>
+                                                ))}
+                                            </div>
                                             <Button
                                                 variant="success"
+
                                                 onClick={handleDownloadPDF}
                                                 className="d-flex align-items-center gap-2"
                                             >
@@ -1738,6 +1757,7 @@ const CVBuilder = () => {
                                             <div className="d-flex align-items-center gap-2">
                                                 <Button
                                                     variant="outline-secondary"
+
                                                     disabled={currentPage === 1}
                                                     onClick={() => goToPage(currentPage - 1)}
                                                 >
@@ -1748,6 +1768,7 @@ const CVBuilder = () => {
                                                 </span>
                                                 <Button
                                                     variant="outline-secondary"
+
                                                     disabled={currentPage === totalPages}
                                                     onClick={() => goToPage(currentPage + 1)}
                                                 >
@@ -1773,37 +1794,9 @@ const CVBuilder = () => {
                                                 minHeight: `${Math.max(1, totalPages) * 1123}px`,
                                             }}
                                         >
-                                            {(() => {
-                                                const selectedTemplateData = cardTemplate.find(t => t.name === selectedTemplate);
-                                                if (!selectedTemplateData) {
-                                                    return <div className="alert alert-warning">Please select a template</div>;
-                                                }
-
-                                                const TemplateComponent = selectedTemplateData.template;
-                                                return (
-                                                    <TemplateComponent
-                                                        resumeData={{
-                                                            ...(parsedResume || {
-                                                                candidateName: [{ firstName: '', familyName: '' }],
-                                                                headline: '',
-                                                                summary: '',
-                                                                phoneNumber: [{ formattedNumber: '' }],
-                                                                email: [''],
-                                                                location: { formatted: '' },
-                                                                workExperience: [],
-                                                                education: [],
-                                                                skill: [],
-                                                                profilePic: null,
-                                                                website: [''],
-                                                                certifications: [],
-                                                                languages: [],
-                                                                hobbies: []
-                                                            }),
-                                                            customSections
-                                                        }}
-                                                    />
-                                                );
-                                            })()}
+                                            {React.createElement(templates[selectedTemplate], {
+                                                resumeData: { ...parsedResume, customSections }
+                                            })}
                                         </div>
 
                                         {/* Only show page dividers if we have multiple pages with content */}
