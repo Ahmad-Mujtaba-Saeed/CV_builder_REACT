@@ -1669,7 +1669,7 @@ const CVBuilder = () => {
             {
                 // cv-builder-container
                 parsedResume && (
-                    <main className="mb-4">
+                    <main className="">
 
                         <motion.div
                             className="secondary-header"
