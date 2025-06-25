@@ -10,3 +10,4 @@ export { default as Template8 } from './Template8';
 export { default as Template9 } from './Template9';
 export { default as Template10 } from './Template10';
 export { default as Template11 } from './Template11';
+export { default as Template12 } from './Template12';
