@@ -5,10 +5,11 @@ import DemoPage from "../pages/DemoPage/DemoPage.jsx"
 import UploadPage from "../pages/UploadPage/UploadPage.jsx"
 import MainMenu from "../pages/MainMenu/MainMenu.jsx"
 import CVBuilder from "../pages/CVBuilder/CVBuilder.jsx"
-// import Login from "../pages/Authentication/Login"
+import Login from "../pages/Authentication/Login"
 // import Logout from "../pages/Authentication/Logout"
-// import Register from "../pages/Authentication/Register"
-// import ForgetPwd from "../pages/Authentication/ForgetPassword"
+import Register from "../pages/Authentication/Register"
+import ForgetPwd from "../pages/Authentication/ForgetPassword"
+import OTP from "../pages/Authentication/OTPVarification"
 
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
@@ -22,13 +23,14 @@ const userRoutes = [
   { path: "/", component: <MainMenu /> },
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
+  { path: "/login", component: <Login /> },
+  { path: "/register", component: <Register /> },
+  { path: "/forgot-password", component: <ForgetPwd /> },
+  { path: "/otp-varification", component: <OTP /> },
 ]
 
 const authRoutes = [
   // { path: "/logout", component: <Logout /> },
-  // { path: "/login", component: <Login /> },
-  // { path: "/forgot-password", component: <ForgetPwd /> },
-  // { path: "/register", component: <Register /> },
 
 
   // // Authentication Inner

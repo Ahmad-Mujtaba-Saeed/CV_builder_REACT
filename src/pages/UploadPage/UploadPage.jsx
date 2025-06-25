@@ -184,7 +184,7 @@ const UploadPage = () => {
         theme="light"
       />
       <Header />
-      <Container fluid className="mb-4 cv-uploder-container">
+      <Container className="mb-4 cv-uploder-container">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
