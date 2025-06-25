@@ -184,74 +184,97 @@ const Template10 = ({ resumeData }) => {
     //             {edu.educationDescription.split('\n').map((item, i) => (
     //               <li key={i} style={styles.bulletItem}>{item}</li>
     //             ))}
-    //           </ul>
-    //         )}
-    //       </div>
-    //     ))}
-    //   </div>
-    // </div>
     <div style={styles.resumeContainer}>
-      <h1 style={styles.resumeTitle}>{resumeData?.candidateName?.[0]?.firstName} {resumeData?.candidateName?.[0]?.familyName}</h1>
+      <h1 style={styles.resumeTitle}>
+        {resumeData?.candidateName?.[0]?.firstName} {resumeData?.candidateName?.[0]?.familyName}
+      </h1>
 
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Personal details</h2>
-        <div  style={styles.personalDetails}>
-        {resumeData?.email?.[0] && (
-          <div  style={styles.detailItem}><span style={styles.label}>Email address:</span> {resumeData.email[0]}</div>
-        )}
-         {resumeData?.phoneNumber?.[0]?.formattedNumber && (
-          <div  style={styles.detailItem}><span style={styles.label}>Phone number:</span> {resumeData.phoneNumber[0].formattedNumber}</div>
-         )}
-         {resumeData?.location?.formatted && (
-          <div  style={styles.detailItem}><span style={styles.label}>Address:</span> {resumeData.location.formatted}</div>
-         )}
-         {resumeData?.website?.[0] && (
-          <div  style={styles.detailItem}><span style={styles.label}>LinkedIn:</span>  {resumeData.website[0].replace(/^https?:\/\//, '')}</div>
-         )}
+        <div style={styles.personalDetails}>
+          {resumeData?.email?.[0] && (
+            <div style={styles.detailItem}>
+              <span style={styles.label}>Email address:</span> {resumeData.email[0]}
+            </div>
+          )}
+          {resumeData?.phoneNumber?.[0]?.formattedNumber && (
+            <div style={styles.detailItem}>
+              <span style={styles.label}>Phone number:</span> {resumeData.phoneNumber[0].formattedNumber}
+            </div>
+          )}
+          {resumeData?.location?.formatted && (
+            <div style={styles.detailItem}>
+              <span style={styles.label}>Address:</span> {resumeData.location.formatted}
+            </div>
+          )}
+          {resumeData?.website?.[0] && (
+            <div style={styles.detailItem}>
+              <span style={styles.label}>LinkedIn:</span> {resumeData.website[0].replace(/^https?:\/\//, '')}
+            </div>
+          )}
         </div>
       </section>
 
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Summary</h2>
-        <p  style={styles.summary}>
-        {resumeData?.summary || 'Professional summary goes here...'}
+        <p style={styles.summary}>
+          {resumeData?.summary || 'Professional summary goes here...'}
         </p>
       </section>
 
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Work Experience</h2>
-        <div style={styles.job}>
-          <div  style={styles.jobHeader}>
-            <div className="job-dates">Apr 2020 - Present</div>
+        {resumeData?.workExperience?.map((job, index) => (
+          <div key={index} style={styles.job}>
+            <div style={styles.jobHeader}>
+              <div className="job-dates">
+                {job.workExperienceDates?.start?.date} - {job.workExperienceDates?.end?.date || 'Present'}
+              </div>
+            </div>
+            <div>
+              <div style={styles.jobTitle}>{job.workExperienceJobTitle}</div>
+              <div style={styles.jobCompany}>{job.workExperienceOrganization}</div>
+              {job.workExperienceDescription && (
+                <ul style={styles.bulletList}>
+                  {job.workExperienceDescription.split('\n').map((item, i) => (
+                    <li key={i} style={styles.bulletItem}>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-          <div>
-            <div  style={styles.jobTitle}>Customer Service Representative</div>
-            <div  style={styles.jobCompany}>PGH Photo Supply Co., Las Vegas, NV</div>
-            <ul>
-              <li>Resolved 20+ customer questions/issues per day with a 98% satisfaction</li>
-              <li>Onboarded and trained 4 new representatives</li>
-              <li>Implemented new automated phone menu to streamline customer service requests</li>
-            </ul>
-          </div>
-        </div>
-        {/* Duplicate job example can be reused with a map() in dynamic data */}
+        ))}
       </section>
 
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Education</h2>
-        <div style={styles.education}>
-          <strong>Bachelor of Science, Business Administration</strong><br />
-          University of Nevada, Las Vegas, NV<br />
-          Graduated Summa Cum Laude in May 2017
-        </div>
+        {resumeData?.education?.map((edu, index) => (
+          <div key={index} style={styles.education}>
+            <strong>{edu.educationAccreditation}</strong>
+            <p style={styles.jobInfo}>
+              {edu.educationOrganization}<br />
+              {edu.educationDates?.start?.date} - {edu.educationDates?.end?.date}
+              {edu.educationDescription && (
+                <ul style={styles.bulletList}>
+                  {edu.educationDescription.split('\n').map((item, i) => (
+                    <li key={i} style={styles.bulletItem}>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </p>
+          </div>
+        ))}
       </section>
 
       <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>Hard Skills</h2>
-        <div className="skills-column" >
-          <div style={styles.skillsRow}><span style={styles.skillsLabel}>Database maintenance</span><span>Excellent</span></div>
-          <div style={styles.skillsRow}><span style={styles.skillsLabel}>Multi-line telephone skills</span><span>Excellent</span></div>
-          <div style={styles.skillsRow}><span style={styles.skillsLabel}>Fresh Sales</span><span>Excellent</span></div>
+        <h2 style={styles.sectionTitle}>Skills</h2>
+        <div className="skills-column">
+          {resumeData?.skill?.map((skill, index) => (
+            <div key={index} style={styles.skillsRow}>
+              <span style={styles.skillsLabel}>{skill.name}</span>
+              <span>{skill.level || 'Proficient'}</span>
+            </div>
+          ))}
         </div>
       </section>
     </div>
