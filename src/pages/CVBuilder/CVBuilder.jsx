@@ -477,6 +477,56 @@ const CVBuilder = () => {
         fileInputRef.current.click();
     };
 
+    const [issues, setIssues] = useState([]);
+    const [suggestedParagraph, setSuggestedParagraph] = useState('');
+    const [analysisResult, setAnalysisResult] = useState(null);
+    
+    const handleAnalysis = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('paragraph', parsedResume?.summary || '');
+            
+            const response = await fetch(`http://localhost:8000/api/analyze-paragraph`, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || 'Failed to analyze resume');
+            }
+            
+            // Parse the response data
+            const { data } = result;
+            if (data) {
+                // Parse the JSON strings from the response
+                const parsedIssues = JSON.parse(data.issues.replace(/```json\n|\n```/g, ''));
+                const parsedSuggestions = JSON.parse(data.suggested_changes.replace(/```json\n|\n```/g, ''));
+                console.log(parsedIssues);
+                console.log(parsedSuggestions);
+                setIssues(parsedIssues.issues);
+                setSuggestedParagraph(parsedSuggestions.revised_profile);
+                setAnalysisResult({
+                    originalParagraph: data.original_paragraph
+                });
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Error analyzing paragraph:', error);
+            // You might want to set some error state here for the UI
+            throw error;
+        }
+    }
+
+    const handleApplyChanges = (suggestedParagraph) => {
+        setParsedResume({
+            ...parsedResume,
+            summary: suggestedParagraph
+        });
+    }
+
     //   const uploadFileToServer = async (file) => {
     //     const formData = new FormData();
     //     formData.append('file', file);
@@ -1657,6 +1707,12 @@ const CVBuilder = () => {
                         <h4 className="tab-heading">
                             Template Design
                         </h4>
+                        <button
+                            onClick={handleAnalysis}
+                            className="btn btn-primary"
+                        >
+                            Analyze
+                        </button>
 
                         {/* LinkedIn Section */}
                         <div className="analysis-section d-flex flex-column justify-content-start align-items-start gap-2">
@@ -1710,24 +1766,23 @@ const CVBuilder = () => {
                                 <div className="section-header">
                                     <h3>Poor Personal Statement</h3>
                                     <p className="example-statement">
-                                        "I am a hardworking individual who is passionate about technology. I work well in a team or on my own and am looking for a role in software development where I can grow and learn new things."
+                                        {parsedResume?.summary}
                                     </p>
                                 </div>
 
                                 <div className="issues-section">
                                     <h4>Issues:</h4>
                                     <ul className="issues-list">
-                                        <li>Vague and generic ("hardworking" "passionate")</li>
-                                        <li>Lacks technical detail or focus</li>
-                                        <li>No evidence or examples of achievements</li>
-                                        <li>Doesn't specify the kind of role or technologies of interest</li>
+                                        {issues?.map((issue, index) => (
+                                            <li key={index}>{issue.issue} - {issue.description}</li>
+                                        ))}
                                     </ul>
                                 </div>
 
                                 <div className="suggested-changes">
                                     <h4>Suggested Changes:</h4>
                                     <p className="improved-statement">
-                                        "As a results-driven software developer with 3+ years of experience in full-stack web development, I specialize in building scalable applications using JavaScript, React, and Node.js. I have led the successful delivery of several client projects from concept to deployment, and I thrive in fast-paced, agile environments. Currently seeking a challenging developer role where I can contribute my skills in modern web frameworks and continue to grow in cloud-based architectures."
+                                        {suggestedParagraph}
                                     </p>
                                 </div>
                             </div>
@@ -1737,7 +1792,7 @@ const CVBuilder = () => {
                             <Button variant="outline-secondary" className="resolve-btn">
                                 Resolve Manually
                             </Button>
-                            <Button variant="primary" className="action-btn">
+                            <Button variant="primary" className="action-btn" onClick={() => handleApplyChanges(suggestedParagraph)}>
                                 Apply Suggested Changes
                             </Button>
                         </div>
