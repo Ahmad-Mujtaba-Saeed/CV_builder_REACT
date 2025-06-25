@@ -194,7 +194,7 @@ const Template11 = ({ resumeData }) => {
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>Skills</h2>
           <ul style={styles.bulletList}>
-            {resumeData.skill.map((skill, index) => (
+          {(resumeData?.skill || []).filter(skill => skill.selected).map((skill, index) => (
               <li key={index} style={styles.bulletItem}>
                 <strong>{skill.name}:</strong> {skill.level || 'Proficient'}
               </li>

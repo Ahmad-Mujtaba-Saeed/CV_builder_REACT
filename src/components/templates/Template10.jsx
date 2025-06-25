@@ -269,7 +269,7 @@ const Template10 = ({ resumeData }) => {
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Skills</h2>
         <div className="skills-column">
-          {resumeData?.skill?.map((skill, index) => (
+        {(resumeData?.skill || []).filter(skill => skill.selected).map((skill, index) => (
             <div key={index} style={styles.skillsRow}>
               <span style={styles.skillsLabel}>{skill.name}</span>
               <span>{skill.level || 'Proficient'}</span>
