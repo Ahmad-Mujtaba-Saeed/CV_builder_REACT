@@ -488,23 +488,25 @@ const CVBuilder = () => {
     const [issues, setIssues] = useState([]);
     const [suggestedParagraph, setSuggestedParagraph] = useState('');
     const [analysisResult, setAnalysisResult] = useState(null);
-    
+    const [analysisRequestLoading, setAnalysisRequestLoading] = useState(false);
     const handleAnalysis = async () => {
         try {
+            setAnalysisRequestLoading(true);
             const formData = new FormData();
             formData.append('paragraph', parsedResume?.summary || '');
-            
+
             const response = await fetch(`http://localhost:8000/api/analyze-paragraph`, {
                 method: 'POST',
                 body: formData,
             });
-            
+
             const result = await response.json();
-            
+
             if (!response.ok) {
+                setAnalysisRequestLoading(false);
                 throw new Error(result.message || 'Failed to analyze resume');
             }
-            
+
             // Parse the response data
             const { data } = result;
             if (data) {
@@ -518,15 +520,23 @@ const CVBuilder = () => {
                 setAnalysisResult({
                     originalParagraph: data.original_paragraph
                 });
+                setAnalysisRequestLoading(false);
             }
-            
+
             return data;
         } catch (error) {
+            setAnalysisRequestLoading(false);
             console.error('Error analyzing paragraph:', error);
             // You might want to set some error state here for the UI
             throw error;
         }
     }
+
+    useEffect(() => {
+        if (activeTab == "Analysis" && parsedResume?.summary != '' && !analysisRequestLoading) {
+            handleAnalysis();
+        }
+    }, [activeTab]);
 
     const handleApplyChanges = (suggestedParagraph) => {
         setParsedResume({
@@ -1713,15 +1723,16 @@ const CVBuilder = () => {
                 <Card className="border-0">
                     <Card.Body className="p-0">
                         <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="tab-heading">
-                            Template Design
-                        </h4>
-                        <button
-                            onClick={handleAnalysis}
-                            className="btn btn-primary"
-                        >
-                            Analyze
-                        </button>
+                            <h4 className="tab-heading">
+                                Template Analysis
+                            </h4>
+                            <button
+                                disabled={analysisRequestLoading}
+                                onClick={handleAnalysis}
+                                className="btn btn-primary"
+                            >
+                                {analysisRequestLoading ? "Analyzing..." : "Analyze"}
+                            </button>
                         </div>
 
                         {/* LinkedIn Section */}
@@ -1767,35 +1778,53 @@ const CVBuilder = () => {
 
                         {/* Personal Statement Section */}
                         <div className="analysis-section d-flex gap-3 justify-content-start align-items-start">
-                            <Button variant="primary" className="btn-blue btn-blue-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                                    <path d="M6.98852 6.04648C7.2475 6.28555 7.2475 6.70391 6.98852 6.94297C6.86898 7.0625 6.70961 7.12227 6.55023 7.12227C6.37094 7.12227 6.21156 7.0625 6.09203 6.94297L4.00023 4.85117L1.88852 6.94297C1.76898 7.0625 1.60961 7.12227 1.45023 7.12227C1.27094 7.12227 1.11156 7.0625 0.992031 6.94297C0.733047 6.70391 0.733047 6.28555 0.992031 6.04648L3.08383 3.93477L0.992031 1.84297C0.733047 1.60391 0.733047 1.18555 0.992031 0.946485C1.23109 0.6875 1.64945 0.6875 1.88852 0.946485L4.00023 3.03828L6.09203 0.946485C6.33109 0.6875 6.74945 0.6875 6.98852 0.946485C7.2475 1.18555 7.2475 1.60391 6.98852 1.84297L4.89672 3.95469L6.98852 6.04648Z" fill="#003CC7" />
-                                </svg>
-                            </Button>
-                            <div className="d-flex flex-column gap-3">
-                                <div className="section-header">
-                                    <h3>Poor Personal Statement</h3>
-                                    <p className="example-statement">
-                                        {parsedResume?.summary}
-                                    </p>
-                                </div>
 
-                                <div className="issues-section">
-                                    <h4>Issues:</h4>
-                                    <ul className="issues-list">
-                                        {issues?.map((issue, index) => (
-                                            <li key={index}>{issue.issue} - {issue.description}</li>
-                                        ))}
-                                    </ul>
-                                </div>
+                            {parsedResume?.summary ? (
+                                <>
+                                    <Button variant="primary" className="btn-blue btn-blue-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                                            <path d="M6.98852 6.04648C7.2475 6.28555 7.2475 6.70391 6.98852 6.94297C6.86898 7.0625 6.70961 7.12227 6.55023 7.12227C6.37094 7.12227 6.21156 7.0625 6.09203 6.94297L4.00023 4.85117L1.88852 6.94297C1.76898 7.0625 1.60961 7.12227 1.45023 7.12227C1.27094 7.12227 1.11156 7.0625 0.992031 6.94297C0.733047 6.70391 0.733047 6.28555 0.992031 6.04648L3.08383 3.93477L0.992031 1.84297C0.733047 1.60391 0.733047 1.18555 0.992031 0.946485C1.23109 0.6875 1.64945 0.6875 1.88852 0.946485L4.00023 3.03828L6.09203 0.946485C6.33109 0.6875 6.74945 0.6875 6.98852 0.946485C7.2475 1.18555 7.2475 1.60391 6.98852 1.84297L4.89672 3.95469L6.98852 6.04648Z" fill="#003CC7" />
+                                        </svg>
+                                    </Button>
+                                    <div className="d-flex flex-column gap-3">
+                                        <div className="section-header">
+                                            <h3>Original Statement</h3>
+                                            <p className="example-statement">
+                                                {parsedResume?.summary}
+                                            </p>
+                                        </div>
+                                        {!analysisRequestLoading ? (
+                                            <>
+                                                <div className="issues-section">
+                                                    <h4>Issues:</h4>
+                                                    <ul className="issues-list">
+                                                        {issues?.map((issue, index) => (
+                                                            <li key={index}>{issue.issue} - {issue.description}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                <div className="suggested-changes">
+                                                    <h4>Suggested Changes:</h4>
+                                                    <p className="improved-statement">
+                                                        {suggestedParagraph}
+                                                    </p>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="d-flex justify-content-center">
+                                                    {/* <Loader type="Oval" color="#003CC7" height={20} width={20} />
+                                                     */}
+                                                     Loading...
+                                                </div>
+                                            </>
+                                        )}
 
-                                <div className="suggested-changes">
-                                    <h4>Suggested Changes:</h4>
-                                    <p className="improved-statement">
-                                        {suggestedParagraph}
-                                    </p>
-                                </div>
-                            </div>
+
+                                    </div></>
+                            ) : (
+                                <p>No personal statement found.</p>
+                            )}
                         </div>
 
                         <div className="button-group border rounded p-3 d-flex justify-content-center">

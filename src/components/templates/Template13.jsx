@@ -192,8 +192,6 @@ const Template13 = ({ resumeData }) => {
           </div>
         </>
       )}
-
-      <div style={styles.footer}>© Jobseeker</div>
     </div>
   );
 };
