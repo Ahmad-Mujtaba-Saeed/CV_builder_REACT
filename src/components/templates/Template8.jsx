@@ -13,7 +13,7 @@ const Template8 = ({ resumeData }) => {
     },
     leftSidebar: {
       width: '250px',
-      backgroundColor: '#4a6fa5',
+      backgroundColor: '#943b2b',
       color: 'white',
       padding: '30px 20px',
       boxSizing: 'border-box'

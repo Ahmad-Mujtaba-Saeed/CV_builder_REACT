@@ -12,7 +12,7 @@
   margin: 100px 0;
 }
 
-.card-body {
+.signin-card .card-body {
   padding: 40px 0px !important;
   max-width: 400px;
   width: 100% !important;
