@@ -16,8 +16,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary-color: #b767ec;
+  --primary-color: #ba67ef;
   --primary-hover-color: #b767ec2b;
+  --secondary-color: #e3e6ed;
+
+  --btn-blue-bg: #e5edff;
+  --btn-blue-color: #003cc7;
 }
 
 body {
@@ -37,7 +41,8 @@ a:hover {
 .cv-uploder-container {
   border: 1px solid rgb(212 216 219);
   border-radius: 10px;
-  padding: 70px 36px 50px;
+  padding: 60px 30px 40px;
+  margin-top: 60px;
 }
 
 .cv-with-ai-btn {
@@ -58,7 +63,7 @@ a:hover {
 
 @media (min-width: 1350px) {
   .cv-uploder-container {
-    width: 80%;
+    width: 70%;
   }
 
   .cv-builder-container {
@@ -211,5 +216,53 @@ a:hover {
   & .Toastify__toast {
     width: 100%;
     font-family: inherit;
+  }
+}
+
+.primary-header {
+  display: flex;
+  justify-content: center;
+  padding: 2px 10px 5px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.secondary-header {
+  width: 100%;
+  padding: 40px 20px 20px;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.btn-blue {
+  background-color: var(--btn-blue-bg) !important;
+  color: var(--btn-blue-color) !important;
+  border-color: var(--btn-blue-bg) !important;
+}
+
+.btn-blue-sm {
+  padding: 7px 10px 8px;
+  border-radius: 50%;
+  
+  & svg {
+    width: 20px;
+    height: 14px;
   }
 }

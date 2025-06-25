@@ -8,6 +8,7 @@ import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import './CVBuilder.css';
+import Header from '../../components/Partials/Header';
 import {
     ModernTemplate,
     ClassicTemplate,
@@ -24,18 +25,44 @@ import { useResume } from '../../context/ResumeContext';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const tabs = ['Preview', 'Design', 'Analysis', 'Job Matching', 'Cover Letter'];
+const tabs = [
+    {
+        text: 'Preview', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="10" height="14" viewBox="0 0 10 14" fill="none">
+            <path d="M8.6 2.4C9.25 2.4 9.8 2.95 9.8 3.6V12.4C9.8 13.075 9.25 13.6 8.6 13.6H1.4C0.725 13.6 0.2 13.075 0.2 12.4V3.6C0.2 2.95 0.725 2.4 1.4 2.4H2.725C3.075 1.475 3.95 0.8 5 0.8C6.025 0.8 6.9 1.475 7.25 2.4H8.6ZM5 2.4C4.55 2.4 4.2 2.775 4.2 3.2C4.2 3.65 4.55 4 5 4C5.425 4 5.8 3.65 5.8 3.2C5.8 2.775 5.425 2.4 5 2.4ZM7 6.4C7.2 6.4 7.4 6.225 7.4 6C7.4 5.8 7.2 5.6 7 5.6H3C2.775 5.6 2.6 5.8 2.6 6C2.6 6.225 2.775 6.4 3 6.4H7Z" fill="#31374A" />
+        </svg>)
+    },
+    {
+        text: 'Design', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14" fill="none">
+            <path d="M12.35 1.825C12.9 2.375 12.9 3.25 12.35 3.8L11.6 4.55L9.15 2.1L9.9 1.35C10.45 0.8 11.325 0.8 11.875 1.35L12.35 1.825ZM4.4 6.85L8.575 2.675L11.025 5.125L6.85 9.3C6.7 9.45 6.5 9.575 6.3 9.65L4.075 10.375C3.85 10.45 3.625 10.4 3.475 10.225C3.3 10.075 3.25 9.825 3.325 9.625L4.05 7.4C4.125 7.2 4.25 7 4.4 6.85ZM4.9 2.4C5.325 2.4 5.7 2.775 5.7 3.2C5.7 3.65 5.325 4 4.9 4H2.5C2.05 4 1.7 4.375 1.7 4.8V11.2C1.7 11.65 2.05 12 2.5 12H8.9C9.325 12 9.7 11.65 9.7 11.2V8.8C9.7 8.375 10.05 8 10.5 8C10.925 8 11.3 8.375 11.3 8.8V11.2C11.3 12.525 10.225 13.6 8.9 13.6H2.5C1.15 13.6 0.0999999 12.525 0.0999999 11.2V4.8C0.0999999 3.475 1.15 2.4 2.5 2.4H4.9Z" fill="#31374A" />
+        </svg>)
+    },
+    {
+        text: 'Analysis', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M6.9 1.225C6.9 1 7.05 0.8 7.3 0.8C10.375 0.8 12.9 3.325 12.9 6.4C12.9 6.625 12.7 6.8 12.475 6.8H6.9V1.225ZM0.0999997 7.6C0.0999997 4.575 2.35 2.075 5.25 1.675C5.5 1.625 5.7 1.825 5.7 2.05V8L9.6 11.925C9.775 12.1 9.75 12.375 9.575 12.5C8.575 13.2 7.375 13.6 6.1 13.6C2.775 13.6 0.0999997 10.925 0.0999997 7.6ZM13.25 8C13.475 8 13.675 8.2 13.625 8.425C13.45 9.825 12.775 11.075 11.775 12C11.625 12.125 11.4 12.125 11.25 11.975L7.3 8H13.25Z" fill="#BA67EF" />
+        </svg>)
+    },
+    {
+        text: 'Job Matching', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14" fill="none">
+            <path d="M4.3 4.1C5.7 2.7 8 2.7 9.4 4.1C10.65 5.35 10.825 7.325 9.8 8.775L9.775 8.8C9.525 9.175 9.025 9.25 8.65 9C8.3 8.725 8.2 8.225 8.475 7.875L8.5 7.85C9.075 7.025 8.975 5.95 8.275 5.25C7.5 4.45 6.225 4.45 5.425 5.25L2.625 8.05C1.825 8.825 1.825 10.1 2.625 10.9C3.325 11.6 4.425 11.675 5.225 11.125L5.25 11.075C5.625 10.825 6.125 10.9 6.375 11.275C6.625 11.625 6.55 12.125 6.2 12.4L6.15 12.425C4.7 13.45 2.75 13.275 1.5 12.025C0.075 10.625 0.075 8.325 1.5 6.925L4.3 4.1ZM11.675 10.3C10.275 11.725 7.975 11.725 6.575 10.3C5.325 9.05 5.15 7.1 6.175 5.65L6.2 5.625C6.45 5.25 6.95 5.175 7.325 5.425C7.675 5.675 7.775 6.175 7.5 6.55L7.475 6.575C6.9 7.375 7 8.475 7.7 9.175C8.475 9.975 9.75 9.975 10.55 9.175L13.35 6.375C14.15 5.575 14.15 4.3 13.35 3.525C12.65 2.825 11.55 2.725 10.75 3.3L10.725 3.325C10.35 3.6 9.85 3.5 9.6 3.15C9.35 2.8 9.425 2.3 9.775 2.025L9.825 2C11.275 0.975 13.225 1.15 14.475 2.4C15.9 3.8 15.9 6.1 14.475 7.5L11.675 10.3Z" fill="#31374A" />
+        </svg>)
+    },
+    {
+        text: 'Cover Letter', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
+            <path d="M9.5 2.9C8.875 2.3 7.9 2.3 7.275 2.9L2.675 7.5C1.625 8.55 1.625 10.275 2.675 11.325C3.725 12.375 5.45 12.375 6.5 11.325L10.3 7.525C10.575 7.25 11 7.25 11.275 7.525C11.55 7.8 11.55 8.225 11.275 8.5L7.475 12.3C5.875 13.9 3.3 13.9 1.7 12.3C0.1 10.7 0.1 8.125 1.7 6.525L6.3 1.925C7.45 0.75 9.325 0.75 10.475 1.925C11.65 3.075 11.65 4.95 10.475 6.1L6.075 10.5C5.375 11.225 4.2 11.225 3.5 10.5C2.775 9.8 2.775 8.625 3.5 7.925L7.1 4.325C7.375 4.05 7.8 4.05 8.075 4.325C8.35 4.6 8.35 5.025 8.075 5.3L4.475 8.9C4.325 9.075 4.325 9.35 4.475 9.525C4.65 9.675 4.925 9.675 5.1 9.525L9.5 5.125C10.1 4.5 10.1 3.525 9.5 2.9Z" fill="#31374A" />
+        </svg>)
+    },
+];
 
 const cardTemplate = [
     // { name: 'Template1', template: ModernTemplate, image: 'dummy.jpg' },
     // { name: 'Template2', template: ClassicTemplate, image: 'dummy.jpg' },
     // { name: 'Template3', template: ProfessionalTemplate, image: 'dummy.jpg' },
     // { name: 'Template4', template: ProfessionalTemplate2, image: 'dummy.jpg' },
+    { name: 'Default', template: Template9, image: 'default.png' },
     { name: 'Professional', template: Template5, image: 'professional.jpg' },
     { name: 'Chrono', template: Template6, image: 'chrono.png' },
     { name: 'Elegant', template: Template7, image: 'elegant.jpg' },
     { name: 'Modern', template: Template8, image: 'modern.jpg' },
-    { name: 'Default', template: Template9, image: 'default.png' },
 ];
 
 const CVBuilder = () => {
@@ -784,6 +811,9 @@ const CVBuilder = () => {
         if (activeTab === 'Preview') {
             return (
                 <>
+                    <h4 className="tab-heading">
+                        Basic Information
+                    </h4>
                     <Accordion defaultActiveKey="profile">
                         <Accordion.Item eventKey="profile">
                             <Accordion.Header>
@@ -1589,41 +1619,131 @@ const CVBuilder = () => {
 
         if (activeTab === 'Design') {
             return (
-                <Card className="border-0">
-                    <Card.Body className="p-0 pt-4">
-                        <h5>Template Designs</h5>
-                        <Row className="g-3">
-                            {cardTemplate.map((template) => (
-                                <Col xs={6} sm={4} md={3} lg={4} xl={3}  >
-                                    <Button
-                                        key={template.name}
-                                        variant={selectedTemplate === template.name ? "primary" : "outline-primary"}
-                                        onClick={() => setSelectedTemplate(template.name)}
-                                        className="d-flex flex-column align-items-center gap-2 cv-template-button"
-                                    >
-                                        <img
-                                            src={`/assets/images/${template.image}`}
-                                            alt={template.name}
-                                            className="template-thumbnail"
-                                        />
-                                        {template.name}
-                                    </Button>
-                                </Col>
-                            ))}
-                        </Row>
-                    </Card.Body>
-                </Card>
+                <>
+                    <Card className="border-0">
+                        <Card.Body className="p-0">
+                            <h4 className="tab-heading">
+                                Template Design
+                            </h4>
+                            <Row className="g-3">
+                                {cardTemplate.map((template) => (
+                                    <Col xs={6} sm={4} md={3} lg={4} xl={3}  >
+                                        <Button
+                                            key={template.name}
+                                            variant={selectedTemplate === template.name ? "primary" : "outline-primary"}
+                                            onClick={() => setSelectedTemplate(template.name)}
+                                            className="d-flex flex-column align-items-center gap-2 cv-template-button"
+                                        >
+                                            <img
+                                                src={`/assets/images/${template.image}`}
+                                                alt={template.name}
+                                                className="template-thumbnail"
+                                            />
+                                            {template.name}
+                                        </Button>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                </>
             );
         }
 
         if (activeTab === 'Analysis') {
             return (
-                <Card>
-                    <Card.Body>
-                        <h5>Analysis</h5>
-                        <p>This is the Analysis card content.</p>
+                <Card className="border-0">
+                    <Card.Body className="p-0">
+                        <h4 className="tab-heading">
+                            Template Design
+                        </h4>
+
+                        {/* LinkedIn Section */}
+                        <div className="analysis-section d-flex flex-column justify-content-start align-items-start gap-2">
+                            <div className="d-flex justify-content-start gap-3 align-items-start">
+                                <Button variant="primary" className="btn-blue btn-blue-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
+                                        <path d="M4.0518 3.46445C5.16742 2.34883 7.00023 2.34883 8.11586 3.46445C9.11195 4.46055 9.25141 6.03438 8.43461 7.18984L8.41469 7.20977C8.21547 7.50859 7.81703 7.56836 7.5182 7.36914C7.2393 7.15 7.15961 6.75156 7.37875 6.47266L7.39867 6.45273C7.85688 5.79531 7.77719 4.93867 7.21938 4.38086C6.6018 3.74336 5.58578 3.74336 4.94828 4.38086L2.71703 6.61211C2.07953 7.22969 2.07953 8.2457 2.71703 8.8832C3.27484 9.44102 4.15141 9.50078 4.78891 9.0625L4.80883 9.02266C5.10766 8.82344 5.50609 8.8832 5.70531 9.18203C5.90453 9.46094 5.84477 9.85937 5.56586 10.0785L5.52602 10.0984C4.37055 10.9152 2.81664 10.7758 1.82055 9.77969C0.685 8.66406 0.685 6.83125 1.82055 5.71563L4.0518 3.46445ZM9.92875 8.40508C8.81313 9.54063 6.98031 9.54063 5.86469 8.40508C4.86859 7.40898 4.72914 5.85508 5.54594 4.69961L5.56586 4.67969C5.76508 4.38086 6.16352 4.32109 6.46234 4.52031C6.74125 4.71953 6.82094 5.11797 6.6018 5.4168L6.58188 5.43672C6.12367 6.07422 6.20336 6.95078 6.76117 7.50859C7.37875 8.14609 8.39477 8.14609 9.03227 7.50859L11.2635 5.27734C11.901 4.63984 11.901 3.62383 11.2635 3.00625C10.7057 2.44844 9.82914 2.36875 9.19164 2.82695L9.17172 2.84688C8.87289 3.06602 8.47445 2.98633 8.27523 2.70742C8.07602 2.42852 8.13578 2.03008 8.41469 1.81094L8.45453 1.79102C9.61 0.974219 11.1639 1.11367 12.16 2.10977C13.2955 3.22539 13.2955 5.0582 12.16 6.17383L9.92875 8.40508Z" fill="#003CC7" />
+                                    </svg>
+                                </Button>
+                                <div className="section-header">
+                                    <h3>LinkedIn Missing</h3>
+                                    <p className="section-description">
+                                        Please ensure that LinkedIn Profile is present in your contact information.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="divider"></div>
+
+                            <div className="input-section border rounded p-3 w-100">
+                                <div className='position-relative linked-form'>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Type Linked Profile here..."
+                                    />
+                                    <Button className="form-buttom">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="21" viewBox="0 0 25 21" fill="none">
+                                            <path d="M6.71875 5.65625C8.90625 3.46875 12.5 3.46875 14.6875 5.65625C16.6406 7.60938 16.9141 10.6953 15.3125 12.9609L15.2734 13C14.8828 13.5859 14.1016 13.7031 13.5156 13.3125C12.9688 12.8828 12.8125 12.1016 13.2422 11.5547L13.2812 11.5156C14.1797 10.2266 14.0234 8.54688 12.9297 7.45312C11.7188 6.20312 9.72656 6.20312 8.47656 7.45312L4.10156 11.8281C2.85156 13.0391 2.85156 15.0312 4.10156 16.2812C5.19531 17.375 6.91406 17.4922 8.16406 16.6328L8.20312 16.5547C8.78906 16.1641 9.57031 16.2812 9.96094 16.8672C10.3516 17.4141 10.2344 18.1953 9.6875 18.625L9.60938 18.6641C7.34375 20.2656 4.29688 19.9922 2.34375 18.0391C0.117188 15.8516 0.117188 12.2578 2.34375 10.0703L6.71875 5.65625ZM18.2422 15.3438C16.0547 17.5703 12.4609 17.5703 10.2734 15.3438C8.32031 13.3906 8.04688 10.3438 9.64844 8.07812L9.6875 8.03906C10.0781 7.45312 10.8594 7.33594 11.4453 7.72656C11.9922 8.11719 12.1484 8.89844 11.7188 9.48438L11.6797 9.52344C10.7812 10.7734 10.9375 12.4922 12.0312 13.5859C13.2422 14.8359 15.2344 14.8359 16.4844 13.5859L20.8594 9.21094C22.1094 7.96094 22.1094 5.96875 20.8594 4.75781C19.7656 3.66406 18.0469 3.50781 16.7969 4.40625L16.7578 4.44531C16.1719 4.875 15.3906 4.71875 15 4.17188C14.6094 3.625 14.7266 2.84375 15.2734 2.41406L15.3516 2.375C17.6172 0.773438 20.6641 1.04688 22.6172 3C24.8438 5.1875 24.8438 8.78125 22.6172 10.9688L18.2422 15.3438Z" fill="#31374A" />
+                                        </svg>
+                                    </Button>
+                                </div>
+                                <div className="button-group d-flex justify-content-center gap-3">
+                                    <Button variant="secondary" className="resolve-btn">
+                                        Resolve Manually
+                                    </Button>
+                                    <Button variant="primary" className="action-btn">
+                                        Add LinkedIn Profile
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Personal Statement Section */}
+                        <div className="analysis-section d-flex gap-3 justify-content-start align-items-start">
+                            <Button variant="primary" className="btn-blue btn-blue-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                                    <path d="M6.98852 6.04648C7.2475 6.28555 7.2475 6.70391 6.98852 6.94297C6.86898 7.0625 6.70961 7.12227 6.55023 7.12227C6.37094 7.12227 6.21156 7.0625 6.09203 6.94297L4.00023 4.85117L1.88852 6.94297C1.76898 7.0625 1.60961 7.12227 1.45023 7.12227C1.27094 7.12227 1.11156 7.0625 0.992031 6.94297C0.733047 6.70391 0.733047 6.28555 0.992031 6.04648L3.08383 3.93477L0.992031 1.84297C0.733047 1.60391 0.733047 1.18555 0.992031 0.946485C1.23109 0.6875 1.64945 0.6875 1.88852 0.946485L4.00023 3.03828L6.09203 0.946485C6.33109 0.6875 6.74945 0.6875 6.98852 0.946485C7.2475 1.18555 7.2475 1.60391 6.98852 1.84297L4.89672 3.95469L6.98852 6.04648Z" fill="#003CC7" />
+                                </svg>
+                            </Button>
+                            <div className="d-flex flex-column gap-3">
+                                <div className="section-header">
+                                    <h3>Poor Personal Statement</h3>
+                                    <p className="example-statement">
+                                        "I am a hardworking individual who is passionate about technology. I work well in a team or on my own and am looking for a role in software development where I can grow and learn new things."
+                                    </p>
+                                </div>
+
+                                <div className="issues-section">
+                                    <h4>Issues:</h4>
+                                    <ul className="issues-list">
+                                        <li>Vague and generic ("hardworking" "passionate")</li>
+                                        <li>Lacks technical detail or focus</li>
+                                        <li>No evidence or examples of achievements</li>
+                                        <li>Doesn't specify the kind of role or technologies of interest</li>
+                                    </ul>
+                                </div>
+
+                                <div className="suggested-changes">
+                                    <h4>Suggested Changes:</h4>
+                                    <p className="improved-statement">
+                                        "As a results-driven software developer with 3+ years of experience in full-stack web development, I specialize in building scalable applications using JavaScript, React, and Node.js. I have led the successful delivery of several client projects from concept to deployment, and I thrive in fast-paced, agile environments. Currently seeking a challenging developer role where I can contribute my skills in modern web frameworks and continue to grow in cloud-based architectures."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="button-group border rounded p-3 d-flex justify-content-center">
+                            <Button variant="outline-secondary" className="resolve-btn">
+                                Resolve Manually
+                            </Button>
+                            <Button variant="primary" className="action-btn">
+                                Apply Suggested Changes
+                            </Button>
+                        </div>
                     </Card.Body>
                 </Card>
+
             );
         }
 
@@ -1671,6 +1791,8 @@ const CVBuilder = () => {
                 parsedResume && (
                     <main className="">
 
+                        <Header />
+
                         <motion.div
                             className="secondary-header"
                             initial={{ opacity: 0, y: -20 }}
@@ -1690,10 +1812,11 @@ const CVBuilder = () => {
                                         <Row>
                                             <Col>
                                                 <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
-                                                    {tabs.map((tab) => (
-                                                        <Nav.Item key={tab}>
-                                                            <Nav.Link eventKey={tab} className="text-capitalize">
-                                                                {tab}
+                                                    {tabs.map((tab, index) => (
+                                                        <Nav.Item key={index}>
+                                                            <Nav.Link eventKey={tab.text} className="text-capitalize d-flex align-items-center gap-2">
+                                                                {tab.icon && <span>{tab.icon}</span>}
+                                                                {tab.text}
                                                             </Nav.Link>
                                                         </Nav.Item>
                                                     ))}
