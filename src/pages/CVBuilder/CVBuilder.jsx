@@ -18,7 +18,10 @@ import {
     Template6,
     Template7,
     Template8,
-    Template9
+    Template9,
+    Template10,
+    Template11,
+    Template12
 } from "../../components/templates";
 import { useResume } from '../../context/ResumeContext';
 
@@ -58,6 +61,9 @@ const cardTemplate = [
     // { name: 'Template2', template: ClassicTemplate, image: 'dummy.jpg' },
     // { name: 'Template3', template: ProfessionalTemplate, image: 'dummy.jpg' },
     // { name: 'Template4', template: ProfessionalTemplate2, image: 'dummy.jpg' },
+    { name: 'Classic', template: Template12, image: 'default.png' },
+    { name: 'Unique', template: Template11, image: 'chrono.png' },
+    { name: 'Simple', template: Template10, image: 'default.png' },
     { name: 'Default', template: Template9, image: 'default.png' },
     { name: 'Professional', template: Template5, image: 'professional.jpg' },
     { name: 'Chrono', template: Template6, image: 'chrono.png' },
