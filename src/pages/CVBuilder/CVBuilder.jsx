@@ -1712,6 +1712,7 @@ const CVBuilder = () => {
             return (
                 <Card className="border-0">
                     <Card.Body className="p-0">
+                        <div className="d-flex justify-content-between align-items-center">
                         <h4 className="tab-heading">
                             Template Design
                         </h4>
@@ -1721,6 +1722,7 @@ const CVBuilder = () => {
                         >
                             Analyze
                         </button>
+                        </div>
 
                         {/* LinkedIn Section */}
                         <div className="analysis-section d-flex flex-column justify-content-start align-items-start gap-2">
