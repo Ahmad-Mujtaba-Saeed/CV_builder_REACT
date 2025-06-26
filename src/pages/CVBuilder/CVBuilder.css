@@ -56,7 +56,7 @@
 
 .cv-uplodaer-tabs {
   border-bottom: 0px solid var(--primary-color);
-  gap: 4px;
+  gap: 3px;
 }
 
 .nav-underline .nav-link,
@@ -283,18 +283,18 @@ body {
 
 .left-section {
   overflow: auto;
-  height: calc(100vh - 188px);
+  height: calc(100vh - 115px);
   padding: 24px 90px;
 }
 
 .right-section {
   padding: 0px 40px 12px;
   position: relative;
-  height: calc(100vh - 188px);
+  height: calc(100vh - 115px);
 }
 
 .cv-template-div {
-  max-height: calc(100vh - 316px);
+  max-height: calc(100vh - 230px);
   overflow-y: auto;
   position: relative;
   scroll-behavior: smooth;
