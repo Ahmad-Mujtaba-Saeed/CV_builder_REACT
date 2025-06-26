@@ -71,6 +71,7 @@ const App = () => {
   // }
 
   return (
+    <>
     <ResumeProvider>
     <Routes>
       {/* Public routes */}
@@ -89,9 +90,9 @@ const App = () => {
             key={idx}
           path={route.path}
           element={
-            // <Authmiddleware>
-              route.component
-            // </Authmiddleware>
+            <Authmiddleware>
+              {route.component}
+            </Authmiddleware>
           }
         />
       ))}
@@ -107,6 +108,7 @@ const App = () => {
       />
     </Routes>
     </ResumeProvider>
+    </>
   )
 }
 

@@ -10,7 +10,7 @@ import Login from "../pages/Authentication/Login"
 import Register from "../pages/Authentication/Register"
 import ForgetPwd from "../pages/Authentication/ForgetPassword"
 import OTP from "../pages/Authentication/OTPVarification"
-
+import Logout from "../pages/Authentication/Logout.jsx"
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -23,10 +23,7 @@ const userRoutes = [
   { path: "/", component: <MainMenu /> },
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
-  { path: "/login", component: <Login /> },
-  { path: "/register", component: <Register /> },
-  { path: "/forgot-password", component: <ForgetPwd /> },
-  { path: "/otp-varification", component: <OTP /> },
+
 ]
 
 const authRoutes = [
@@ -34,6 +31,11 @@ const authRoutes = [
 
 
   // // Authentication Inner
+  { path: "/login", component: <Login /> },
+  { path: "/logout", component: <Logout /> },
+  { path: "/register", component: <Register /> },
+  { path: "/forgot-password", component: <ForgetPwd /> },
+  { path: "/otp-varification", component: <OTP /> },
   // { path: "/pages-login", component: <Login1 /> },
   // { path: "/pages-register", component: <Register1 /> },
   // { path: "/page-recoverpw", component: <Recoverpw /> },

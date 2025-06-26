@@ -3,9 +3,38 @@ import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import './SignIn.css'; // Custom styles
+import axios from '../../utils/axios';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const Signin = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/login', formData);
+      console.log(response.data);
+      localStorage.setItem('access_token', response.data.access_token);
+      navigate('/');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   return (
+
     <div className="signin-page">
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="signin-card shadow-sm">
@@ -48,14 +77,14 @@ const Signin = () => {
               <span>or use email</span>
             </div>
 
-            <Form>
+            <Form onSubmit={handleLogin}>
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label className="text-muted small fw-semibold">EMAIL</Form.Label>
                 <div className="input-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="11" viewBox="0 0 14 11" fill="none">
                     <path d="M12.2 0.9C12.85 0.9 13.4 1.45 13.4 2.1C13.4 2.5 13.2 2.85 12.9 3.075L7.475 7.15C7.175 7.375 6.8 7.375 6.5 7.15L1.075 3.075C0.775 2.85 0.6 2.5 0.6 2.1C0.6 1.45 1.125 0.9 1.8 0.9H12.2ZM6.025 7.8C6.6 8.225 7.375 8.225 7.95 7.8L13.4 3.7V8.9C13.4 9.8 12.675 10.5 11.8 10.5H2.2C1.3 10.5 0.6 9.8 0.6 8.9V3.7L6.025 7.8Z" fill="#31374A" />
                   </svg>
-                  <Form.Control type="email" placeholder="Enter email address" className="ps-5" />
+                  <Form.Control onChange={handleChange} name='email' type="email" placeholder="Enter email address" className="ps-5" />
                 </div>
               </Form.Group>
 
@@ -65,7 +94,7 @@ const Signin = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <path d="M7.65 8.9L6.8 9.725C6.7 9.85 6.55 9.9 6.4 9.9H5.4V10.9C5.4 11.25 5.125 11.5 4.8 11.5H3.8V12.5C3.8 12.85 3.525 13.1 3.2 13.1H1.2C0.85 13.1 0.6 12.85 0.6 12.5V10.5C0.6 10.35 0.65 10.2 0.775 10.075L4.8 6.05C4.65 5.625 4.6 5.175 4.6 4.7C4.6 2.275 6.55 0.3 9 0.3C11.425 0.3 13.4 2.275 13.4 4.7C13.4 7.15 11.425 9.1 9 9.1C8.525 9.1 8.075 9.05 7.65 8.9ZM10 4.7C10.55 4.7 11 4.275 11 3.7C11 3.15 10.55 2.7 10 2.7C9.425 2.7 9 3.15 9 3.7C9 4.275 9.425 4.7 10 4.7Z" fill="#31374A" />
                   </svg>
-                  <Form.Control type="password" placeholder="Password" className="ps-5 pe-5" defaultValue="" />
+                  <Form.Control onChange={handleChange} name='password' type="password" placeholder="Password" className="ps-5 pe-5" defaultValue="" />
                   <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
                     <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
                   </svg>

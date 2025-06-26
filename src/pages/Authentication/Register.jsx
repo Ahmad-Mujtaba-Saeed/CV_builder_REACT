@@ -3,8 +3,39 @@ import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import './SignIn.css'; // Custom styles
+import axios from '../../utils/axios';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const Signin = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+  });
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/register', formData);
+      console.log(response.data);
+      localStorage.setItem('access_token', response.data.access_token);
+      navigate('/');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="signin-page">
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -48,18 +79,18 @@ const Signin = () => {
               <span>or use email</span>
             </div>
 
-            <Form>
+            <Form onSubmit={handleRegister}>
               <Form.Group className="mb-3" controlId="formName">
                 <Form.Label className="text-muted small fw-semibold">NAME</Form.Label>
                 <div className="input-icon">
-                  <Form.Control type="text" placeholder="Enter Your Name" className="" />
+                  <Form.Control name='name' onChange={handleChange} type="text" placeholder="Enter Your Name" className="" />
                 </div>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label className="text-muted small fw-semibold">EMAIL</Form.Label>
                 <div className="input-icon">
-                  <Form.Control type="email" placeholder="Enter email address" className="" />
+                  <Form.Control name='email' onChange={handleChange} type="email" placeholder="Enter email address" className="" />
                 </div>
               </Form.Group>
 
@@ -68,7 +99,7 @@ const Signin = () => {
                   <Form.Group className="mb-3" controlId="formPassword">
                     <Form.Label className="text-muted small fw-semibold">PASSWORD</Form.Label>
                     <div className="input-icon">
-                      <Form.Control type="password" placeholder="Password" className="pe-5" defaultValue="" />
+                      <Form.Control name='password' onChange={handleChange} type="password" placeholder="Password" className="pe-5" defaultValue="" />
                       <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
                         <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
                       </svg>
@@ -79,7 +110,7 @@ const Signin = () => {
                   <Form.Group className="mb-3" controlId="formPasswordConform">
                     <Form.Label className="text-muted small fw-semibold">CONFIRM PASSWORD</Form.Label>
                     <div className="input-icon">
-                      <Form.Control type="password" placeholder="Password" className="pe-5" defaultValue="" />
+                      <Form.Control name='password_confirmation' onChange={handleChange} type="password" placeholder="Password" className="pe-5" defaultValue="" />
                       <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
                         <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
                       </svg>

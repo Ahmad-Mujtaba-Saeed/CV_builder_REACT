@@ -6,15 +6,15 @@ import { Navigate } from 'react-router-dom'
 
 const Authmiddleware = ({ children }) => {
   // const { userData, loading } = useContext(UserContext)
-  // const accessToken = localStorage.getItem('access_token')
+  const accessToken = localStorage.getItem('access_token')
 
   // if (loading) {
   //   return <Loader />
   // }
 
-  // if (!accessToken) {
-  //   return <Navigate to="/login" replace />
-  // }
+  if (!accessToken) {
+    return <Navigate to="/login" replace />
+  }
 
   // if (!userData || (userData.roles !== 'admin' && userData.roles !== 'creators')) {
   //   return <Navigate to="/login" replace />
