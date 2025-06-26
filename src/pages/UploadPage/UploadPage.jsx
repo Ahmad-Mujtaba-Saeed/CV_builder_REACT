@@ -155,7 +155,7 @@ const UploadPage = () => {
   };
 
   const handleAICV = () => {
-    alert("Redirecting to AI-powered CV builder");
+    navigate('/build-cv-ai');
   };
 
   const removeFile = () => {
@@ -275,7 +275,6 @@ const UploadPage = () => {
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    disabled={true}
                     // variant="success"
                     onClick={handleAICV}
                     className="d-flex align-items-center gap-2 cv-with-ai-btn custom-button"

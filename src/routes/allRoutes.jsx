@@ -5,6 +5,7 @@ import DemoPage from "../pages/DemoPage/DemoPage.jsx"
 import UploadPage from "../pages/UploadPage/UploadPage.jsx"
 import MainMenu from "../pages/MainMenu/MainMenu.jsx"
 import CVBuilder from "../pages/CVBuilder/CVBuilder.jsx"
+import BuildCVAI from "../pages/BuildCVAI/BuildCVAI.jsx"
 import Login from "../pages/Authentication/Login"
 // import Logout from "../pages/Authentication/Logout"
 import Register from "../pages/Authentication/Register"
@@ -23,7 +24,7 @@ const userRoutes = [
   { path: "/", component: <MainMenu /> },
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
-
+  { path: "/build-CV-AI", component: <BuildCVAI />}
 ]
 
 const authRoutes = [
