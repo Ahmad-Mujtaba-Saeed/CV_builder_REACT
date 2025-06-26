@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Container, Row, Col, Button, Card, Alert, Form, ProgressBar, Nav, Tab, Accordion } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
-import { FiPlus, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiChevronDown, FiChevronUp, FiMinus } from "react-icons/fi";
 import { FiUpload, FiEdit2, FiCpu, FiFileText, FiDownload } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
@@ -94,7 +94,23 @@ const CVBuilder = () => {
     const fileInputRef = useRef(null);
     const cvRef = useRef();
     const [activeTab, setActiveTab] = useState('Preview');
-
+    const [zoom, setZoom] = useState(1);
+  
+    const zoomIn = () => {
+        setZoom(prev => {
+          const newZoom = Math.min(prev + 0.1, 2);
+          console.log('Zoom In clicked. New zoom level:', newZoom);
+          return newZoom;
+        });
+      };
+      
+      const zoomOut = () => {
+        setZoom(prev => {
+          const newZoom = Math.max(prev - 0.1, 0.5);
+          console.log('Zoom Out clicked. New zoom level:', newZoom);
+          return newZoom;
+        });
+      };
     const [currentLanguage, setCurrentLanguage] = useState('');
     const [languageLevel, setLanguageLevel] = useState('Intermediate');
     const [currentHobby, setCurrentHobby] = useState('');
@@ -1893,14 +1909,14 @@ const CVBuilder = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-center mb-2 display-6 fw-400">Smart CV Builder, tailored for the Modern Job Market.</h1>
+                            <h1  className="text-center mb-2 fw-400 form-header">Smart CV Builder, tailored for the Modern Job Market.</h1>
                             <p className="text-center text-muted mb-2 heading-text">
                                 MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                             </p>
                         </motion.div>
 
                         <Container fluid className="">
-                            <Row>
+                            <Row className="mt-3">
                                 <Col lg={7} xxl={6} className='left-section'>
                                     <Tab.Container className='cv-builder-container' activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
                                         <Row>
@@ -1931,6 +1947,16 @@ const CVBuilder = () => {
                                     <Card className="border-0 shadow-custom mb-3">
                                         <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
                                             <h5 className="mb-0 py-1" style={{ fontSize: '1rem' }}>CV Preview</h5>
+                                            <div className="d-flex align-items-center gap-3">
+                                                <div className="d-flex align-items-center gap-1">
+                                                <Button variant="light" size="sm" onClick={zoomOut}>
+                                                    <FiMinus />
+                                                </Button>
+                                                <Button variant="light" size="sm" onClick={zoomIn}>
+                                                    <FiPlus />
+                                                </Button>
+                                                </div>
+                                            </div>
                                             {totalPages > 1 && (
                                                 <div className="d-flex align-items-center gap-2">
                                                     <Button
@@ -1963,6 +1989,9 @@ const CVBuilder = () => {
                                                     background: 'white',
                                                     padding: '16px',
                                                     minHeight: `${Math.max(1, totalPages) * 1080}px`,
+                                                    transform: `scale(${zoom})`,
+                                                    transformOrigin: 'top center',
+                                                    transition: 'transform 0.2s ease-in-out',
                                                 }}
                                             >
                                                 {(() => {
