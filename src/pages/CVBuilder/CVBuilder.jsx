@@ -955,7 +955,7 @@ const CVBuilder = () => {
                             <Accordion.Body>
                                 <Card className="border-0">
                                     <Row className="mb-3 g-3">
-                                        <Col md={2}>
+                                    <Col xs={2} md={3}>
                                             <div className="photo-upload border d-flex flex-column justify-content-center align-items-center overflow-hidden"
                                                 onClick={triggerFileInput}>
                                                 {profilePic || (parsedResume?.profilePic) ? (
@@ -983,7 +983,7 @@ const CVBuilder = () => {
                                                 />
                                             </div>
                                         </Col>
-                                        <Col md={10}>
+                                        <Col xs={10} md={9}>
                                             <Row className="g-3">
                                                 <Col md={6}>
                                                     <Form.Group>
@@ -2008,17 +2008,19 @@ const CVBuilder = () => {
                                                             variant="outline-primary"
                                                             size="sm"
                                                             onClick={handleUploadNew}
-                                                            className="d-flex align-items-center gap-1"
+                                                            className="btn btn-outline-primary"
                                                         >
-                                                            <FiUpload size={14} /> New Upload
+                                                            <FiUpload size={14} /> 
+                                                            <span className="d-none d-xl-inline ms-1">New Upload</span>
                                                         </Button>
                                                         <Button
-                                                            variant="primary"
+                                                            variant="outline-primary"
                                                             size="sm"
                                                             onClick={handleDownloadPDF}
-                                                            className="d-flex align-items-center gap-1"
+                                                            className="btn btn-outline-primary"
                                                         >
-                                                            <FiDownload size={14} /> Download PDF
+                                                            <FiDownload size={14} /> 
+                                                            <span className="d-none d-xl-inline ms-1">Download PDF</span>
                                                         </Button>
                                                     </div>
                                                 </div>
