@@ -33,31 +33,31 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const tabs = [
     {
-        active:true,
+        active: true,
         text: 'Preview', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="10" height="14" viewBox="0 0 10 14" fill="none">
             <path d="M8.6 2.4C9.25 2.4 9.8 2.95 9.8 3.6V12.4C9.8 13.075 9.25 13.6 8.6 13.6H1.4C0.725 13.6 0.2 13.075 0.2 12.4V3.6C0.2 2.95 0.725 2.4 1.4 2.4H2.725C3.075 1.475 3.95 0.8 5 0.8C6.025 0.8 6.9 1.475 7.25 2.4H8.6ZM5 2.4C4.55 2.4 4.2 2.775 4.2 3.2C4.2 3.65 4.55 4 5 4C5.425 4 5.8 3.65 5.8 3.2C5.8 2.775 5.425 2.4 5 2.4ZM7 6.4C7.2 6.4 7.4 6.225 7.4 6C7.4 5.8 7.2 5.6 7 5.6H3C2.775 5.6 2.6 5.8 2.6 6C2.6 6.225 2.775 6.4 3 6.4H7Z" fill="#31374A" />
         </svg>)
     },
     {
-        active:true,
+        active: true,
         text: 'Design', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14" fill="none">
             <path d="M12.35 1.825C12.9 2.375 12.9 3.25 12.35 3.8L11.6 4.55L9.15 2.1L9.9 1.35C10.45 0.8 11.325 0.8 11.875 1.35L12.35 1.825ZM4.4 6.85L8.575 2.675L11.025 5.125L6.85 9.3C6.7 9.45 6.5 9.575 6.3 9.65L4.075 10.375C3.85 10.45 3.625 10.4 3.475 10.225C3.3 10.075 3.25 9.825 3.325 9.625L4.05 7.4C4.125 7.2 4.25 7 4.4 6.85ZM4.9 2.4C5.325 2.4 5.7 2.775 5.7 3.2C5.7 3.65 5.325 4 4.9 4H2.5C2.05 4 1.7 4.375 1.7 4.8V11.2C1.7 11.65 2.05 12 2.5 12H8.9C9.325 12 9.7 11.65 9.7 11.2V8.8C9.7 8.375 10.05 8 10.5 8C10.925 8 11.3 8.375 11.3 8.8V11.2C11.3 12.525 10.225 13.6 8.9 13.6H2.5C1.15 13.6 0.0999999 12.525 0.0999999 11.2V4.8C0.0999999 3.475 1.15 2.4 2.5 2.4H4.9Z" fill="#31374A" />
-        </svg>) ,
+        </svg>),
     },
     {
-        active:true,
+        active: true,
         text: 'Analysis', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M6.9 1.225C6.9 1 7.05 0.8 7.3 0.8C10.375 0.8 12.9 3.325 12.9 6.4C12.9 6.625 12.7 6.8 12.475 6.8H6.9V1.225ZM0.0999997 7.6C0.0999997 4.575 2.35 2.075 5.25 1.675C5.5 1.625 5.7 1.825 5.7 2.05V8L9.6 11.925C9.775 12.1 9.75 12.375 9.575 12.5C8.575 13.2 7.375 13.6 6.1 13.6C2.775 13.6 0.0999997 10.925 0.0999997 7.6ZM13.25 8C13.475 8 13.675 8.2 13.625 8.425C13.45 9.825 12.775 11.075 11.775 12C11.625 12.125 11.4 12.125 11.25 11.975L7.3 8H13.25Z" fill="#BA67EF" />
         </svg>)
     },
     {
-        active:false,
+        active: false,
         text: 'Job Matching', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14" fill="none">
             <path d="M4.3 4.1C5.7 2.7 8 2.7 9.4 4.1C10.65 5.35 10.825 7.325 9.8 8.775L9.775 8.8C9.525 9.175 9.025 9.25 8.65 9C8.3 8.725 8.2 8.225 8.475 7.875L8.5 7.85C9.075 7.025 8.975 5.95 8.275 5.25C7.5 4.45 6.225 4.45 5.425 5.25L2.625 8.05C1.825 8.825 1.825 10.1 2.625 10.9C3.325 11.6 4.425 11.675 5.225 11.125L5.25 11.075C5.625 10.825 6.125 10.9 6.375 11.275C6.625 11.625 6.55 12.125 6.2 12.4L6.15 12.425C4.7 13.45 2.75 13.275 1.5 12.025C0.075 10.625 0.075 8.325 1.5 6.925L4.3 4.1ZM11.675 10.3C10.275 11.725 7.975 11.725 6.575 10.3C5.325 9.05 5.15 7.1 6.175 5.65L6.2 5.625C6.45 5.25 6.95 5.175 7.325 5.425C7.675 5.675 7.775 6.175 7.5 6.55L7.475 6.575C6.9 7.375 7 8.475 7.7 9.175C8.475 9.975 9.75 9.975 10.55 9.175L13.35 6.375C14.15 5.575 14.15 4.3 13.35 3.525C12.65 2.825 11.55 2.725 10.75 3.3L10.725 3.325C10.35 3.6 9.85 3.5 9.6 3.15C9.35 2.8 9.425 2.3 9.775 2.025L9.825 2C11.275 0.975 13.225 1.15 14.475 2.4C15.9 3.8 15.9 6.1 14.475 7.5L11.675 10.3Z" fill="#31374A" />
         </svg>)
     },
     {
-        active:false,
+        active: false,
         text: 'Cover Letter', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
             <path d="M9.5 2.9C8.875 2.3 7.9 2.3 7.275 2.9L2.675 7.5C1.625 8.55 1.625 10.275 2.675 11.325C3.725 12.375 5.45 12.375 6.5 11.325L10.3 7.525C10.575 7.25 11 7.25 11.275 7.525C11.55 7.8 11.55 8.225 11.275 8.5L7.475 12.3C5.875 13.9 3.3 13.9 1.7 12.3C0.1 10.7 0.1 8.125 1.7 6.525L6.3 1.925C7.45 0.75 9.325 0.75 10.475 1.925C11.65 3.075 11.65 4.95 10.475 6.1L6.075 10.5C5.375 11.225 4.2 11.225 3.5 10.5C2.775 9.8 2.775 8.625 3.5 7.925L7.1 4.325C7.375 4.05 7.8 4.05 8.075 4.325C8.35 4.6 8.35 5.025 8.075 5.3L4.475 8.9C4.325 9.075 4.325 9.35 4.475 9.525C4.65 9.675 4.925 9.675 5.1 9.525L9.5 5.125C10.1 4.5 10.1 3.525 9.5 2.9Z" fill="#31374A" />
         </svg>)
@@ -104,22 +104,22 @@ const CVBuilder = () => {
     const cvRef = useRef();
     const [activeTab, setActiveTab] = useState('Preview');
     const [zoom, setZoom] = useState(1);
-  
+
     const zoomIn = () => {
         setZoom(prev => {
-          const newZoom = Math.min(prev + 0.1, 2);
-          console.log('Zoom In clicked. New zoom level:', newZoom);
-          return newZoom;
+            const newZoom = Math.min(prev + 0.1, 2);
+            console.log('Zoom In clicked. New zoom level:', newZoom);
+            return newZoom;
         });
-      };
-      
-      const zoomOut = () => {
+    };
+
+    const zoomOut = () => {
         setZoom(prev => {
-          const newZoom = Math.max(prev - 0.1, 0.5);
-          console.log('Zoom Out clicked. New zoom level:', newZoom);
-          return newZoom;
+            const newZoom = Math.max(prev - 0.1, 0.5);
+            console.log('Zoom Out clicked. New zoom level:', newZoom);
+            return newZoom;
         });
-      };
+    };
     const [currentLanguage, setCurrentLanguage] = useState('');
     const [languageLevel, setLanguageLevel] = useState('Intermediate');
     const [currentHobby, setCurrentHobby] = useState('');
@@ -729,30 +729,30 @@ const CVBuilder = () => {
 
 
     const handlePreviousStep = () => {
-        if(activeTab == "Preview"){
+        if (activeTab == "Preview") {
             setActiveTab("Preview");
-        }else if(activeTab == "Design"){
+        } else if (activeTab == "Design") {
             setActiveTab("Preview");
-        }else if(activeTab == "Analysis"){
+        } else if (activeTab == "Analysis") {
             setActiveTab("Design");
-        }else if(activeTab == "Job Matching"){
+        } else if (activeTab == "Job Matching") {
             setActiveTab("Analysis");
-        }else if(activeTab == "Cover Letter"){
+        } else if (activeTab == "Cover Letter") {
             setActiveTab("Job Matching");
         }
     }
 
 
     const handleNextStep = () => {
-        if(activeTab == "Preview"){
+        if (activeTab == "Preview") {
             setActiveTab("Design");
-        }else if(activeTab == "Design"){
+        } else if (activeTab == "Design") {
             setActiveTab("Analysis");
-        }else if(activeTab == "Analysis"){
+        } else if (activeTab == "Analysis") {
             setActiveTab("Job Matching");
-        }else if(activeTab == "Job Matching"){
+        } else if (activeTab == "Job Matching") {
             setActiveTab("Cover Letter");
-        }else if(activeTab == "Cover Letter"){
+        } else if (activeTab == "Cover Letter") {
             setActiveTab("Cover Letter");
         }
     }
@@ -955,7 +955,7 @@ const CVBuilder = () => {
                             <Accordion.Body>
                                 <Card className="border-0">
                                     <Row className="mb-3 g-3">
-                                        <Col md={2}>
+                                    <Col xs={2} md={3}>
                                             <div className="photo-upload border d-flex flex-column justify-content-center align-items-center overflow-hidden"
                                                 onClick={triggerFileInput}>
                                                 {profilePic || (parsedResume?.profilePic) ? (
@@ -983,7 +983,7 @@ const CVBuilder = () => {
                                                 />
                                             </div>
                                         </Col>
-                                        <Col md={10}>
+                                        <Col xs={10} md={9}>
                                             <Row className="g-3">
                                                 <Col md={6}>
                                                     <Form.Group>
@@ -1854,7 +1854,7 @@ const CVBuilder = () => {
                                         <div className="section-header">
                                             <h3>Original Statement</h3>
                                             <p className="example-statement">
-                                                { analysisResult?.originalParagraph || parsedResume?.summary}
+                                                {analysisResult?.originalParagraph || parsedResume?.summary}
                                             </p>
                                         </div>
                                         {!analysisRequestLoading ? (
@@ -1864,9 +1864,9 @@ const CVBuilder = () => {
                                                     <ul className="issues-list">
                                                         {issues?.map((issue, index) => (
                                                             <li key={index}>{issue.issue} - {issue.description}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
+                                                        ))}
+                                                    </ul>
+                                                </div>
                                                 <div className="suggested-changes">
                                                     <h4>Suggested Changes:</h4>
                                                     <p className="improved-statement">
@@ -1879,7 +1879,7 @@ const CVBuilder = () => {
                                                 <div className="d-flex justify-content-center">
                                                     {/* <Loader type="Oval" color="#003CC7" height={20} width={20} />
                                                      */}
-                                                     Loading...
+                                                    Loading...
                                                 </div>
                                             </>
                                         )}
@@ -1957,7 +1957,7 @@ const CVBuilder = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1  className="text-center mb-2 fw-400 form-header">Smart CV Builder, tailored for the Modern Job Market.</h1>
+                            <h1 className="text-center mb-2 fw-400 form-header">Smart CV Builder, tailored for the Modern Job Market.</h1>
                             <p className="text-center text-muted mb-2 heading-text">
                                 MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                             </p>
@@ -1993,39 +1993,40 @@ const CVBuilder = () => {
                                 {/* Right Side - CV Preview */}
                                 <Col lg={5} xxl={6} className='right-section'>
                                     <Card className="border-0 shadow-custom mb-3">
-                                    <Card.Header className="bg-white border-bottom p-3">
-    <div className="d-flex justify-content-between align-items-center">
-        <h5 className="mb-0 fw-semibold" style={{ fontSize: '1.1rem' }}>CV Preview</h5>
-                                            <div className="d-flex align-items-center gap-3">
-                                                <div className="d-flex align-items-center gap-1">
-                                                <Button variant="light" size="sm" onClick={zoomOut}>
-                                                    <FiMinus />
-                                                </Button>
-                                                <Button variant="light" size="sm" onClick={zoomIn}>
-                                                    <FiPlus />
-                                                </Button>
+                                        <Card.Header className="bg-white border-bottom p-3">
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <h5 className="mb-0 fw-semibold" style={{ fontSize: '1.1rem' }}>CV Preview</h5>
+                                                <div className="d-flex align-items-center gap-3">
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        <Button variant="outline-primary" size="sm" onClick={zoomOut}>
+                                                            <FiMinus />
+                                                        </Button>
+                                                        <Button variant="outline-primary" size="sm" onClick={zoomIn}>
+                                                            <FiPlus />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline-primary"
+                                                            size="sm"
+                                                            onClick={handleUploadNew}
+                                                            className="btn btn-outline-primary"
+                                                        >
+                                                            <FiUpload size={14} /> 
+                                                            <span className="d-none d-xl-inline ms-1">New Upload</span>
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline-primary"
+                                                            size="sm"
+                                                            onClick={handleDownloadPDF}
+                                                            className="btn btn-outline-primary"
+                                                        >
+                                                            <FiDownload size={14} /> 
+                                                            <span className="d-none d-xl-inline ms-1">Download PDF</span>
+                                                        </Button>
+                                                    </div>
                                                 </div>
+                                                
                                             </div>
-        <div className="d-flex gap-2">
-            <Button
-                variant="outline-primary"
-                size="sm"
-                onClick={handleUploadNew}
-                className="d-flex align-items-center gap-1"
-            >
-                <FiUpload size={14} /> New Upload
-            </Button>
-            <Button
-                variant="primary"
-                size="sm"
-                onClick={handleDownloadPDF}
-                className="d-flex align-items-center gap-1"
-            >
-                <FiDownload size={14} /> Download PDF
-            </Button>
-        </div>
-    </div>
-</Card.Header>
+                                        </Card.Header>
                                         <div
                                             ref={previewContainerRef}
                                             className="cv-template-div"
@@ -2091,27 +2092,27 @@ const CVBuilder = () => {
                                         </div>
                                     </Card>
                                     <Card className="border-0 shadow-custom">
-    <Card.Body className="p-3">
-        <div className="d-flex justify-content-between align-items-center">
-            <Button
-                variant="outline-primary"
-                onClick={handlePreviousStep}
-                disabled={activeTab === "Preview"}
-                className="d-flex align-items-center gap-2"
-            >
-                <FiChevronLeft /> Previous
-            </Button>
-            <Button
-                variant="primary"
-                onClick={handleNextStep}
-                disabled={activeTab === "Cover Letter"}
-                className="d-flex align-items-center gap-2"
-            >
-                Next <FiChevronRight />
-            </Button>
-        </div>
-    </Card.Body>
-</Card>
+                                        <Card.Body className="p-3">
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <Button
+                                                    variant="outline-primary"
+                                                    onClick={handlePreviousStep}
+                                                    disabled={activeTab === "Preview"}
+                                                    className="d-flex align-items-center gap-2"
+                                                >
+                                                    <FiChevronLeft /> Previous
+                                                </Button>
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={handleNextStep}
+                                                    disabled={activeTab === "Cover Letter"}
+                                                    className="d-flex align-items-center gap-2"
+                                                >
+                                                    Next <FiChevronRight />
+                                                </Button>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
                                 </Col>
 
                             </Row>
