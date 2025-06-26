@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Card, Alert, Form, ProgressBar, Nav, Tab, 
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
 import { FiPlus, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { FiUpload, FiEdit2, FiCpu, FiFileText, FiDownload } from "react-icons/fi";
+import { FiEdit2, FiCpu, FiFileText } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -25,9 +25,11 @@ import {
     Template13
 } from "../../components/templates";
 import { useResume } from '../../context/ResumeContext';
-
+import { FiDownload, FiUpload } from 'react-icons/fi';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const tabs = [
     {
@@ -74,6 +76,8 @@ const cardTemplate = [
 ];
 
 const CVBuilder = () => {
+    const navigate = useNavigate();
+    const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
     const { parsedResume, setParsedResume } = useResume();
     const [customSections, setCustomSections] = useState([]);
 
@@ -495,7 +499,7 @@ const CVBuilder = () => {
             const formData = new FormData();
             formData.append('paragraph', parsedResume?.summary || '');
 
-            const response = await fetch(`http://localhost:8000/api/analyze-paragraph`, {
+            const response = await fetch(`${baseUrl}/api/analyze-paragraph`, {
                 method: 'POST',
                 body: formData,
             });
@@ -532,11 +536,11 @@ const CVBuilder = () => {
         }
     }
 
-    useEffect(() => {
-        if (activeTab == "Analysis" && parsedResume?.summary != '' && !analysisRequestLoading) {
-            handleAnalysis();
-        }
-    }, [activeTab]);
+    // useEffect(() => {
+    //     if (activeTab == "Analysis" && parsedResume?.summary != '' && !analysisRequestLoading) {
+    //         handleAnalysis();
+    //     }
+    // }, [activeTab]);
 
     const handleApplyChanges = (suggestedParagraph) => {
         setParsedResume({
@@ -701,6 +705,40 @@ const CVBuilder = () => {
     //     setCurrentPage(1);
     //     setTotalPages(1);
     // };
+
+
+    const handlePreviousStep = () => {
+        if(activeTab == "Preview"){
+            setActiveTab("Preview");
+        }else if(activeTab == "Design"){
+            setActiveTab("Preview");
+        }else if(activeTab == "Analysis"){
+            setActiveTab("Design");
+        }else if(activeTab == "Job Matching"){
+            setActiveTab("Analysis");
+        }else if(activeTab == "Cover Letter"){
+            setActiveTab("Job Matching");
+        }
+    }
+
+
+    const handleNextStep = () => {
+        if(activeTab == "Preview"){
+            setActiveTab("Design");
+        }else if(activeTab == "Design"){
+            setActiveTab("Analysis");
+        }else if(activeTab == "Analysis"){
+            setActiveTab("Job Matching");
+        }else if(activeTab == "Job Matching"){
+            setActiveTab("Cover Letter");
+        }else if(activeTab == "Cover Letter"){
+            setActiveTab("Cover Letter");
+        }
+    }
+
+    const handleUploadNew = () => {
+        navigate('/upload');
+    }
 
     const updateField = (path, value) => {
         setParsedResume((prev) => {
@@ -930,17 +968,22 @@ const CVBuilder = () => {
                                                     <Form.Group>
                                                         <Form.Label>First Name</Form.Label>
                                                         <Form.Control type="text"
-                                                            value={`${parsedResume?.candidateName?.[0]?.firstName || ''} ${parsedResume?.candidateName?.[0]?.familyName || ''}`}
+                                                            value={`${parsedResume?.candidateName?.[0]?.firstName || ''}`}
                                                             onChange={(e) => updateField("candidateName", [{
-                                                                firstName: e.target.value.split(' ')[0],
-                                                                familyName: e.target.value.split(' ').slice(1).join(' ')
+                                                                firstName: e.target.value,
+                                                                familyName: parsedResume?.candidateName?.[0]?.familyName || '',
                                                             }])} />
                                                     </Form.Group>
                                                 </Col>
                                                 <Col md={6}>
                                                     <Form.Group>
                                                         <Form.Label>Last name</Form.Label>
-                                                        <Form.Control type="text" />
+                                                        <Form.Control type="text"
+                                                            value={`${parsedResume?.candidateName?.[0]?.familyName || ''}`}
+                                                            onChange={(e) => updateField("candidateName", [{
+                                                                firstName: parsedResume?.candidateName?.[0]?.firstName || '',
+                                                                familyName: e.target.value,
+                                                            }])} />
                                                     </Form.Group>
                                                 </Col>
                                                 <Col md={12}>
@@ -1790,7 +1833,7 @@ const CVBuilder = () => {
                                         <div className="section-header">
                                             <h3>Original Statement</h3>
                                             <p className="example-statement">
-                                                {parsedResume?.summary}
+                                                { analysisResult?.originalParagraph || parsedResume?.summary}
                                             </p>
                                         </div>
                                         {!analysisRequestLoading ? (
@@ -1929,30 +1972,29 @@ const CVBuilder = () => {
                                 {/* Right Side - CV Preview */}
                                 <Col lg={5} xxl={6} className='right-section'>
                                     <Card className="border-0 shadow-custom mb-3">
-                                        <Card.Header className="bg-white border-bottom d-flex justify-content-between align-items-center">
-                                            <h5 className="mb-0 py-1" style={{ fontSize: '1rem' }}>CV Preview</h5>
-                                            {totalPages > 1 && (
-                                                <div className="d-flex align-items-center gap-2">
-                                                    <Button
-                                                        variant="outline-secondary"
-                                                        disabled={currentPage === 1}
-                                                        onClick={() => goToPage(currentPage - 1)}
-                                                    >
-                                                        Previous
-                                                    </Button>
-                                                    <span className="mx-2">
-                                                        Page {currentPage} of {totalPages}
-                                                    </span>
-                                                    <Button
-                                                        variant="outline-secondary"
-                                                        disabled={currentPage === totalPages}
-                                                        onClick={() => goToPage(currentPage + 1)}
-                                                    >
-                                                        Next
-                                                    </Button>
-                                                </div>
-                                            )}
-                                        </Card.Header>
+                                    <Card.Header className="bg-white border-bottom p-3">
+    <div className="d-flex justify-content-between align-items-center">
+        <h5 className="mb-0 fw-semibold" style={{ fontSize: '1.1rem' }}>CV Preview</h5>
+        <div className="d-flex gap-2">
+            <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={handleUploadNew}
+                className="d-flex align-items-center gap-1"
+            >
+                <FiUpload size={14} /> New Upload
+            </Button>
+            <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDownloadPDF}
+                className="d-flex align-items-center gap-1"
+            >
+                <FiDownload size={14} /> Download PDF
+            </Button>
+        </div>
+    </div>
+</Card.Header>
                                         <div
                                             ref={previewContainerRef}
                                             className="cv-template-div"
@@ -2015,16 +2057,27 @@ const CVBuilder = () => {
                                         </div>
                                     </Card>
                                     <Card className="border-0 shadow-custom">
-                                        <Card.Body className="d-flex p-2 justify-content-center alight-items-center gap-2">
-                                            <Button
-                                                variant="success"
-                                                onClick={handleDownloadPDF}
-                                                className="d-flex align-items-center gap-2"
-                                            >
-                                                <FiDownload /> Download PDF
-                                            </Button>
-                                        </Card.Body>
-                                    </Card>
+    <Card.Body className="p-3">
+        <div className="d-flex justify-content-between align-items-center">
+            <Button
+                variant="outline-primary"
+                onClick={handlePreviousStep}
+                disabled={activeTab === "Preview"}
+                className="d-flex align-items-center gap-2"
+            >
+                <FiChevronLeft /> Previous
+            </Button>
+            <Button
+                variant="primary"
+                onClick={handleNextStep}
+                disabled={activeTab === "Cover Letter"}
+                className="d-flex align-items-center gap-2"
+            >
+                Next <FiChevronRight />
+            </Button>
+        </div>
+    </Card.Body>
+</Card>
                                 </Col>
 
                             </Row>
