@@ -156,3 +156,36 @@
     background-color: #f0eaff;
   }
 }
+
+.payment-card {
+  & .card-body {
+    max-width: 500px;
+    padding-bottom: 80px !important;
+
+    & .small {
+      font-size: 13px;
+    }
+
+    & .sub-heading {
+      font-size: 16px;
+      font-weight: 600 !important;
+    }
+  }
+}
+
+
+.upload-profile{
+  margin: 70px 0px;
+  & .card-body{
+    max-width: 500px;
+    padding: 16px !important;
+
+    & .sub-card{
+      padding: 28px 36px;
+    }
+  }
+}
+
+.min-vh-90{
+  min-height: 90vh !important;
+}
