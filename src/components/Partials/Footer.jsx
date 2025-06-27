@@ -7,8 +7,8 @@ const Footer = () => {
         <footer className="bg-dark py-5 mt-auto">
             <Container>
                 {/* Links Row */}
-                <div className="d-flex justify-content-between">
-                    <Row className="g-5">
+                <div className="d-flex justify-content-between flex-wrap gap-4">
+                    <Row className="g-5 flex-shrink-0">
                         <Col xs="auto">
                             <a href="/about" className="text-light text-decoration-none">About</a>
                         </Col>
@@ -32,7 +32,7 @@ const Footer = () => {
                         </Col>
                     </Row>
 
-                    <Row className="g-5">
+                    <Row className="g-5 flex-shrink-0 justify-content-end">
                         <Col xs="auto">
                             <a href="/" className="text-light text-decoration-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" fill="none">
