@@ -82,7 +82,8 @@ const cardTemplate = [
 
 const CVBuilder = () => {
     const navigate = useNavigate();
-    const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
+    // const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
+    const baseUrl = "http://localhost:8000";
     const { parsedResume, setParsedResume } = useResume();
     const [customSections, setCustomSections] = useState([]);
 
@@ -536,12 +537,12 @@ const CVBuilder = () => {
             const { data } = result;
             if (data) {
                 // Parse the JSON strings from the response
-                const parsedIssues = JSON.parse(data.issues.replace(/```json\n|\n```/g, ''));
-                const parsedSuggestions = JSON.parse(data.suggested_changes.replace(/```json\n|\n```/g, ''));
+                const parsedIssues = data.issues;
+                const parsedSuggestions = data.suggested_changes;
                 console.log(parsedIssues);
                 console.log(parsedSuggestions);
-                setIssues(parsedIssues.issues);
-                setSuggestedParagraph(parsedSuggestions.revised_profile);
+                setIssues(parsedIssues);
+                setSuggestedParagraph(parsedSuggestions);
                 setAnalysisResult({
                     originalParagraph: data.original_paragraph
                 });
