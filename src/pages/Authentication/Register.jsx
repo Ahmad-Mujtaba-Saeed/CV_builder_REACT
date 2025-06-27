@@ -1,40 +1,90 @@
-import React from 'react';
-import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
-import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
-import { FiEye } from 'react-icons/fi';
-import './SignIn.css'; // Custom styles
+import React, { useState } from 'react';
+import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
+import { FaGoogle, FaFacebook, FaEnvelope, FaLock, FaExclamationCircle } from 'react-icons/fa';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import './SignIn.css';
 import axios from '../../utils/axios';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Signin = () => {
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(3, 'Name must be at least 3 characters')
+    .max(50, 'Name is too long')
+    .required('Name is required'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  password: Yup.string()
+    .min(8, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    )
+    .required('Password is required'),
+  password_confirmation: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
+  terms: Yup.boolean()
+    .oneOf([true], 'You must accept the terms and conditions')
+    .required('You must accept the terms and conditions')
+});
+
+const Register = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/api/register', formData);
-      console.log(response.data);
-      localStorage.setItem('access_token', response.data.access_token);
-      navigate('/');
-    } catch (error) {
-      console.error('Registration failed:', error);
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+      terms: false
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting, setFieldError }) => {
+      try {
+        setIsLoading(true);
+        setApiError('');
+
+        const response = await axios.post('/api/register', {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          password_confirmation: values.password_confirmation
+        });
+
+        localStorage.setItem('access_token', response.data.access_token);
+        toast.success('Registration successful! Redirecting...');
+        setTimeout(() => navigate('/'), 1500);
+      } catch (error) {
+        console.error('Registration failed:', error);
+
+        if (error.response?.data?.errors) {
+          // Handle Laravel validation errors
+          Object.entries(error.response.data.errors).forEach(([field, errors]) => {
+            setFieldError(field.toLowerCase(), errors[0]);
+          });
+        } else if (error.response?.data?.message) {
+          setApiError(error.response.data.message);
+        } else {
+          setApiError('An error occurred during registration. Please try again.');
+        }
+
+        toast.error('Registration failed. Please check the form for errors.');
+      } finally {
+        setIsLoading(false);
+        setSubmitting(false);
+      }
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  });
 
   return (
     <div className="signin-page">
@@ -79,18 +129,51 @@ const Signin = () => {
               <span>or use email</span>
             </div>
 
-            <Form onSubmit={handleRegister}>
+            <Form onSubmit={formik.handleSubmit}>
+              {apiError && (
+                <Alert variant="danger" className="d-flex align-items-center">
+                  <FaExclamationCircle className="me-2" />
+                  {apiError}
+                </Alert>
+              )}
+
               <Form.Group className="mb-3" controlId="formName">
                 <Form.Label className="text-muted small fw-semibold">NAME</Form.Label>
                 <div className="input-icon">
-                  <Form.Control name='name' onChange={handleChange} type="text" placeholder="Enter Your Name" className="" />
+                  <Form.Control
+                    name="name"
+                    type="text"
+                    placeholder="Enter Your Name"
+                    className={`${formik.touched.name && formik.errors.name ? 'is-invalid' : ''}`}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <div className="invalid-feedback d-block">
+                      {formik.errors.name}
+                    </div>
+                  )}
                 </div>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label className="text-muted small fw-semibold">EMAIL</Form.Label>
                 <div className="input-icon">
-                  <Form.Control name='email' onChange={handleChange} type="email" placeholder="Enter email address" className="" />
+                  <Form.Control
+                    name="email"
+                    type="email"
+                    placeholder="Enter email address"
+                    className={`${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.email}
+                  />
+                  {formik.touched.email && formik.errors.email && (
+                    <div className="invalid-feedback d-block">
+                      {formik.errors.email}
+                    </div>
+                  )}
                 </div>
               </Form.Group>
 
@@ -99,40 +182,114 @@ const Signin = () => {
                   <Form.Group className="mb-3" controlId="formPassword">
                     <Form.Label className="text-muted small fw-semibold">PASSWORD</Form.Label>
                     <div className="input-icon">
-                      <Form.Control name='password' onChange={handleChange} type="password" placeholder="Password" className="pe-5" defaultValue="" />
-                      <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
-                        <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
-                      </svg>
+                      <Form.Control
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className={`pe-5 ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.password}
+                      />
+                      <div
+                        className="input-icon-end"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                      </div>
+                      {formik.touched.password && formik.errors.password && (
+                        <div className="invalid-feedback d-block">
+                          {formik.errors.password}
+                        </div>
+                      )}
                     </div>
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group className="mb-3" controlId="formPasswordConform">
+                  <Form.Group className="mb-3" controlId="formPasswordConfirm">
                     <Form.Label className="text-muted small fw-semibold">CONFIRM PASSWORD</Form.Label>
                     <div className="input-icon">
-                      <Form.Control name='password_confirmation' onChange={handleChange} type="password" placeholder="Password" className="pe-5" defaultValue="" />
-                      <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
-                        <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
-                      </svg>
+                      <Form.Control
+                        name="password_confirmation"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm Password"
+                        className={`pe-5 ${formik.touched.password_confirmation && formik.errors.password_confirmation ? 'is-invalid' : ''}`}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.password_confirmation}
+                      />
+                      <div
+                        className="input-icon-end"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                      </div>
+                      {formik.touched.password_confirmation && formik.errors.password_confirmation && (
+                        <div className="invalid-feedback d-block">
+                          {formik.errors.password_confirmation}
+                        </div>
+                      )}
                     </div>
                   </Form.Group>
                 </Col>
               </Row>
 
-              <div className="d-flex justify-content-start gap-1 align-items-center mb-4">
-                <Form.Check label="I accept the" className="text-muted" />
-                <a href="#" className="small text-decoration-none text-purple privicy-policy">terms and privicy policy</a>
+              <div className="d-flex justify-content-start gap-1 align-items-start mb-4">
+                <Form.Check
+                  id="terms"
+                  name="terms"
+                  checked={formik.values.terms}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  isInvalid={formik.touched.terms && !!formik.errors.terms}
+                  className="text-muted"
+                />
+                <div>
+                  <Form.Label className="mb-0 ms-2" style={{ fontSize: '0.8rem' }}>
+                    I accept the{' '}
+                    <Link to="/terms" className="text-purple text-decoration-none">
+                      terms and privacy policy
+                    </Link>
+                  </Form.Label>
+                  {formik.touched.terms && formik.errors.terms && (
+                    <div className="invalid-feedback d-block">
+                      {formik.errors.terms}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <Button type="submit" variant="dark" className="w-100 py-2 sign-in-btn d-flex align-items-center gap-2 justify-content-center">
-                Register Account
-                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
-                  <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
-                </svg>
+              <Button
+                type="submit"
+                variant="dark"
+                className="w-100 py-2 sign-in-btn d-flex align-items-center gap-2 justify-content-center"
+                disabled={isLoading || !formik.isValid || formik.isSubmitting}
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Register Account
+                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
+                      <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
+                    </svg>
+                  </>
+                )}
               </Button>
 
               <div className="text-center mt-2 d-flex justify-content-center">
-                <a href="/login" className="small text-purple text-decoration-none" style={{ fontSize: '13px', fontWeight: '600' }}>Already a member? Click here to sign in</a>
+                <Link
+                  to="/login"
+                  className="small text-purple text-decoration-none"
+                  style={{ fontSize: '13px', fontWeight: '600' }}
+                >
+                  Already a member? Click here to sign in
+                </Link>
               </div>
             </Form>
           </Card.Body>
@@ -142,4 +299,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Register;

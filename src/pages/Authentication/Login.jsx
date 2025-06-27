@@ -1,40 +1,62 @@
-import React from 'react';
-import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
-import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
-import { FiEye } from 'react-icons/fi';
-import './SignIn.css'; // Custom styles
+import React, { useState } from 'react';
+import { Container, Form, Button, Card } from 'react-bootstrap';
+import { FaGoogle, FaFacebook, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './SignIn.css';
 import axios from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+
+// Validation schema
+const loginSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters')
+});
 
 const Signin = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (values, { setSubmitting, setFieldError }) => {
+    setIsLoading(true);
+    setApiError('');
+    
     try {
-      const response = await axios.post('/api/login', formData);
-      console.log(response.data);
+      const response = await axios.post('/api/login', values);
       localStorage.setItem('access_token', response.data.access_token);
+      toast.success('Login successful!');
       navigate('/');
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Login failed:', error);
+      const errorMessage = error.response?.data?.message || 'An error occurred during login';
+      setApiError(errorMessage);
+      
+      if (error.response?.data?.errors) {
+        // Handle field-specific errors from the API
+        Object.entries(error.response.data.errors).forEach(([field, message]) => {
+          setFieldError(field, Array.isArray(message) ? message[0] : message);
+        });
+      }
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+      setSubmitting(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
-  return (
 
+  return (
     <div className="signin-page">
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="signin-card shadow-sm">
@@ -61,7 +83,7 @@ const Signin = () => {
 
             <Button variant="light" className="w-100 mb-3 gap-2 d-flex align-items-center justify-content-center border google-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
-                <path d="M10.3609 5.79453C10.3609 8.62344 8.42852 10.6156 5.57969 10.6156C2.83047 10.6156 0.639062 8.42422 0.639062 5.675C0.639062 2.9457 2.83047 0.734375 5.57969 0.734375C6.89453 0.734375 8.03008 1.23242 8.88672 2.0293L7.53203 3.32422C5.77891 1.63086 2.51172 2.90586 2.51172 5.675C2.51172 7.4082 3.88633 8.80273 5.57969 8.80273C7.53203 8.80273 8.26914 7.4082 8.36875 6.67109H5.57969V4.97773H10.2812C10.3211 5.23672 10.3609 5.47578 10.3609 5.79453Z" fill="#CC1B00" />
+                <path d="M10.3609 5.79453C10.3609 8.62344 8.42852 10.6156 5.57969 10.6156C2.83047 10.6156 0.639062 8.42422 0.639062 5.675C0.639062 2.9457 2.83047 0.734375 5.57969 0.734375C6.89453 0.734375 8.03008 1.23242 8.88672 2.0293L7.53203 3.32422C5.77891 1.63086 2.51172 2.90586 2.51172 5.675C2.51172 7.4082 3.88633 8.80273 5.57969 8.80273C7.53203 8.80273 8.26914 7.4082 8.36875 6.67109H5.57969V4.97773H10.2812C10.3211 5.23672 10.3609 5.47578 10.3609 5.79453ZM6.025 7.8C6.6 8.225 7.375 8.225 7.95 7.8L13.4 3.7V8.9C13.4 9.8 12.675 10.5 11.8 10.5H2.2C1.3 10.5 0.6 9.8 0.6 8.9V3.7L6.025 7.8Z" fill="#CC1B00" />
               </svg>
               <span>Sign in with google</span>
             </Button>
@@ -77,46 +99,124 @@ const Signin = () => {
               <span>or use email</span>
             </div>
 
-            <Form onSubmit={handleLogin}>
-              <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Label className="text-muted small fw-semibold">EMAIL</Form.Label>
-                <div className="input-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="11" viewBox="0 0 14 11" fill="none">
-                    <path d="M12.2 0.9C12.85 0.9 13.4 1.45 13.4 2.1C13.4 2.5 13.2 2.85 12.9 3.075L7.475 7.15C7.175 7.375 6.8 7.375 6.5 7.15L1.075 3.075C0.775 2.85 0.6 2.5 0.6 2.1C0.6 1.45 1.125 0.9 1.8 0.9H12.2ZM6.025 7.8C6.6 8.225 7.375 8.225 7.95 7.8L13.4 3.7V8.9C13.4 9.8 12.675 10.5 11.8 10.5H2.2C1.3 10.5 0.6 9.8 0.6 8.9V3.7L6.025 7.8Z" fill="#31374A" />
-                  </svg>
-                  <Form.Control onChange={handleChange} name='email' type="email" placeholder="Enter email address" className="ps-5" />
-                </div>
-              </Form.Group>
+            <Formik
+              initialValues={{
+                email: '',
+                password: '',
+                remember: false
+              }}
+              validationSchema={loginSchema}
+              onSubmit={handleLogin}
+            >
+              {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+                <Form onSubmit={handleSubmit}>
+                  {apiError && (
+                    <div className="alert alert-danger d-flex align-items-center" role="alert">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" className="me-2" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                      </svg>
+                      <div>{apiError}</div>
+                    </div>
+                  )}
 
-              <Form.Group className="mb-3" controlId="formPassword">
-                <Form.Label className="text-muted small fw-semibold">PASSWORD</Form.Label>
-                <div className="input-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M7.65 8.9L6.8 9.725C6.7 9.85 6.55 9.9 6.4 9.9H5.4V10.9C5.4 11.25 5.125 11.5 4.8 11.5H3.8V12.5C3.8 12.85 3.525 13.1 3.2 13.1H1.2C0.85 13.1 0.6 12.85 0.6 12.5V10.5C0.6 10.35 0.65 10.2 0.775 10.075L4.8 6.05C4.65 5.625 4.6 5.175 4.6 4.7C4.6 2.275 6.55 0.3 9 0.3C11.425 0.3 13.4 2.275 13.4 4.7C13.4 7.15 11.425 9.1 9 9.1C8.525 9.1 8.075 9.05 7.65 8.9ZM10 4.7C10.55 4.7 11 4.275 11 3.7C11 3.15 10.55 2.7 10 2.7C9.425 2.7 9 3.15 9 3.7C9 4.275 9.425 4.7 10 4.7Z" fill="#31374A" />
-                  </svg>
-                  <Form.Control onChange={handleChange} name='password' type="password" placeholder="Password" className="ps-5 pe-5" defaultValue="" />
-                  <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-end" width="16" height="12" viewBox="0 0 16 12" fill="none">
-                    <path d="M7.775 3.325C7.85 3.325 7.925 3.3 8 3.3C9.325 3.3 10.4 4.375 10.4 5.7C10.4 7.025 9.325 8.1 8 8.1C6.65 8.1 5.6 7.025 5.6 5.7C5.6 5.65 5.6 5.575 5.6 5.5C5.825 5.625 6.1 5.7 6.4 5.7C7.275 5.7 8 5 8 4.1C8 3.825 7.9 3.55 7.775 3.325ZM12.8 2.125C13.975 3.2 14.75 4.5 15.125 5.4C15.2 5.6 15.2 5.825 15.125 6.025C14.75 6.9 13.975 8.2 12.8 9.3C11.625 10.4 10 11.3 8 11.3C5.975 11.3 4.35 10.4 3.175 9.3C2 8.2 1.225 6.9 0.85 6.025C0.775 5.825 0.775 5.6 0.85 5.4C1.225 4.5 2 3.2 3.175 2.125C4.35 1.025 5.975 0.0999998 8 0.0999998C10 0.0999998 11.625 1.025 12.8 2.125ZM8 2.1C6 2.1 4.4 3.725 4.4 5.7C4.4 7.7 6 9.3 8 9.3C9.975 9.3 11.6 7.7 11.6 5.7C11.6 3.725 9.975 2.1 8 2.1Z" fill="#525B75" />
-                  </svg>
-                </div>
-              </Form.Group>
+                  <Form.Group className="mb-3" controlId="formEmail">
+                    <Form.Label className="text-muted small fw-semibold">EMAIL</Form.Label>
+                    <div className="input-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="11" viewBox="0 0 14 11" fill="none">
+                        <path d="M12.2 0.9C12.85 0.9 13.4 1.45 13.4 2.1C13.4 2.5 13.2 2.85 12.9 3.075L7.475 7.15C7.175 7.375 6.8 7.375 6.5 7.15L1.075 3.075C0.775 2.85 0.6 2.5 0.6 2.1C0.6 1.45 1.125 0.9 1.8 0.9H12.2ZM6.025 7.8C6.6 8.225 7.375 8.225 7.95 7.8L13.4 3.7V8.9C13.4 9.8 12.675 10.5 11.8 10.5H2.2C1.3 10.5 0.6 9.8 0.6 8.9V3.7L6.025 7.8Z" fill="#31374A" />
+                      </svg>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        placeholder="Enter email address"
+                        className={`ps-5 ${touched.email && errors.email ? 'is-invalid' : ''}`}
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {touched.email && errors.email && (
+                      <div className="invalid-feedback d-block">{errors.email}</div>
+                    )}
+                  </Form.Group>
 
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <Form.Check label="Remember me" className="text-muted" />
-                <a href="/forgot-password" className="small text-decoration-none text-purple forget-password">Forgot Password?</a>
-              </div>
+                  <Form.Group className="mb-3" controlId="formPassword">
+                    <Form.Label className="text-muted small fw-semibold">PASSWORD</Form.Label>
+                    <div className="input-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="input-icon-start" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M7.65 8.9L6.8 9.725C6.7 9.85 6.55 9.9 6.4 9.9H5.4V10.9C5.4 11.25 5.125 11.5 4.8 11.5H3.8V12.5C3.8 12.85 3.525 13.1 3.2 13.1H1.2C0.85 13.1 0.6 12.85 0.6 12.5V10.5C0.6 10.35 0.65 10.2 0.775 10.075L4.8 6.05C4.65 5.625 4.6 5.175 4.6 4.7C4.6 2.275 6.55 0.3 9 0.3C11.425 0.3 13.4 2.275 13.4 4.7C13.4 7.15 11.425 9.1 9 9.1C8.525 9.1 8.075 9.05 7.65 8.9ZM10 4.7C10.55 4.7 11 4.275 11 3.7C11 3.15 10.55 2.7 10 2.7C9.425 2.7 9 3.15 9 3.7C9 4.275 9.425 4.7 10 4.7Z" fill="#31374A" />
+                      </svg>
+                      <Form.Control
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Password"
+                        className={`ps-5 pe-5 ${touched.password && errors.password ? 'is-invalid' : ''}`}
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        disabled={isLoading}
+                      />
+                      <div 
+                        className="input-icon-end" 
+                        onClick={togglePasswordVisibility}
+                        style={{ cursor: 'pointer', padding: '0 10px' }}
+                      >
+                        {showPassword ? (
+                          <FaEyeSlash size={16} color="#525B75" />
+                        ) : (
+                          <FaEye size={16} color="#525B75" />
+                        )}
+                      </div>
+                    </div>
+                    {touched.password && errors.password && (
+                      <div className="invalid-feedback d-block">{errors.password}</div>
+                    )}
+                  </Form.Group>
 
-              <Button type="submit" variant="dark" className="w-100 py-2 sign-in-btn d-flex align-items-center gap-2 justify-content-center">
-                Sign In
-                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
-                  <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
-                </svg>
-              </Button>
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <Form.Check
+                      type="checkbox"
+                      id="remember"
+                      name="remember"
+                      label="Remember me"
+                      className="text-muted"
+                      checked={values.remember}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                    />
+                    <a href="/forgot-password" className="small text-decoration-none text-purple forget-password">
+                      Forgot Password?
+                    </a>
+                  </div>
 
-              <div className="text-center mt-2 d-flex justify-content-center">
-                <a href="/register" className="small text-purple text-decoration-none" style={{ fontSize: '13px', fontWeight: '600' }}>Create an account</a>
-              </div>
-            </Form>
+                  <Button 
+                    type="submit" 
+                    variant="dark" 
+                    className="w-100 py-2 sign-in-btn d-flex align-items-center gap-2 justify-content-center"
+                    disabled={isLoading || isSubmitting}
+                  >
+                    {isLoading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Signing In...
+                      </>
+                    ) : (
+                      <>
+                        Sign In
+                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
+                          <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
+                      </svg>
+                    </>
+                  )}
+                  </Button>
+
+                  <div className="text-center mt-2 d-flex justify-content-center">
+                    <a href="/register" className="small text-purple text-decoration-none" style={{ fontSize: '13px', fontWeight: '600' }}>Create an account</a>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </Card.Body>
         </Card>
       </Container>
