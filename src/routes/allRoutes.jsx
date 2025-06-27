@@ -15,6 +15,7 @@ import Logout from "../pages/Authentication/Logout.jsx";
 
 import Payment from "../pages/Authentication/PaymentPage";
 import UploadProfile from "../pages/Authentication/UploadProfile";
+import LinkVacancy from "../pages/Authentication/LinkVacancy";
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -28,6 +29,7 @@ const userRoutes = [
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
   { path: "/build-CV-AI", component: <BuildCVAI />},
+  { path: "/link-vacancy", component: <LinkVacancy />},
 ]
 
 const authRoutes = [

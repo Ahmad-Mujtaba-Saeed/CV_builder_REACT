@@ -277,20 +277,16 @@
   border-color: var(--primary-color);
 }
 
-body {
-  overflow: hidden !important;
-}
-
 .left-section {
   overflow: auto;
-  height: calc(100vh - 115px);
+  height: calc(100vh - 52px);
   padding: 24px 90px;
 }
 
 .right-section {
-  padding: 0px 40px 12px;
+  padding: 16px 40px 12px;
   position: relative;
-  height: calc(100vh - 115px);
+  height: calc(100vh - 52px);
 }
 
 .cv-template-div {
@@ -323,7 +319,7 @@ body {
     padding: 24px 40px;
   }
   .right-section {
-    padding: 0px 40px 12px;
+    padding: 16px 40px 12px;
   }
 }
 
@@ -332,20 +328,17 @@ body {
     padding: 24px 16px;
   }
   .right-section {
-    padding: 0px 16px 12px;
+    padding: 16px 16px 12px;
   }
 }
 
 @media (max-width: 991px) {
-  body {
-    overflow: auto !important;
-  }
   .left-section {
     height: unset;
     padding: 24px 120px;
   }
   .right-section {
-    padding: 0px 120px 12px;
+    padding: 16px 120px 12px;
   }
 }
 

@@ -173,19 +173,49 @@
   }
 }
 
-
-.upload-profile{
+.upload-profile {
   margin: 70px 0px;
-  & .card-body{
+  & .card-body {
     max-width: 500px;
     padding: 16px !important;
 
-    & .sub-card{
+    & .sub-card {
       padding: 28px 36px;
     }
   }
 }
 
-.min-vh-90{
+.min-vh-90 {
   min-height: 90vh !important;
+}
+
+.link-vacancy {
+  & .card-body {
+    max-width: 100%;
+    padding: 16px !important;
+
+    & .vacancy-image {
+      margin: 0 auto;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+
+      & img {
+        max-width: 280px;
+      }
+
+      & .sub-heading {
+        font-size: 16px;
+        margin: 16px 0px 24px;
+      }
+    }
+
+    & .link-card {
+      & .custom-button {
+        padding: 6px 20px;
+      }
+    }
+  }
 }

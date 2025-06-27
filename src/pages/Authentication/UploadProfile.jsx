@@ -7,6 +7,7 @@ import axios from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Header from '../../components/Partials/Header';
+import Footer from '../../components/Partials/Footer';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -107,6 +108,7 @@ const Signin = () => {
           </Card.Body>
         </Card>
       </Container>
+      <Footer />
     </div>
   );
 };

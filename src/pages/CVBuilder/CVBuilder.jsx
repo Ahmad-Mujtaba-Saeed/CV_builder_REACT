@@ -1964,7 +1964,7 @@ const CVBuilder = () => {
                         </motion.div>
 
                         <Container fluid className="">
-                            <Row className="mt-3">
+                            <Row className="">
                                 <Col lg={7} xxl={6} className='left-section'>
                                     <Tab.Container className='cv-builder-container' activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
                                         <Row>
