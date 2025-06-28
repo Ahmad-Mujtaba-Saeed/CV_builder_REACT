@@ -16,6 +16,9 @@ import Logout from "../pages/Authentication/Logout.jsx";
 import Payment from "../pages/Authentication/PaymentPage";
 import UploadProfile from "../pages/Authentication/UploadProfile";
 import LinkVacancy from "../pages/Authentication/LinkVacancy";
+import Success from "../pages/Authentication/Success";
+import LockScreen from "../pages/Authentication/LockScreen.jsx";
+import WelcomeBack from "../pages/Authentication/WelcomeBack.jsx";
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -30,6 +33,9 @@ const userRoutes = [
   { path: "/cv-builder", component: <CVBuilder /> },
   { path: "/build-CV-AI", component: <BuildCVAI />},
   { path: "/link-vacancy", component: <LinkVacancy />},
+  { path: "/success", component: <Success />},
+  { path: "/lock", component: <LockScreen />},
+  { path: "/welcome-back", component: <WelcomeBack />},
 ]
 
 const authRoutes = [

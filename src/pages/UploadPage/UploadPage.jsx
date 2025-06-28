@@ -266,7 +266,7 @@ const UploadPage = () => {
               <div className="d-flex justify-content-center gap-3">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    // variant="primary"
+                    variant="secondary"
                     onClick={handleManualCV}
                     className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button"
                   >
@@ -275,7 +275,7 @@ const UploadPage = () => {
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    // variant="success"
+                    variant="primary"
                     onClick={handleAICV}
                     className="d-flex align-items-center gap-2 cv-with-ai-btn custom-button"
                   >

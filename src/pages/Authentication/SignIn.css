@@ -219,3 +219,77 @@
     }
   }
 }
+
+.status-card {
+  & .title {
+    font-size: 20px;
+  }
+  & .content {
+    font-size: 14px;
+  }
+  & a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: var(--primary-color);
+    gap: 8px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+}
+
+.lockCard .card-body {
+  padding: 16px !important;
+  max-width: 100%;
+
+  & .image-header {
+    width: 100%;
+
+    & img {
+      width: 100%;
+    }
+  }
+
+  & .lock-content {
+    max-width: 480px;
+    margin: 20px auto;
+
+    & .title {
+      font-size: 20px;
+    }
+
+    & .content {
+      font-size: 14px;
+    }
+  }
+}
+
+.welcomeCard .card-body {
+  padding: 16px !important;
+  max-width: 100%;
+
+  & .image-header {
+    display: flex;
+    justify-content: center;
+
+    & img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+  }
+
+  & .welcome-content {
+    max-width: 350px;
+    margin: 20px auto;
+
+    & .title {
+      font-size: 20px;
+    }
+
+    & .content {
+      font-size: 14px;
+    }
+  }
+}
