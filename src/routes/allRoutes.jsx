@@ -19,6 +19,10 @@ import LinkVacancy from "../pages/Authentication/LinkVacancy";
 import Success from "../pages/Authentication/Success";
 import LockScreen from "../pages/Authentication/LockScreen.jsx";
 import WelcomeBack from "../pages/Authentication/WelcomeBack.jsx";
+import InterviewQuestions from "../pages/InterviewQuestions/InterviewQuestions.jsx";
+import PracticeQuestion from "../pages/PracticeQuestion/PracticeQuestion.jsx";
+import QuestionFeedback from "../pages/QuestionFeedback/QuestionFeedback.jsx";
+import ManageCategories from "../pages/dashboard/ManageCategories/ManageCategories.jsx";
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -29,6 +33,10 @@ import WelcomeBack from "../pages/Authentication/WelcomeBack.jsx";
 const userRoutes = [
  
   { path: "/", component: <MainMenu /> },
+  { path: "/dashboard/categories", component: <ManageCategories /> },
+  { path: "/question-feedback", component: <QuestionFeedback /> },
+  { path: "/practice-question/:id", component: <PracticeQuestion /> },
+  { path: "/interview-questions", component: <InterviewQuestions /> },
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
   { path: "/build-CV-AI", component: <BuildCVAI />},

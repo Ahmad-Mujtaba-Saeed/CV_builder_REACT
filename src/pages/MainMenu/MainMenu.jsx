@@ -58,7 +58,7 @@ const PathfinderLanding = () => {
             </svg>),
             title: 'Interview with confidence',
             description: 'Got an interview coming up? Jump straight into our simulator for immediate feedback.',
-            path: '/interview-simulator'
+            path: '/interview-questions'
         },
         {
             icon: (<svg xmlns="http://www.w3.org/2000/svg" width="150" height="151" viewBox="0 0 150 151" fill="none">

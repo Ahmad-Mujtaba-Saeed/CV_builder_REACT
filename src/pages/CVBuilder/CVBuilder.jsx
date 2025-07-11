@@ -82,8 +82,8 @@ const cardTemplate = [
 
 const CVBuilder = () => {
     const navigate = useNavigate();
-    // const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
-    const baseUrl = "http://localhost:8000";
+    const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
+    // const baseUrl = "http://localhost:8000";
     const { parsedResume, setParsedResume } = useResume();
     const [customSections, setCustomSections] = useState([]);
 
