@@ -14,7 +14,7 @@ import {
 import { Search, Filter, SortAsc, Video, RotateCcw, Play } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
-import axios from "../../utils/axios";
+import axios from "../../../utils/axios";
 
 
 const questions = [
@@ -442,7 +442,7 @@ const InterviewQuestions = () => {
                                         )}
                                     </div>
                                     <Button 
-                                        onClick={() => navigate(`/practice-question/${q.id}`)} 
+                                        onClick={() => navigate(`/dashboard/practice-question/${q.id}`)} 
                                         variant="outline-primary" 
                                         size="sm"
                                         disabled={isLoading}
@@ -497,7 +497,7 @@ const InterviewQuestions = () => {
                                     <Button 
                                         variant="outline-primary" 
                                         size="sm" 
-                                        onClick={() => navigate(`/practice-question/${q.question?.id}`)}
+                                        onClick={() => navigate(`/dashboard/practice-question/${q.question?.id}`)}
                                     >
                                         <RotateCcw size={16} className="me-1" /> Retry
                                     </Button>

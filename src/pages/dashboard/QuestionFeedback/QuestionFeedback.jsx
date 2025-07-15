@@ -1,6 +1,6 @@
 import React from "react";
-import { UserContext } from "../../context/userContext";
-import { FeedbackContext } from "../../context/feedbackContext";
+import { UserContext } from "../../../context/userContext";
+import { FeedbackContext } from "../../../context/feedbackContext";
 import { useContext } from "react";
 import "./QuestionFeedback.css";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ const QuestionFeedback = () => {
                     </button>
                     <button 
                         className="btn btn-primary d-flex align-items-center gap-1"
-                        onClick={() => navigate('/practice-question/' + parsedFeedback?.question?.id)}
+                        onClick={() => navigate('/dashboard/practice-question/' + parsedFeedback?.question?.id)}
                     >
                         <i className="bi bi-arrow-repeat"></i> Retry
                     </button>

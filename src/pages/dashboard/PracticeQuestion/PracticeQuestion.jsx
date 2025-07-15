@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "../../utils/axios";
+import axios from "../../../utils/axios";
 import { Spinner } from "react-bootstrap";
 import "./PracticeQuestion.css";
 import { motion } from "framer-motion";
-import { UserContext } from "../../context/userContext";
-import { FeedbackContext } from "../../context/feedbackContext";
+import { UserContext } from "../../../context/userContext";
+import { FeedbackContext } from "../../../context/feedbackContext";
 import Swal from "sweetalert2";
 
 const PracticeQuestion = () => {
@@ -101,7 +101,7 @@ const PracticeQuestion = () => {
                         }
                     });
                     setParsedFeedback(response.data);
-                    navigate('/question-feedback');
+                    navigate('/dashboard/question-feedback');
                 } catch (error) {
                     console.error('Upload failed:', error);
                 }
