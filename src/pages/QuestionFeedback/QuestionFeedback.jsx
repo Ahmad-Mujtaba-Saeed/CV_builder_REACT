@@ -14,7 +14,10 @@ const QuestionFeedback = () => {
         <div className="feedback-container">
             <div className="feedback-header">
                 <div className="d-flex justify-content-between">
-                <h1>Well done for completing your interview practice.</h1>
+                {parsedFeedback?.evaluation?.score < 40 
+  ? <h1>Please review the feedback and try the question again.</h1> 
+  : <h1>Great job on completing your interview practice!</h1>}
+
                 <div className="d-flex gap-2">
                     <button 
                         className="btn btn-outline-primary d-flex align-items-center gap-1"

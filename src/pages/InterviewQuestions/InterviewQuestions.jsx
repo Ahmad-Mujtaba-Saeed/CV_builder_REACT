@@ -245,7 +245,7 @@ const InterviewQuestions = () => {
             case 2:
                 return (
                     <>
-                        <Modal.Title className="text-center mb-4">Select Industry</Modal.Title>
+                        <Modal.Title className="text-center mb-4">What Do You Want to Practice?</Modal.Title>
                         <div className="d-grid gap-2">
                             {questionTypes.map(type => (
                                 <Button

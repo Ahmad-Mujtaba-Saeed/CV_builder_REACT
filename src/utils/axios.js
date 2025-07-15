@@ -4,7 +4,7 @@ import axios from 'axios';
 // https://deepskyblue-donkey-692108.hostingersite.com
 // Create axios instance with base URL
 const instance = axios.create({
-    baseURL: 'http://localhost:8000',
+    baseURL: 'https://deepskyblue-donkey-692108.hostingersite.com',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
