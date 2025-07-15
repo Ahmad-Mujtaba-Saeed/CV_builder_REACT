@@ -348,6 +348,7 @@ const PracticeQuestion = () => {
                 </div> */}
                 <motion.div style={{display: 'flex', justifyContent: 'center'}}>
                 <motion.button 
+                    onClick={()=> navigate('/')}
                     className="start-button bg-warning"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
