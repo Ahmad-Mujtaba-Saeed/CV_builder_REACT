@@ -23,6 +23,7 @@ import InterviewQuestions from "../pages/InterviewQuestions/InterviewQuestions.j
 import PracticeQuestion from "../pages/PracticeQuestion/PracticeQuestion.jsx";
 import QuestionFeedback from "../pages/QuestionFeedback/QuestionFeedback.jsx";
 import ManageCategories from "../pages/dashboard/ManageCategories/ManageCategories.jsx";
+import DashboardLanding from "../pages/dashboard/DashboardLanding/DashboardLanding.jsx";
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -33,6 +34,7 @@ import ManageCategories from "../pages/dashboard/ManageCategories/ManageCategori
 const userRoutes = [
  
   { path: "/", component: <MainMenu /> },
+  { path: "/dashboard", component: <DashboardLanding /> },
   { path: "/dashboard/categories", component: <ManageCategories /> },
   { path: "/question-feedback", component: <QuestionFeedback /> },
   { path: "/practice-question/:id", component: <PracticeQuestion /> },
