@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useContext} from "react";
 import { motion } from "framer-motion";
 import { 
   Container, 
@@ -15,6 +15,7 @@ import { Search, Filter, SortAsc, Video, RotateCcw, Play } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../utils/axios";
+import { UserContext } from "../../../context/UserContext";
 
 
 const questions = [
@@ -73,7 +74,8 @@ const history = [
 
 const InterviewQuestions = () => {
     const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(true);
+    const {userData} = useContext(UserContext);
+    const [showModal, setShowModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     
@@ -96,6 +98,9 @@ const InterviewQuestions = () => {
 
 
     const [historyQuestions, setHistoryQuestions] = useState([]);
+
+
+
 
     const fetchHistoryQuestions = async () => {
         try {
@@ -153,13 +158,7 @@ const InterviewQuestions = () => {
     }, []);
     
     // Fetch questions when filters change
-    useEffect(() => {
-        if (!showModal) {
-            fetchQuestions();
-            fetchHistoryQuestions();
-        }
-    }, [filters, showModal]);
-    
+
     // Fetch subcategories when question type is selected
     useEffect(() => {
         const fetchSubcategories = async () => {
@@ -206,6 +205,14 @@ const InterviewQuestions = () => {
             return newFilters;
         });
     };
+
+    useEffect(() => {
+        if (filters) {
+            fetchQuestions();
+            fetchHistoryQuestions();
+        }
+    }, [filters]);
+    
     
     const handleSearch = (e) => {
         e.preventDefault();
@@ -220,6 +227,24 @@ const InterviewQuestions = () => {
             searchQuery: ""
         });
     };
+
+    useEffect(() => {
+        if(!userData) return;
+        if(userData.preferred_industry && userData.preferred_industry_type){
+            setFilters((prev) => ({
+                ...prev,
+                subcategory: userData?.preferred_industry,
+                questionType: userData?.preferred_industry_type,
+                difficulty: {
+                    id: 1,
+                    name: "Easy",
+                    slug: "E"
+                },
+            }))
+        }else{
+            setShowModal(true);
+        }
+    }, [userData]);
     
     const renderStepContent = () => {
         switch (currentStep) {

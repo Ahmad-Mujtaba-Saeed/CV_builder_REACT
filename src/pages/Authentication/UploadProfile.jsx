@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useEffect , useState , useContext } from 'react';
 import { Container, Row, Col, Form, Button, Card, } from 'react-bootstrap';
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import './SignIn.css'; // Custom styles
 import axios from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import Header from '../../components/Partials/Header';
 import Footer from '../../components/Partials/Footer';
+import Select from 'react-select';
+import { UserContext } from '../../context/UserContext';
+import {Spinner} from 'react-bootstrap';
 
 const Signin = () => {
   const navigate = useNavigate();
+  const {userData , setUserData} = useContext(UserContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,24 +21,65 @@ const Signin = () => {
     password_confirmation: '',
   });
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const [industries , setIndustries] = useState([]);
+  const [roles , setRoles] = useState([]);
+  const [educationLevels , setEducationLevels] = useState([]);
+  const [loading , setLoading] = useState(false);
+
+
+  const fetchIndustries = async () => {
     try {
-      const response = await axios.post('/api/register', formData);
-      console.log(response.data);
-      localStorage.setItem('access_token', response.data.access_token);
-      navigate('/');
+      const response = await axios.get('/api/get-industries');
+      setIndustries(response.data);
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Failed to fetch industries:', error);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const fetchRoles = async () => {
+    try {
+      const response = await axios.get('/api/get-roles');
+      setRoles(response.data);
+    } catch (error) {
+      console.error('Failed to fetch roles:', error);
+    }
+  };
+
+  const fetchEducationLevels = async () => {
+    try {
+      const response = await axios.get('/api/get-education-levels');
+      setEducationLevels(response.data);
+    } catch (error) {
+      console.error('Failed to fetch education levels:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchIndustries();
+    fetchRoles();
+    fetchEducationLevels();
+  }, []);
+
+  const industryOptions = industries.map(industry => ({ value: industry.id, label: industry.name }));
+  const roleOptions = roles.map(role => ({ value: role.id, label: role.name }));
+  const educationOptions = educationLevels.map(edu => ({ value: edu.id, label: edu.name }));
+
+
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await axios.post('/api/upload-profile', formData);
+      console.log(response.data);
+      setLoading(false);
+      setUserData(response.data);
+      navigate('/');
+    } catch (error) {
+      setLoading(false);
+      console.error('Upload profile failed:', error);
+    }
   };
 
   return (
@@ -68,39 +112,55 @@ const Signin = () => {
                 <span>or complete a short questionnaire</span>
               </div>
 
-              <Form>
-                <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label className="text-muted small fw-semibold">Industry I am looking to work in:</Form.Label>
-                  <div className="input-icon">
-                    <Form.Select name='industury' className="">
-                      <option value="">-- Select --</option>
-                      <option value="">Industury 1</option>
-                      <option value="">Industury 2</option>
-                    </Form.Select>
-                  </div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label className="text-muted small fw-semibold">JOB ROLE I am looking to work in:</Form.Label>
-                  <div className="input-icon">
-                    <Form.Select name='job' className="">
-                      <option value="">-- Select --</option>
-                      <option value="">Job 1</option>
-                      <option value="">Job 2</option>
-                    </Form.Select>
-                  </div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label className="text-muted small fw-semibold">Education level:</Form.Label>
-                  <div className="input-icon">
-                    <Form.Control name='email' type="text" placeholder="Enter Email Address" className="" />
-                  </div>
-                </Form.Group>
+              <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formIndustry">
+  <Form.Label className="text-muted small fw-semibold">Industry I am looking to work in:</Form.Label>
+  <Select
+    name="industry"
+    options={industryOptions}
+    placeholder="Select industry..."
+    onChange={(selected) =>
+      setFormData((prevData) => ({ ...prevData, industry_id: selected?.value }))
+    }
+  />
+</Form.Group>
+
+<Form.Group className="mb-3" controlId="formRole">
+  <Form.Label className="text-muted small fw-semibold">Job Role I am looking to work in:</Form.Label>
+  <Select
+    name="role"
+    options={roleOptions}
+    placeholder="Select job role..."
+    onChange={(selected) =>
+      setFormData((prevData) => ({ ...prevData, role_id: selected?.value }))
+    }
+  />
+</Form.Group>
+
+<Form.Group className="mb-3" controlId="formEducation">
+  <Form.Label className="text-muted small fw-semibold">Education Level:</Form.Label>
+  <Select
+    name="education"
+    options={educationOptions}
+    placeholder="Select education level..."
+    onChange={(selected) =>
+      setFormData((prevData) => ({ ...prevData, education_level_id: selected?.value }))
+    }
+  />
+</Form.Group>
+
 
                 <Button type="submit" variant="dark" className="w-100 py-2 sign-in-btn d-flex align-items-center gap-2 justify-content-center mt-3">
                   Continue
-                  <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
-                    <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
-                  </svg>
+                  {loading ? (
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>  
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="15" viewBox="0 0 9 15" fill="none">
+                      <path d="M1.5 14.5C1.21875 14.5 0.96875 14.4062 0.78125 14.2188C0.375 13.8438 0.375 13.1875 0.78125 12.8125L6.0625 7.5L0.78125 2.21875C0.375 1.84375 0.375 1.1875 0.78125 0.8125C1.15625 0.40625 1.8125 0.40625 2.1875 0.8125L8.1875 6.8125C8.59375 7.1875 8.59375 7.84375 8.1875 8.21875L2.1875 14.2188C2 14.4062 1.75 14.5 1.5 14.5Z" fill="white" />
+                    </svg>
+                  )}
                 </Button>
 
               </Form>

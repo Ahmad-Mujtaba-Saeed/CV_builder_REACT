@@ -1,7 +1,7 @@
 // import PropTypes from 'prop-types'
 import React, { useState, useEffect } from "react"
 
-import { UserContext } from "./context/userContext"
+import { UserContext } from "./context/UserContext"
 import { Route, Routes, Navigate } from "react-router-dom"
 // import { connect } from "react-redux"
 import axios from "./utils/axios"
@@ -25,21 +25,14 @@ const App = () => {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access_token')
-    if (!accessToken) {
-      return
-    }
 
     const getUserData = async () => {
       try {
-        const response = await axios.get(`/api/user`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        })
+        const response = await axios.get(`/api/user`)
         setUserData(response.data)
         setError(null)
       } catch (err) {
         setError(err)
-        localStorage.removeItem('access_token')
         setUserData(null)
       }
     }

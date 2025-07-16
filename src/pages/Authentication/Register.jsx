@@ -63,7 +63,7 @@ const Register = () => {
 
         localStorage.setItem('access_token', response.data.access_token);
         toast.success('Registration successful! Redirecting...');
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => navigate('/upload-profile'), 1500);
       } catch (error) {
         console.error('Registration failed:', error);
 

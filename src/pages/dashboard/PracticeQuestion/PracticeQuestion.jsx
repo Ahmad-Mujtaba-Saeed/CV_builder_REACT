@@ -5,7 +5,7 @@ import axios from "../../../utils/axios";
 import { Spinner } from "react-bootstrap";
 import "./PracticeQuestion.css";
 import { motion } from "framer-motion";
-import { UserContext } from "../../../context/userContext";
+import { UserContext } from "../../../context/UserContext";
 import { FeedbackContext } from "../../../context/feedbackContext";
 import Swal from "sweetalert2";
 
