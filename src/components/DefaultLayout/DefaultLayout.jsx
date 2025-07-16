@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
@@ -8,16 +8,24 @@ import './DefaultLayout.css';
 const DefaultLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+    if (isMobile) {
+      setIsSidebarOpen(!isSidebarOpen);
+    } else {
+      setCollapsed(!collapsed);
+    }
   };
 
+  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 992);
-      // Auto-close sidebar on mobile when resizing to desktop
-      if (window.innerWidth >= 992) {
+      const mobile = window.innerWidth < 992;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setIsSidebarOpen(false);
         setCollapsed(false);
       }
     };
@@ -26,9 +34,22 @@ const DefaultLayout = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close sidebar when route changes
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  }, [location, isMobile]);
+
   return (
     <div className="layout-container">
-      <Sidebar collapsed={isMobile ? false : collapsed} isMobile={isMobile} />
+      <Sidebar 
+        collapsed={isMobile ? false : collapsed} 
+        isMobile={isMobile}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+      />
+      
       <div 
         className={`main-content ${collapsed ? 'sidebar-collapsed' : ''} ${isMobile ? 'mobile-view' : ''}`}
         style={{
@@ -42,7 +63,7 @@ const DefaultLayout = ({ children }) => {
           toggleSidebar={toggleSidebar} 
           isMobile={isMobile}
         />
-        <div className="content-wrapper p-3 p-md-4">
+        <div className="content-wrapper pt-0 mt-0">
           <Container fluid className="h-100">
             <Row className="h-100">
               <Col>

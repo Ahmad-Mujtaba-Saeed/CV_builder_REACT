@@ -25,16 +25,16 @@ const NavbarComponent = ({ collapsed, toggleSidebar, isMobile }) => {
         <div className="d-flex align-items-center">
           <button 
             onClick={toggleSidebar}
-            className="btn btn-link text-dark p-2 me-2"
+            className="btn btn-link text-dark p-2"
           >
             <MenuIcon size={20} />
           </button>
-          <Navbar.Brand as={Link} to="/" className="d-none d-md-block">
+          {/* <Navbar.Brand as={Link} to="/" className="d-none d-md-block">
             CV Builder
-          </Navbar.Brand>
+          </Navbar.Brand> */}
         </div>
 
-        <div className="d-none d-lg-block ms-3" style={{ maxWidth: '400px', flex: 1 }}>
+        <div className="d-none d-lg-block ms-2" style={{ maxWidth: '287px', flex: 1 }}>
           <div className="position-relative">
             <SearchIcon className="position-absolute top-50 start-0 translate-middle-y ms-3" />
             <input 
@@ -49,17 +49,17 @@ const NavbarComponent = ({ collapsed, toggleSidebar, isMobile }) => {
         
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="align-items-center">
-            <Dropdown as={Nav.Item} className="mx-2">
-              <Dropdown.Toggle as={Nav.Link} className="position-relative p-2">
+            <Dropdown as={Nav.Item} className="mx-2 shadow-none">
+              <Dropdown.Toggle as={Nav.Link} className="position-relative p-2 bg-light no-caret">
                 <BellIcon size={20} />
                 {unreadCount > 0 && (
-                  <Badge bg="danger" className="position-absolute top-0 end-0 translate-middle rounded-pill" style={{ fontSize: '0.6rem', padding: '0.2rem 0.35rem' }}>
+                  <Badge bg="danger" className="position-absolute top-end translate-middle rounded-pill" style={{ fontSize: '0.6rem', padding: '0.2rem 0.35rem' }}>
                     {unreadCount}
                   </Badge>
                 )}
               </Dropdown.Toggle>
               
-              <Dropdown.Menu className="mt-2 border-0 shadow" style={{ minWidth: '300px' }}>
+              <Dropdown.Menu className="mt-2 border-0 shadow no-caret" style={{ minWidth: '300px' }}>
                 <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
                   <span className="fw-bold">Notifications</span>
                   <Badge bg="primary">{unreadCount} New</Badge>
@@ -92,12 +92,11 @@ const NavbarComponent = ({ collapsed, toggleSidebar, isMobile }) => {
               </Dropdown.Menu>
             </Dropdown>
 
-            <Dropdown as={Nav.Item} className="ms-2">
-              <Dropdown.Toggle as={Nav.Link} className="d-flex align-items-center p-2">
-                <div className="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+            <Dropdown as={Nav.Item} className="mx-3">
+              <Dropdown.Toggle as={Nav.Link} className="d-flex align-items-center shadow-none p-2 bg-white">
+                <div className="bg-primary bg-opacity-10 rounded-circle py-1 px-2 me-2">
                   <UserIcon size={16} className="text-primary" />
                 </div>
-                <span className="d-none d-lg-inline">John Doe</span>
               </Dropdown.Toggle>
               
               <Dropdown.Menu className="mt-2 border-0 shadow" style={{ minWidth: '200px' }}>

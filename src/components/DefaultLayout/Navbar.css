@@ -1,0 +1,7 @@
+.top-end{
+  top: 8px;
+  right: 9px;
+}
+.no-caret::after {
+  display: none !important;
+}
