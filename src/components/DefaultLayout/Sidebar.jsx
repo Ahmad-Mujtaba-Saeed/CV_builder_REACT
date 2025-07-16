@@ -27,19 +27,19 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
       key: 'resume',
       icon: <FileTextIcon size={20} />,
       label: 'My Resume',
-      to: '/resume'
+      to: '#'
     },
     {
       key: 'profile',
       icon: <UserIcon size={20} />,
       label: 'Profile',
-      to: '/profile'
+      to: '#'
     },
     {
       key: 'settings',
       icon: <SettingsIcon size={20} />,
       label: 'Settings',
-      to: '/settings'
+      to: '#'
     },
     {
       key: 'divider',
