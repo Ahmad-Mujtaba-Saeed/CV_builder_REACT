@@ -11,10 +11,9 @@ import { FeedbackProvider } from './context/feedbackContext';
 // Import components and routes
 import { userRoutes, authRoutes } from "./routes/allRoutes"
 import Authmiddleware from "./routes/middleware/Authmiddleware"
-// import VerticalLayout from "./components/VerticalLayout/"
-// import HorizontalLayout from "./components/HorizontalLayout/"
-// import NonAuthLayout from "./components/NonAuthLayout"
+import DefaultLayout from "./components/DefaultLayout/DefaultLayout"
 import Loader from "./components/Loader/Loader"
+// import 'antd/dist/reset.css';
 // import "./assets/scss/theme.scss"
 // import fakeBackend from "./helpers/AuthType/fakeBackend"
 
@@ -23,6 +22,7 @@ import Loader from "./components/Loader/Loader"
 const App = () => {
   const [userData, setUserData] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
 
@@ -40,24 +40,9 @@ const App = () => {
     getUserData();
   }, [])
 
-  // function getLayout() {
-  //   let layoutCls = VerticalLayout
-  //   switch (props.layout.layoutType) {
-  //     case "horizontal":
-  //       layoutCls = HorizontalLayout
-  //       break
-  //     default:
-  //       layoutCls = VerticalLayout
-  //       break
-  //   }
-  //   return layoutCls
-  // }
-
-  // const Layout = getLayout()
-
-  // if (loading) {
-  //   return <Loader /> // Show loading spinner while checking auth
-  // }
+  if (loading) {
+    return <Loader /> // Show loading spinner while checking auth
+  }
 
   return (
     <>
@@ -76,17 +61,34 @@ const App = () => {
       ))}
 
       {/* Protected routes */}
-      {userRoutes.map((route, idx) => (
-        <Route
-            key={idx}
-          path={route.path}
-          element={
-            <Authmiddleware>
+      {userRoutes.map((route, idx) => {
+  if (route?.name === "dashboard") {
+    return (
+      <Route
+        key={idx}
+        path={route.path}
+        element={
+          <Authmiddleware>
+            <DefaultLayout>
               {route.component}
-            </Authmiddleware>
-          }
-        />
-      ))}
+            </DefaultLayout>
+          </Authmiddleware>
+        }
+      />
+    );
+  }
+  return (
+    <Route
+      key={idx}
+      path={route.path}
+      element={
+        <Authmiddleware>
+          {route.component}
+        </Authmiddleware>
+      }
+    />
+  );
+})}
 
         {/* Catch-all route for unauthorized access */}
         {/* <Route

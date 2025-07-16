@@ -34,11 +34,11 @@ import DashboardLanding from "../pages/dashboard/DashboardLanding/DashboardLandi
 const userRoutes = [
  
   { path: "/", component: <MainMenu /> },
-  { path: "/dashboard", component: <DashboardLanding /> },
-  { path: "/dashboard/categories", component: <ManageCategories /> },
-  { path: "/dashboard/question-feedback", component: <QuestionFeedback /> },
-  { path: "/dashboard/practice-question/:id", component: <PracticeQuestion /> },
-  { path: "/dashboard/interview-questions", component: <InterviewQuestions /> },
+  { path: "/dashboard", component: <DashboardLanding /> , name: "dashboard"},
+  { path: "/dashboard/categories", component: <ManageCategories /> , name: "dashboard"},
+  { path: "/dashboard/question-feedback", component: <QuestionFeedback /> , name: "dashboard" },
+  { path: "/dashboard/practice-question/:id", component: <PracticeQuestion /> , name: "dashboard" },
+  { path: "/dashboard/interview-questions", component: <InterviewQuestions />  , name: "dashboard"},
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
   { path: "/build-CV-AI", component: <BuildCVAI />},

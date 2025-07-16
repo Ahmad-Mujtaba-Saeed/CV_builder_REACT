@@ -1,0 +1,123 @@
+/* Default Layout Styles */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.2s ease-in-out, width 0.2s ease-in-out;
+  background-color: #f8f9fa;
+  position: relative;
+  z-index: 1;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  margin-top: 64px; /* Height of the navbar */
+  transition: all 0.2s ease-in-out;
+  background-color: #f8f9fa;
+  box-shadow: none;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1035;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* When sidebar is open on mobile */
+body.sidebar-open .sidebar-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .content-wrapper {
+    margin-top: 56px; /* Smaller navbar on mobile */
+    padding: 1rem;
+  }
+  
+  /* Show sidebar when toggled on mobile */
+  body.sidebar-open .sidebar.mobile {
+    transform: translateX(0);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Print styles */
+@media print {
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .content-wrapper {
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .navbar, .sidebar {
+    display: none !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animation for page transitions */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.content-wrapper > * {
+  animation: fadeIn 0.3s ease-out forwards;
+}
