@@ -210,7 +210,7 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
         />
       )}
 
-      <div className={`sidebar`}>
+      <div className={`sidebar dashboard-nav`}>
         <div className="sidebar-content">
           <Nav className="sidebar-nav">
             <Nav.Item className={`nav-label-heading`}>
