@@ -1,7 +1,7 @@
 import React from 'react';
-import { Nav } from 'react-bootstrap';
+import { Nav, Button, } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
+import {
   LayoutDashboard as DashboardIcon,
   FileText as FileTextIcon,
   User as UserIcon,
@@ -16,43 +16,178 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
   const selectedKey = location.pathname.split('/')[1] || 'dashboard';
   const navigate = useNavigate();
 
-  const menuItems = [
+  const Navigation = [
     {
       key: 'dashboard',
-      icon: <DashboardIcon size={20} />,
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+        <g clip-path="url(#clip0_36781_3085)">
+          <path d="M14.1409 10.5934C13.7168 11.5964 13.0534 12.4802 12.2088 13.1676C11.3642 13.855 10.3641 14.325 9.29588 14.5366C8.22765 14.7481 7.12387 14.6948 6.08102 14.3813C5.03817 14.0677 4.088 13.5034 3.3136 12.7378C2.5392 11.9722 1.96413 11.0286 1.63868 9.98935C1.31322 8.95015 1.24729 7.84704 1.44665 6.77647C1.64601 5.70591 2.10458 4.70047 2.78228 3.84807C3.45998 2.99567 4.33617 2.32226 5.33425 1.88672" stroke="#BA67EF" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M14.6667 7.99967C14.6667 7.12419 14.4942 6.25729 14.1592 5.44845C13.8242 4.63961 13.3331 3.90469 12.714 3.28563C12.095 2.66657 11.3601 2.17551 10.5512 1.84048C9.74239 1.50545 8.87548 1.33301 8 1.33301V7.99967H14.6667Z" stroke="#BA67EF" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <defs>
+          <clipPath id="clip0_36781_3085">
+            <rect width="16" height="16" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>,
       label: 'Dashboard',
       to: '/dashboard'
     },
     {
-      key: 'resume',
-      icon: <FileTextIcon size={20} />,
-      label: 'My Resume',
+      key: 'CV-Builder',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+        <path d="M9.33268 1.33301H3.99935C3.64573 1.33301 3.30659 1.47348 3.05654 1.72353C2.80649 1.97358 2.66602 2.31272 2.66602 2.66634V13.333C2.66602 13.6866 2.80649 14.0258 3.05654 14.2758C3.30659 14.5259 3.64573 14.6663 3.99935 14.6663H11.9993C12.353 14.6663 12.6921 14.5259 12.9422 14.2758C13.1922 14.0258 13.3327 13.6866 13.3327 13.333V5.33301L9.33268 1.33301Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.6673 11.333H5.33398" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.6673 8.66699H5.33398" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M6.66732 6H6.00065H5.33398" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M9.33398 1.33301V5.33301H13.334" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>,
+      label: 'CV Builder',
       to: '#'
     },
     {
-      key: 'profile',
-      icon: <UserIcon size={20} />,
-      label: 'Profile',
+      key: 'Application-Tracker',
+      icon: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.6667 2.66699H3.33333C2.59695 2.66699 2 3.26395 2 4.00033V13.3337C2 14.07 2.59695 14.667 3.33333 14.667H12.6667C13.403 14.667 14 14.07 14 13.3337V4.00033C14 3.26395 13.403 2.66699 12.6667 2.66699Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M2 6.66699H14" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.666 1.33301V3.99967" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M5.33398 1.33301V3.99967" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>,
+      label: 'Application Tracker',
       to: '#'
     },
     {
-      key: 'settings',
-      icon: <SettingsIcon size={20} />,
-      label: 'Settings',
+      key: 'Interview-Practice',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+        <path d="M14 7.66669C14.0023 8.5466 13.7967 9.41461 13.4 10.2C12.9296 11.1412 12.2065 11.9328 11.3116 12.4862C10.4168 13.0396 9.38549 13.3329 8.33333 13.3334C7.45342 13.3356 6.58541 13.1301 5.8 12.7334L2 14L3.26667 10.2C2.86995 9.41461 2.66437 8.5466 2.66667 7.66669C2.66707 6.61452 2.96041 5.58325 3.51381 4.68839C4.06722 3.79352 4.85884 3.0704 5.8 2.60002C6.58541 2.20331 7.45342 1.99772 8.33333 2.00002H8.66667C10.0562 2.07668 11.3687 2.66319 12.3528 3.64726C13.3368 4.63132 13.9233 5.94379 14 7.33335V7.66669Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>,
+      label: 'Interview Practice',
       to: '#'
     },
     {
-      key: 'divider',
-      type: 'divider'
+      key: 'Job-Search',
+      icon: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M13.9996 13.9996L11.0996 11.0996" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      ,
+      label: 'Job Search',
+      to: '#'
+    },
+    {
+      key: 'Events',
+      icon: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.6673 14L8.00065 10.6667L3.33398 14V3.33333C3.33398 2.97971 3.47446 2.64057 3.72451 2.39052C3.97456 2.14048 4.3137 2 4.66732 2H11.334C11.6876 2 12.0267 2.14048 12.2768 2.39052C12.5268 2.64057 12.6673 2.97971 12.6673 3.33333V14Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      ,
+      label: 'Events',
+      to: '#'
+    },
+    {
+      key: 'Community',
+      icon: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 14.667C13.1046 14.667 14 13.7716 14 12.667C14 11.5624 13.1046 10.667 12 10.667C10.8954 10.667 10 11.5624 10 12.667C10 13.7716 10.8954 14.667 12 14.667Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 10C5.10457 10 6 9.10457 6 8C6 6.89543 5.10457 6 4 6C2.89543 6 2 6.89543 2 8C2 9.10457 2.89543 10 4 10Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M5.72656 9.00684L10.2799 11.6602" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12 5.33301C13.1046 5.33301 14 4.43758 14 3.33301C14 2.22844 13.1046 1.33301 12 1.33301C10.8954 1.33301 10 2.22844 10 3.33301C10 4.43758 10.8954 5.33301 12 5.33301Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.2732 4.33984L5.72656 6.99318" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>,
+      label: 'Community',
+      to: '#'
+    },
+  ];
+
+  const Support = [
+    {
+      key: 'Getting-Started',
+      icon: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_36781_3190)">
+          <path d="M8.00065 14.6663C11.6825 14.6663 14.6673 11.6816 14.6673 7.99967C14.6673 4.31778 11.6825 1.33301 8.00065 1.33301C4.31875 1.33301 1.33398 4.31778 1.33398 7.99967C1.33398 11.6816 4.31875 14.6663 8.00065 14.6663Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M10.8272 5.17285L9.41383 9.41285L5.17383 10.8262L6.58716 6.58618L10.8272 5.17285Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <defs>
+          <clipPath id="clip0_36781_3190">
+            <rect width="16" height="16" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+      ,
+      label: 'Getting Started',
+      to: '#'
+    },
+    {
+      key: 'FAQ',
+      icon:
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_36781_3203)">
+            <path d="M8.00065 14.6663C11.6825 14.6663 14.6673 11.6816 14.6673 7.99967C14.6673 4.31778 11.6825 1.33301 8.00065 1.33301C4.31875 1.33301 1.33398 4.31778 1.33398 7.99967C1.33398 11.6816 4.31875 14.6663 8.00065 14.6663Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8 11.333H8.008" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M6.06055 6.00038C6.21728 5.55482 6.52665 5.17912 6.93385 4.9398C7.34105 4.70049 7.81981 4.61301 8.28533 4.69285C8.75085 4.7727 9.17309 5.01473 9.47727 5.37606C9.78144 5.7374 9.94792 6.19473 9.94721 6.66705C9.94721 8.00038 7.94721 8.66705 7.94721 8.66705" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+          <defs>
+            <clipPath id="clip0_36781_3203">
+              <rect width="16" height="16" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      ,
+      label: 'FAQ',
+      to: '#'
+    },
+    {
+      key: 'Support',
+      icon:
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_36781_3217)">
+            <path d="M8.00065 14.6663C11.6825 14.6663 14.6673 11.6816 14.6673 7.99967C14.6673 4.31778 11.6825 1.33301 8.00065 1.33301C4.31875 1.33301 1.33398 4.31778 1.33398 7.99967C1.33398 11.6816 4.31875 14.6663 8.00065 14.6663Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M1.33398 8H14.6673" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.00065 1.33301C9.66817 3.15858 10.6158 5.5277 10.6673 7.99967C10.6158 10.4717 9.66817 12.8408 8.00065 14.6663C6.33313 12.8408 5.38548 10.4717 5.33398 7.99967C5.38548 5.5277 6.33313 3.15858 8.00065 1.33301V1.33301Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+          <defs>
+            <clipPath id="clip0_36781_3217">
+              <rect width="16" height="16" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      ,
+      label: 'Support',
+      to: '#'
+    },
+    {
+      key: 'Pricing',
+      icon:
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.7273 8.93968L8.94732 13.7197C8.82349 13.8436 8.67644 13.942 8.51457 14.0091C8.35271 14.0762 8.1792 14.1107 8.00398 14.1107C7.82876 14.1107 7.65526 14.0762 7.4934 14.0091C7.33153 13.942 7.18448 13.8436 7.06065 13.7197L1.33398 7.99968V1.33301H8.00065L13.7273 7.05968C13.9757 7.30949 14.115 7.64743 14.115 7.99968C14.115 8.35192 13.9757 8.68986 13.7273 8.93968V8.93968Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4.66602 4.66699H4.67402" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      ,
+      label: 'Pricing',
+      to: '#'
+    },
+    {
+      key: 'Notifications',
+      icon:
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5.33301C12 4.27214 11.5786 3.25473 10.8284 2.50458C10.0783 1.75444 9.06087 1.33301 8 1.33301C6.93913 1.33301 5.92172 1.75444 5.17157 2.50458C4.42143 3.25473 4 4.27214 4 5.33301C4 9.99967 2 11.333 2 11.333H14C14 11.333 12 9.99967 12 5.33301Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M9.15237 14C9.03516 14.2021 8.86693 14.3698 8.66452 14.4864C8.46211 14.6029 8.23262 14.6643 7.99904 14.6643C7.76545 14.6643 7.53596 14.6029 7.33355 14.4864C7.13114 14.3698 6.96291 14.2021 6.8457 14" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      ,
+      label: 'Notifications',
+      to: '#'
     },
     {
       key: 'logout',
-      icon: <LogoutIcon size={20} />,
-      label: 'Logout',
+      icon:
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.666 11.3337L13.9993 8.00033L10.666 4.66699" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M14 8H6" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      ,
+      label: 'Sign Out',
       onClick: () => {
         navigate('/logout');
       },
-      className: 'sidbar-logout-item'
     },
   ];
 
@@ -69,73 +204,74 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
     <>
       {/* Overlay for mobile */}
       {isMobile && (
-        <div 
+        <div
           className="sidebar-overlay"
           onClick={() => toggleSidebar()}
         />
       )}
-      
-      <div 
-        className={`sidebar ${collapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''} ${
-          isMobile && isSidebarOpen ? 'mobile-open' : ''
-        }`}
-      >
-        <div className="sidebar-header">
-          {!collapsed ?                 <svg xmlns="http://www.w3.org/2000/svg" width="135" height="35" viewBox="0 0 170 45" fill="none">
-                  <path d="M131.849 29.3051C127.743 25.3073 121.147 27.0271 118.895 32.0999C116.256 38.0427 120.255 45.5179 127.168 44.9718C129.32 44.8019 130.189 43.9916 131.763 42.7894C131.849 42.7237 131.872 42.6233 132.021 42.6619L132.193 44.6307H136.143V18.9453H131.849L131.849 29.3051ZM126.751 41.0238C121.249 40.5641 121.234 31.4817 126.766 31.0431C133.532 30.5065 133.506 41.5882 126.751 41.0238Z" fill="#fff" />
-                  <path d="M64.6536 27.933L63.1531 28.9626V18.9453H58.8594V44.6307H63.1531V34.6562C63.1531 32.7089 64.7371 31.2214 66.6277 31.1002C69.2084 30.9348 70.4896 32.6612 70.5374 35.0851L70.5382 44.6307H74.8319L74.831 33.7153C74.4667 28.2665 69.5109 25.6137 64.6536 27.933Z" fill="#fff" />
-                  <path d="M153.272 28.8795C150.738 26.9195 147.059 26.5975 144.106 27.7842C136.906 30.6783 136.997 42.1391 144.579 44.4821C149.003 45.8492 154.737 44.5011 156.065 39.5799L152.086 38.8029C151.232 40.8563 149.165 41.3886 147.093 41.2048C145.01 41.0201 143.455 39.4133 143.27 37.3534H156.065C156.685 34.2729 155.815 30.8464 153.272 28.8795ZM143.442 34.0143C144.242 29.7356 151.07 29.4265 151.686 34.0143H143.442Z" fill="#fff" />
-                  <path d="M36.3785 27.2755C32.1086 26.5554 27.6941 28.0268 26.4883 32.517L30.6925 33.3297C31.2283 30.0217 37.1276 29.6312 37.642 33.1508C33.516 34.3337 25.7613 34.6795 26.6655 40.8124C27.3694 45.5868 34.2111 46.0807 37.2106 43.2096C37.375 43.0522 37.5493 42.7805 37.71 42.6002C37.7609 42.5432 37.705 42.4352 37.9059 42.491L38.0781 44.631H41.9424V33.0298C41.9424 30.0472 39.1345 27.7403 36.3785 27.2755ZM37.7346 37.6532C37.7346 38.4077 36.8901 39.7661 36.3151 40.2619C34.9397 41.448 31.0337 42.2708 31.0318 39.6224C31.0306 37.9288 32.9074 37.6531 34.1953 37.2922C35.3641 36.9647 36.5641 36.7315 37.7346 36.4117V37.6532Z" fill="#fff" />
-                  <path d="M106.966 27.3993C105.87 27.7069 104.852 28.3129 104.068 29.1334C103.861 29.1707 103.965 29.0385 103.943 28.9183C103.863 28.4711 103.814 28.0166 103.752 27.5662L103.64 27.4217H99.8184V44.631H104.198V34.0571C104.198 33.4495 104.927 32.3122 105.407 31.9238C107.727 30.0493 111.497 31.4077 111.497 34.5708V44.631H115.791L115.79 33.5443C115.457 28.8861 111.485 26.1317 106.966 27.3993Z" fill="#fff" />
-                  <path d="M168.305 27.1613C166.247 27.0242 164.332 27.8393 163.107 29.4764L162.849 27.4215H158.812V44.6308H163.192V34.9131C163.192 34.4168 163.742 33.2817 164.065 32.8729C165.267 31.3552 167.25 31.2622 169.024 31.6101L169.551 27.5517C169.502 27.2668 168.584 27.18 168.305 27.1613Z" fill="#fff" />
-                  <path d="M92.8393 19.735C91.0951 20.3273 90.6253 22.6677 91.8631 23.9664C93.1419 25.308 95.7839 24.7956 96.3253 22.9537C96.9672 20.7701 94.9739 19.0101 92.8393 19.735Z" fill="#fff" />
-                  <path d="M91.6611 27.4215H84.1906V24.6389C84.1906 24.5769 84.3422 24.0808 84.3811 23.9727C84.9788 22.3146 86.9489 22.2914 88.3942 22.7103L89.2541 19.0344C86.1031 18.0719 82.4158 18.6086 80.7111 21.6835C80.3261 22.3778 79.97 23.4223 79.8969 24.2108C79.8021 25.2329 79.9671 26.3853 79.8969 27.4215H74.5156C75.6282 28.4355 76.4489 29.7542 76.9162 31.2743H79.8969V44.6308H84.1906V31.2743H91.6611V44.6308H95.9548V27.4215H91.6611Z" fill="#fff" />
-                  <path d="M25.4046 23.7198C23.0728 16.0294 11.8806 15.1389 7.15923 21.0248C5.20332 23.4631 4.48266 26.72 4.66614 29.7979C4.28687 29.8581 3.07724 28.7149 2.86706 28.8598L0.555296 32.9394C0.530113 33.0519 0.615367 33.0755 0.684953 33.1256C1.17068 33.4752 2.04959 33.9221 2.60375 34.2095C3.54043 34.6952 4.50659 35.1287 5.50818 35.4668C6.181 38.1275 7.48212 42.1647 8.68245 44.6308H13.8778L10.8495 36.7342C11.8566 36.8423 12.8703 36.9035 13.8778 36.897V32.5291C12.4236 32.5544 10.9658 32.3473 9.74378 32.0135C9.32266 28.8581 9.37047 25.0083 12.0506 22.8194C14.0946 21.15 17.6706 21.0526 19.5784 22.979C20.838 24.2509 21.1815 26.2062 20.8581 27.919C20.3653 30.5287 18.3765 31.8199 16.0362 32.3011L17.5128 36.514C18.7644 36.2358 19.9786 35.791 21.1262 35.1214C25.14 32.7795 26.7456 28.1425 25.4046 23.7198Z" fill="#fff" />
-                  <path d="M36.5345 0C29.929 0 24.5742 5.34425 24.5742 11.9367C24.5742 18.5291 29.929 23.8734 36.5345 23.8734C43.1399 23.8734 48.4947 18.5292 48.4947 11.9367C48.4947 5.34423 43.1399 0 36.5345 0ZM37.8061 14.4705H36.4532V10.9748C36.4532 10.9265 36.3694 10.6834 36.3418 10.6271C36.0456 10.0237 34.9967 10.0788 34.7163 10.6727C34.6864 10.7361 34.6133 10.9165 34.6133 10.9748V14.4705H33.2604V11.1098C33.2604 10.9446 33.1716 10.6527 33.0709 10.5159C32.725 10.0457 31.8153 10.1229 31.534 10.6291C31.5053 10.6807 31.4204 10.8768 31.4204 10.9208V14.4705H30.0405V9.08518L30.0811 9.04469H31.2446C31.3052 9.06437 31.3295 9.4106 31.3405 9.48933C31.3458 9.52793 31.3149 9.56894 31.3795 9.55736C32.0968 8.68521 33.6537 8.74181 34.2482 9.71986C34.2879 9.72019 34.4753 9.48617 34.5317 9.4358C35.4498 8.61638 37.0544 8.81792 37.5942 9.97139C37.6651 10.1229 37.806 10.5507 37.806 10.7049L37.8061 14.4705ZM43.9752 9.39567L41.0936 16.846H39.7001L40.6154 14.4367L38.3202 9.04474H39.7948L41.3371 12.6892L42.6476 9.08346C42.6715 9.04869 42.7057 9.04845 42.7428 9.04346C43.1131 8.99393 43.5926 9.08289 43.9752 9.04472V9.39567Z" fill="#fff" />
-                  <path d="M56.5809 31.274V27.4212H50.7869V23.5684H46.6493V27.41H41.5195C42.7646 28.4064 43.7495 29.73 44.1844 31.274H46.4073V40.1354C46.4073 40.3316 46.5774 41.0363 46.6406 41.2727C47.7857 45.5482 53.1034 45.6326 56.4444 44.0204L55.5522 40.5212C55.4241 40.328 55.1614 40.5921 54.9931 40.6476C53.7156 41.0691 51.6595 41.3306 50.9805 39.8567C50.9475 39.7849 50.7869 39.3097 50.7869 39.2793V31.274H56.5809Z" fill="#fff" />
-                </svg> :
-                
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"  fill="none" style={{position: 'absolute', left: "5px", top: '20px'}}>
-                                  <path d="M36.5345 0C29.929 0 24.5742 5.34425 24.5742 11.9367C24.5742 18.5291 29.929 23.8734 36.5345 23.8734C43.1399 23.8734 48.4947 18.5292 48.4947 11.9367C48.4947 5.34423 43.1399 0 36.5345 0ZM37.8061 14.4705H36.4532V10.9748C36.4532 10.9265 36.3694 10.6834 36.3418 10.6271C36.0456 10.0237 34.9967 10.0788 34.7163 10.6727C34.6864 10.7361 34.6133 10.9165 34.6133 10.9748V14.4705H33.2604V11.1098C33.2604 10.9446 33.1716 10.6527 33.0709 10.5159C32.725 10.0457 31.8153 10.1229 31.534 10.6291C31.5053 10.6807 31.4204 10.8768 31.4204 10.9208V14.4705H30.0405V9.08518L30.0811 9.04469H31.2446C31.3052 9.06437 31.3295 9.4106 31.3405 9.48933C31.3458 9.52793 31.3149 9.56894 31.3795 9.55736C32.0968 8.68521 33.6537 8.74181 34.2482 9.71986C34.2879 9.72019 34.4753 9.48617 34.5317 9.4358C35.4498 8.61638 37.0544 8.81792 37.5942 9.97139C37.6651 10.1229 37.806 10.5507 37.806 10.7049L37.8061 14.4705ZM43.9752 9.39567L41.0936 16.846H39.7001L40.6154 14.4367L38.3202 9.04474H39.7948L41.3371 12.6892L42.6476 9.08346C42.6715 9.04869 42.7057 9.04845 42.7428 9.04346C43.1131 8.99393 43.5926 9.08289 43.9752 9.04472V9.39567Z" fill="#fff" />
-                </svg> }
-          
-          
-          
-          {isMobile && (
-            <button 
-              className="close-btn"
-              onClick={() => toggleSidebar()}
-            >
-              <CloseIcon size={20} />
-            </button>
-          )}
-        </div>
-        
+
+      <div className={`sidebar`}>
         <div className="sidebar-content">
           <Nav className="sidebar-nav">
-            {menuItems.map((item) => {
-              if (item.type === 'divider') {
-                return <div key={item.key} className="divider sidbar-divider-item" />;
-              }
-              
+            <Nav.Item className={`nav-label-heading`}>
+              <Nav.Link
+                as={'div'}
+              >
+                <span className="nav-label">NAVIGATION</span>
+              </Nav.Link>
+            </Nav.Item>
+            {Navigation.map((item) => {
               const isActive = selectedKey === item.key;
-              
               return (
                 <Nav.Item key={item.key} className={item.className}>
-                  <Nav.Link 
+                  <Nav.Link
                     as={item.to ? Link : 'div'}
                     to={item.to}
                     onClick={() => handleItemClick(item.onClick)}
-                    className={`nav-link ${isActive ? 'active' : ''}`}
+                    className={`${isActive ? 'active' : ''}`}
                   >
                     <div className="nav-icon">{item.icon}</div>
                     {!collapsed && <span className="nav-label">{item.label}</span>}
-                    {isActive && !collapsed && <div className="active-indicator" />}
+                  </Nav.Link>
+                </Nav.Item>
+              );
+            })}
+            <Nav.Item className={`nav-label-heading`}>
+              <Nav.Link
+                as={'div'}
+              >
+                <span className="nav-label">SUPPORT</span>
+              </Nav.Link>
+            </Nav.Item>
+            {Support.map((item) => {
+              const isActive = selectedKey === item.key;
+              return (
+                <Nav.Item key={item.key} className={item.className}>
+                  <Nav.Link
+                    as={item.to ? Link : 'div'}
+                    to={item.to}
+                    onClick={() => handleItemClick(item.onClick)}
+                    className={`${isActive ? 'active' : ''}`}
+                  >
+                    <div className="nav-icon">{item.icon}</div>
+                    {!collapsed && <span className="nav-label">{item.label}</span>}
                   </Nav.Link>
                 </Nav.Item>
               );
             })}
           </Nav>
+          <div className="side-nav-update-package">
+            <div className="update-image">
+              <img src="/assets/images/side-nav-image.png" alt="" />
+            </div>
+            <div className="update-content">
+              <h4>Upgrade to Pro</h4>
+              <p>Unlock your full potential by signing up to  MyPathFinder PRO.</p>
+            </div>
+            <div className="update-button">
+              <Button varient={'primary'} >Upgrade to pro</Button>
+            </div>
+          </div>
         </div>
       </div>
     </>
