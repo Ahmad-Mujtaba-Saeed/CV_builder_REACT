@@ -12,7 +12,7 @@ import './uploadPage.css';
 import { useResume } from '../../context/ResumeContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Partials/Header';
-
+import axios from '../../utils/axios';
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -109,8 +109,7 @@ const UploadPage = () => {
     return interval;
   };
 
-  const handleManualCV = () => {
-    // Initialize a fresh empty resume structure
+  const handleManualCV = async () => {
     const emptyResume = {
       candidateName: [{ firstName: '', familyName: '' }],
       headline: '',
@@ -122,36 +121,46 @@ const UploadPage = () => {
       education: [],
       skill: [],
       profilePic: null,
-      // Add any other required fields your templates expect
       website: [''],
       certifications: [],
       languages: [],
       hobbies: []
-
     };
 
-    // Clear file first
-    setFile(null);
-    setUploadProgress(0);
-    setIsParsing(false);
+    try {
+      const response = await axios.post('/api/v1/resume/create-empty', { newEmptyResume : emptyResume});
+       // Clear file first
+       setFile(null);
+       setUploadProgress(0);
+       setIsParsing(false);
+       // Update the local resume object with the server-generated ID
+       const updatedResume = {
+         ...emptyResume,
+         id: response.data.data.id
+       }
+       // Then set the empty resume with the updated ID
+       setParsedResume(updatedResume);
+       navigate('/cv-builder');
+       setSelectedTemplate("Modern");
+   
+       // Set success message after a small delay to ensure it shows
+       setTimeout(() => {
+         setUploadStatus({
+           type: "success",
+           message: "Empty resume created successfully! Start editing your CV."
+         });
+       }, 100);
+   
+       setCurrentPage(1);
+       setTotalPages(1);
+       setAiSuggestions([]);
+       setProfilePic(null);
+    } catch (error) {
+      console.error('Error creating empty resume:', error);
+      return;
+    }
+    
 
-    // Then set the empty resume
-    setParsedResume(emptyResume);
-    navigate('/cv-builder');
-    setSelectedTemplate("Modern");
-
-    // Set success message after a small delay to ensure it shows
-    setTimeout(() => {
-      setUploadStatus({
-        type: "success",
-        message: "Empty resume created successfully! Start editing your CV."
-      });
-    }, 100);
-
-    setCurrentPage(1);
-    setTotalPages(1);
-    setAiSuggestions([]);
-    setProfilePic(null);
   };
 
   const handleAICV = () => {
