@@ -46,63 +46,63 @@ const App = () => {
 
   return (
     <>
-    <UserContext.Provider value={{ userData, setUserData, error, setError }}>
-      <FeedbackProvider>
-    <ResumeProvider>
-    <Routes>
-      {/* Public routes */}
-      {authRoutes.map((route, idx) => (
-        <Route
-            key={idx}
-          path={route.path}
-            // element={<NonAuthLayout>{route.component}</NonAuthLayout>}
-          element={route.component}
-        />
-      ))}
+      <UserContext.Provider value={{ userData, setUserData, error, setError }}>
+        <FeedbackProvider>
+          <ResumeProvider>
+            <Routes>
+              {/* Public routes */}
+              {authRoutes.map((route, idx) => (
+                <Route
+                  key={idx}
+                  path={route.path}
+                  // element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+                  element={route.component}
+                />
+              ))}
 
-      {/* Protected routes */}
-      {userRoutes.map((route, idx) => {
-  if (route?.name === "dashboard") {
-    return (
-      <Route
-        key={idx}
-        path={route.path}
-        element={
-          <Authmiddleware>
-            <DefaultLayout>
-              {route.component}
-            </DefaultLayout>
-          </Authmiddleware>
-        }
-      />
-    );
-  }
-  return (
-    <Route
-      key={idx}
-      path={route.path}
-      element={
-        <Authmiddleware>
-          {route.component}
-        </Authmiddleware>
-      }
-    />
-  );
-})}
+              {/* Protected routes */}
+              {userRoutes.map((route, idx) => {
+                if (route?.name === "dashboard") {
+                  return (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      element={
+                        <Authmiddleware>
+                          <DefaultLayout>
+                            {route.component}
+                          </DefaultLayout>
+                        </Authmiddleware>
+                      }
+                    />
+                  );
+                }
+                return (
+                  <Route
+                    key={idx}
+                    path={route.path}
+                    element={
+                      <Authmiddleware>
+                        {route.component}
+                      </Authmiddleware>
+                    }
+                  />
+                );
+              })}
 
-        {/* Catch-all route for unauthorized access */}
-        {/* <Route
+              {/* Catch-all route for unauthorized access */}
+              {/* <Route
           path="*"
           element={<Navigate to={userData ? "/dashboard" : "/login"} />}
         /> */}
-      <Route
-        path="*"
-          element={<Navigate to={"/"} />}
-      />
-    </Routes>
-    </ResumeProvider>
-    </FeedbackProvider>
-    </UserContext.Provider>
+              <Route
+                path="*"
+                element={<Navigate to={"/"} />}
+              />
+            </Routes>
+          </ResumeProvider>
+        </FeedbackProvider>
+      </UserContext.Provider>
     </>
   )
 }

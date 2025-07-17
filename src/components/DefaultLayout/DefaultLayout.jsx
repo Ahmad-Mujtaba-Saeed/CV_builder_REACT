@@ -42,15 +42,15 @@ const DefaultLayout = ({ children }) => {
   }, [location, isMobile]);
 
   return (
-    <div className="layout-container">
-      <Sidebar 
-        collapsed={isMobile ? false : collapsed} 
-        isMobile={isMobile}
-        isSidebarOpen={isSidebarOpen}
+    <div className="layout-container" theme='dark'>
+
+      <Navbar
+        collapsed={collapsed}
         toggleSidebar={toggleSidebar}
+        isMobile={isMobile}
       />
-      
-      <div 
+
+      <div
         className={`main-content ${collapsed ? 'sidebar-collapsed' : ''} ${isMobile ? 'mobile-view' : ''}`}
         style={{
           marginLeft: isMobile ? 0 : (collapsed ? '80px' : '250px'),
@@ -58,10 +58,11 @@ const DefaultLayout = ({ children }) => {
           width: isMobile ? '100%' : `calc(100% - ${collapsed ? '80px' : '250px'})`
         }}
       >
-        <Navbar 
-          collapsed={collapsed} 
-          toggleSidebar={toggleSidebar} 
+        <Sidebar
+          collapsed={isMobile ? false : collapsed}
           isMobile={isMobile}
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
         />
         <div className="content-wrapper pt-0 mt-0">
           <Container fluid className="h-100">

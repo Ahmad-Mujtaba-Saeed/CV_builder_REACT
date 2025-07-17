@@ -1,7 +1,33 @@
-.top-end{
-  top: 8px;
-  right: 9px;
+[theme='dark']{
+  .dark-logo{
+    display: none;
+  }
+  .light-logo{
+    display: block;
+  }
 }
-.no-caret::after {
-  display: none !important;
+
+[theme='light']{
+  .dark-logo{
+    display: block;
+  }
+  .light-logo{
+    display: none;
+  }
+}
+
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  height: 65px;
+  width: 100%;
+  background: var(--nav-bg-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+
+  & .container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
