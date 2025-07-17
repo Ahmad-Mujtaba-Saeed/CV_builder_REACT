@@ -65,7 +65,7 @@ const DefaultLayout = ({ children }) => {
           toggleSidebar={toggleSidebar}
         />
         <div className="content-wrapper pt-0 mt-0">
-          <Container fluid className="h-100">
+          <Container className="h-100">
             <Row className="h-100">
               <Col>
                 {children || <Outlet />}
