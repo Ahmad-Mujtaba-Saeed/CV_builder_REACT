@@ -12,7 +12,8 @@ import './uploadPage.css';
 import { useResume } from '../../context/ResumeContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Partials/Header';
-import axios from '../../utils/axios';
+import axios, {baseUrl} from '../../utils/axios';
+
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const UploadPage = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await fetch(`https://deepskyblue-donkey-692108.hostingersite.com/api/parse-resume`, {
+      const response = await fetch(`${baseUrl}/api/parse-resume`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -44,7 +45,7 @@ const UploadPage = () => {
       if (!response.ok) {
         throw new Error(data.message || 'Failed to parse resume');
       }
-      return data.data?.data;
+      return data?.data;
     } catch (error) {
       console.error('Error uploading file:', error);
       throw error;
@@ -61,7 +62,14 @@ const UploadPage = () => {
       try {
         interval = simulateUpload(pdfFile);
         const parsedData = await uploadFileToServer(pdfFile);
-        setParsedResume(parsedData);
+        console.log("after Upload",parsedData);
+        const response = await axios.post('/api/v1/resume/create-empty', { newEmptyResume : parsedData});
+        const updatedResume = {
+          ...parsedData,
+          id: response.data.data.id,
+          template: "Default"
+        }
+        setParsedResume(updatedResume);
         setUploadProgress(100);
         setUploadStatus({
           type: "success",
@@ -163,8 +171,67 @@ const UploadPage = () => {
 
   };
 
-  const handleAICV = () => {
-    navigate('/build-cv-ai');
+  const handleAICV = async () => {
+
+    const emptyResume = {
+      candidateName: [{ firstName: '', familyName: '' }],
+      headline: '',
+      summary: '',
+      phoneNumber: [{ formattedNumber: '' }],
+      email: [''],
+      location: { formatted: '' },
+      workExperience: [],
+      education: [],
+      skill: [],
+      profilePic: null,
+      website: [''],
+      certifications: [],
+      languages: [],
+      hobbies: []
+    };
+
+    try {
+      const response = await axios.post('/api/v1/resume/create-empty', { newEmptyResume : emptyResume});
+       // Clear file first
+       setFile(null);
+       setUploadProgress(0);
+       setIsParsing(false);
+       // Update the local resume object with the server-generated ID
+       const updatedResume = {
+         ...emptyResume,
+         id: response.data.data.id
+       }
+       // Then set the empty resume with the updated ID
+       setParsedResume(updatedResume);
+
+       axios.put(`/api/v1/resume/${updatedResume.id}`, { cv_resumejson: updatedResume })
+       .then(response => {
+           toast.success('Resume updated successfully');
+           setHasUnsavedChanges(false);
+         })
+         .catch(error => {
+           toast.error('Failed to update resume');
+         });
+       navigate('/build-cv-ai');
+   
+       // Set success message after a small delay to ensure it shows
+       setTimeout(() => {
+         setUploadStatus({
+           type: "success",
+           message: "Empty resume created successfully! Start editing your CV."
+         });
+       }, 100);
+   
+       setCurrentPage(1);
+       setTotalPages(1);
+       setAiSuggestions([]);
+       setProfilePic(null);
+    } catch (error) {
+      console.error('Error creating empty resume:', error);
+      return;
+    }
+    
+
   };
 
   const removeFile = () => {

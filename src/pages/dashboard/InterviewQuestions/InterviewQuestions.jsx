@@ -16,6 +16,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../utils/axios";
 import { UserContext } from "../../../context/UserContext";
+import { useCurrentQuestion } from "../../../context/CurrentQuestionContext";
 
 
 const questions = [
@@ -75,6 +76,7 @@ const history = [
 const InterviewQuestions = () => {
     const navigate = useNavigate();
     const {userData} = useContext(UserContext);
+    const { setCurrentQuestion } = useCurrentQuestion();
     const [showModal, setShowModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -126,6 +128,7 @@ const InterviewQuestions = () => {
             
             const res = await axios.get(`/api/questions?${params.toString()}`);
             setQuestionsData(res.data);
+            setCurrentQuestion(res.data);
         } catch (error) {
             console.error("Error fetching questions:", error);
         } finally {

@@ -30,6 +30,7 @@ import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import axios, {baseUrl} from '../../utils/axios';
 
 const tabs = [
     {
@@ -82,8 +83,7 @@ const cardTemplate = [
 
 const CVBuilder = () => {
     const navigate = useNavigate();
-    const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
-    // const baseUrl = "http://localhost:8000";
+
     const { parsedResume, setParsedResume } = useResume();
     const [customSections, setCustomSections] = useState([]);
 
@@ -105,6 +105,13 @@ const CVBuilder = () => {
     const cvRef = useRef();
     const [activeTab, setActiveTab] = useState('Preview');
     const [zoom, setZoom] = useState(1);
+
+
+    useEffect(() => {
+        if (parsedResume?.template) {
+            setSelectedTemplate(parsedResume.template);
+        }
+    }, [parsedResume]);
 
     const zoomIn = () => {
         setZoom(prev => {
@@ -815,6 +822,96 @@ const CVBuilder = () => {
         }
     }, [parsedResume, currentPage]);
 
+    const [previousParsedResume, setPreviousParsedResume] = useState(null);
+
+    useEffect(() => {
+        if (parsedResume) {
+            setPreviousParsedResume(parsedResume);
+        }
+    }, []);
+
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    
+    // Add this effect to track changes
+    useEffect(() => {
+      if (previousParsedResume && parsedResume) {
+        const isChanged = JSON.stringify(previousParsedResume) !== JSON.stringify(parsedResume);
+        setHasUnsavedChanges(isChanged);
+      }
+    }, [parsedResume, previousParsedResume]);
+    
+    // Handle browser refresh/close
+    useEffect(() => {
+      const handleBeforeUnload = (e) => {
+        if (hasUnsavedChanges) {
+          e.preventDefault();
+          e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+          return e.returnValue;
+        }
+      };
+    
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }, [hasUnsavedChanges]);
+    
+    // Handle route changes
+    useEffect(() => {
+      const handleRouteChange = () => {
+        if (hasUnsavedChanges && !window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+          throw 'Route change aborted.';
+        }
+      };
+    
+      window.addEventListener('popstate', handleRouteChange);
+    
+      return () => {
+        window.removeEventListener('popstate', handleRouteChange);
+      };
+    }, [hasUnsavedChanges]);
+    
+    const confirmNavigation = (e) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+          // If user confirms, save changes and then navigate
+          saveChanges().then(() => {
+            navigate(e.currentTarget.getAttribute('href'));
+          });
+        }
+      }
+    };
+    
+    const handleTemplateChange = (templateName) => {
+      setSelectedTemplate(templateName);
+      setParsedResume({
+        ...parsedResume,
+        template: templateName
+      });
+    };
+    const [isSaving, setIsSaving] = useState(false);
+    // Update your saveChanges function to return a Promise
+    const saveChanges = () => {
+        setIsSaving(true);
+      return new Promise((resolve, reject) => {
+        setPreviousParsedResume(parsedResume);
+        axios.put(`/api/v1/resume/${parsedResume.id}`, { cv_resumejson: parsedResume })
+        .then(response => {
+            toast.success('Resume updated successfully');
+            setIsSaving(false);
+            setHasUnsavedChanges(false);
+            resolve();
+          })
+          .catch(error => {
+            setIsSaving(false);
+            toast.error('Failed to update resume');
+            reject(error);
+          });
+      });
+    };
+
     // Improved PDF generation that matches preview
     const handleDownloadPDF = async () => {
         if (!cvRef.current) return;
@@ -939,9 +1036,12 @@ const CVBuilder = () => {
         if (activeTab === 'Preview') {
             return (
                 <>
+                <div className="d-flex justify-content-between align-items-center">
                     <h4 className="tab-heading">
                         Basic Information
                     </h4>
+                    <button className="btn btn-primary" disabled={previousParsedResume == parsedResume} onClick={saveChanges}>{isSaving ? 'Saving...' : 'Save Changes'}</button>
+                </div>
                     <Accordion defaultActiveKey="profile">
                         <Accordion.Item eventKey="profile">
                             <Accordion.Header>
@@ -1764,7 +1864,7 @@ const CVBuilder = () => {
                                         <Button
                                             key={template.name}
                                             variant={selectedTemplate === template.name ? "primary" : "outline-primary"}
-                                            onClick={() => setSelectedTemplate(template.name)}
+                                            onClick={() => handleTemplateChange(template.name) }
                                             className="d-flex flex-column align-items-center gap-2 cv-template-button"
                                         >
                                             <img
@@ -1972,7 +2072,7 @@ const CVBuilder = () => {
                                             <Col>
                                                 <Nav variant="underline cv-uplodaer-tabs" className="mb-3">
                                                     {tabs.map((tab, index) => (
-                                                        <Nav.Item key={index}>
+                                                        <Nav.Item key={index} className="w-auto">
                                                             <Nav.Link eventKey={tab.text} className="text-capitalize d-flex align-items-center gap-2">
                                                                 {tab.icon && <span>{tab.icon}</span>}
                                                                 {tab.text}

@@ -1,10 +1,13 @@
 import axios from 'axios';
 
 // http://localhost:8000
-// https://deepskyblue-donkey-692108.hostingersite.com
 // Create axios instance with base URL
+
+// const baseURL = 'https://deepskyblue-donkey-692108.hostingersite.com';
+const baseURL = 'http://localhost:8000';
+
 const instance = axios.create({
-    baseURL: 'http://localhost:8000',
+    baseURL: baseURL,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -33,5 +36,7 @@ instance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export const baseUrl = baseURL;
 
 export default instance;

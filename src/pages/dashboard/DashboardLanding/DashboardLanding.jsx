@@ -7,32 +7,34 @@ import axios from "../../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { FeedbackContext } from "../../../context/feedbackContext";
+import { useResume } from '../../../context/ResumeContext';
 
 const DashboardLanding = () => {
     const navigate = useNavigate();
     const { parsedFeedback , setParsedFeedback} = useContext(FeedbackContext);
+    const { parsedResume , setParsedResume} = useResume();
     const [interviewHistory, setInterviewHistory] = useState([]);
     // const [coachingSessions, setCoachingSessions] = useState([]);
-    // const [recentActivities, setRecentActivities] = useState([]);
+    const [recentActivities, setRecentActivities] = useState([]);
 
 
-    const recentActivities = [
-        { 
-            action: "Create a new CV for 'Senior Graphic Designer'", 
-            description: "Creative and detail-oriented Graphic Designer with over 5 years of experience delivering engaging visual content across digital...",
-            link: "View in CV Builder"
-        },
-        { 
-            action: "Achieved a score of 96% in General #073: Tell us about yourself", 
-            description: "Feedback summary: Include specific roles, industries, and measurable experiences (e.g., '4 years in tech and retail sectors').",
-            link: "View Feedback"
-        },
-        { 
-            action: "Achieved a score of 69% in General #746: What are your strengths and weaknesses?", 
-            description: "Highlight a few key strengths (e.g., communication, problem solving) with examples or proof...",
-            link: "View Feedback"
-        }
-    ];
+    // const recentActivities = [
+    //     { 
+    //         action: "Create a new CV for 'Senior Graphic Designer'", 
+    //         description: "Creative and detail-oriented Graphic Designer with over 5 years of experience delivering engaging visual content across digital...",
+    //         link: "View in CV Builder"
+    //     },
+    //     { 
+    //         action: "Achieved a score of 96% in General #073: Tell us about yourself", 
+    //         description: "Feedback summary: Include specific roles, industries, and measurable experiences (e.g., '4 years in tech and retail sectors').",
+    //         link: "View Feedback"
+    //     },
+    //     { 
+    //         action: "Achieved a score of 69% in General #746: What are your strengths and weaknesses?", 
+    //         description: "Highlight a few key strengths (e.g., communication, problem solving) with examples or proof...",
+    //         link: "View Feedback"
+    //     }
+    // ];
 
     const getInterviewHistory = async (searchTerm = "") => {
         try {
@@ -40,6 +42,15 @@ const DashboardLanding = () => {
             setInterviewHistory(response.data);
         } catch (error) {
             console.error("Error fetching interview history:", error);
+        }
+    };
+
+    const getRecentActivities = async () => {
+        try {
+            const response = await axios.get(`/api/recent-activities?limit=3`);
+            setRecentActivities(response.data);
+        } catch (error) {
+            console.error("Error fetching recent activities:", error);
         }
     };
 
@@ -56,11 +67,23 @@ const DashboardLanding = () => {
 
     useEffect(() => {
         getInterviewHistory();
+        getRecentActivities();
     }, []);
 
     const handleSearch = (searchTerm) => {
         if(searchTerm){
             getInterviewHistory(searchTerm);
+        }
+    };
+
+    const handleRedirectActivity = (activity) => {
+        console.log('Redirecting to activity:', activity?.id);
+        if(activity?.type == 'resume'){
+            setParsedResume(activity?.resume?.cv_resumejson);
+            navigate(`/cv-builder`);
+        }else if(activity?.type == 'interview'){
+            setParsedFeedback(activity?.interview);
+            navigate(`/dashboard/question-feedback`);
         }
     };
 
@@ -104,9 +127,9 @@ const DashboardLanding = () => {
                                 <div className="history-actions">
                                     <div className={`progress-status ${item?.status.toLowerCase().replace(' ', '-')}`}>
                                         {item?.status === "FAIL" ? (
-                                            <span>{item?.evaluation?.score}% FAIL <span className="fail-x">X</span></span>
+                                            <span>{item?.evaluation?.breakdown?.total?.score}% FAIL <span className="fail-x">X</span></span>
                                         ) : (
-                                            <span>{item?.status}: {item?.evaluation?.score}%</span>
+                                            <span>{item?.status}: {item?.evaluation?.breakdown?.total?.score}%</span>
                                         )}
                                     </div>
                                     <div className="action-buttons">
@@ -134,9 +157,9 @@ const DashboardLanding = () => {
                 <div className="activity-list">
                     {recentActivities.map((activity, index) => (
                         <div key={index} className="activity-item">
-                            <div className="activity-action">{activity.action}</div>
-                            <div className="activity-description">{activity.description}</div>
-                            <a href="#" className="activity-link">{activity.link}</a>
+                            <div className="activity-action">{activity.type}</div>
+                            <div className="activity-description">{activity.message}</div>
+                            <a href="#" onClick={() => handleRedirectActivity(activity)} className="activity-link">{activity.type}</a>
                         </div>
                     ))}
                 </div>

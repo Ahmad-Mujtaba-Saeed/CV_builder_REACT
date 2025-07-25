@@ -7,6 +7,7 @@ import { Route, Routes, Navigate } from "react-router-dom"
 import axios from "./utils/axios"
 import { ResumeProvider } from './context/ResumeContext';
 import { FeedbackProvider } from './context/feedbackContext';
+import { CurrentQuestionProvider } from './context/CurrentQuestionContext';
 
 // Import components and routes
 import { userRoutes, authRoutes } from "./routes/allRoutes"
@@ -48,6 +49,7 @@ const App = () => {
     <>
       <UserContext.Provider value={{ userData, setUserData, error, setError }}>
         <FeedbackProvider>
+          <CurrentQuestionProvider>
           <ResumeProvider>
             <Routes>
               {/* Public routes */}
@@ -101,6 +103,7 @@ const App = () => {
               />
             </Routes>
           </ResumeProvider>
+          </CurrentQuestionProvider>
         </FeedbackProvider>
       </UserContext.Provider>
     </>

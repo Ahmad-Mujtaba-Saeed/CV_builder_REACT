@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from 'react-bootstrap';
 
 const BuildCVAI = () => {
-  const { setParsedResume } = useResume();
+  const { setParsedResume , parsedResume } = useResume();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,7 +44,11 @@ const BuildCVAI = () => {
 
     try {
       const response = await axios.post("/api/generate-cv-ai", data);
-      setParsedResume(response.data?.data);
+      const updatedResume = {
+         ...response.data?.data,
+         id: parsedResume.id
+       }
+      setParsedResume(updatedResume);
       toast.success('CV generated successfully!');
       navigate("/cv-builder");
     } catch (error) {

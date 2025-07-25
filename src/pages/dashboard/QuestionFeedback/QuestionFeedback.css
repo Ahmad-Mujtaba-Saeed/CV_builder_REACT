@@ -1,3 +1,31 @@
+/* Progress Bar Styles */
+.progress-container {
+    margin: 8px 0;
+    width: 100%;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Existing styles */
 .feedback-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -5,6 +33,32 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
     line-height: 1.6;
+}
+
+.score-percentage {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    padding-bottom: 25px;
+}
+
+.proficiency-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    padding: 3px 0;
+    border-radius: 3px;
+    background-color: #f8f9fa;
+    color: #495057;
 }
 
 .feedback-header h1 {

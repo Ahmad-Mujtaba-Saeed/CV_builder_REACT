@@ -7,13 +7,16 @@ import "./PracticeQuestion.css";
 import { motion } from "framer-motion";
 import { UserContext } from "../../../context/UserContext";
 import { FeedbackContext } from "../../../context/feedbackContext";
+import { Dropdown } from 'bootstrap';
 import Swal from "sweetalert2";
+import { useCurrentQuestion } from "../../../context/CurrentQuestionContext";
+import { baseUrl } from "../../../utils/axios";
 
 const PracticeQuestion = () => {
-    const baseUrl = "https://deepskyblue-donkey-692108.hostingersite.com";
-    // const baseUrl = "http://localhost:8000";
+   
     const { setParsedFeedback } = useContext(FeedbackContext);
     const { userData } = useContext(UserContext);
+    const {currentQuestion , setCurrentQuestion , clearCurrentQuestion} = useCurrentQuestion();
     const navigate = useNavigate();
     const { id } = useParams();
     const [isRecording, setIsRecording] = useState(false);
@@ -35,6 +38,14 @@ const PracticeQuestion = () => {
     const analyserRef = useRef(null);
     const dataArrayRef = useRef(null);
     const animationFrameRef = useRef(null);
+
+    useEffect(() => {
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+    }, []);
+    
 
     const startRecording = async () => {
         try {
@@ -241,25 +252,33 @@ const PracticeQuestion = () => {
             }
         });
     };
+    const [nextQuestion, setNextQuestion] = useState(null);
+
+    useEffect(() => {
+        const index = currentQuestion.findIndex(q => q.id == id);
+        const nextQuestion = currentQuestion[index + 1] || null;        
+        if (nextQuestion) {
+            setNextQuestion(nextQuestion);
+        }
+    }, [currentQuestion]);
 
     const handleSkipQuestion = () => {
-        // Logic to skip to next question
+        if (nextQuestion) {
+            window.location.href = `/dashboard/practice-question/${nextQuestion.id}`;
+        }
     };
 
     const handleExitInterview = () => {
         if (mediaRecorder && isRecording) {
             try {
-                // Stop the media recorder
                 mediaRecorder.stop();
                 
-                // Stop all tracks in the stream
                 if (mediaRecorder.stream) {
                     mediaRecorder.stream.getTracks().forEach(track => {
                         track.stop();
                     });
                 }
                 
-                // Clean up audio context and animation frame
                 if (animationFrameRef.current) {
                     cancelAnimationFrame(animationFrameRef.current);
                     animationFrameRef.current = null;
@@ -290,7 +309,7 @@ const PracticeQuestion = () => {
         if (document.fullscreenElement) {
             document.exitFullscreen();
         }
-        navigate(-1);
+        navigate('/');
     };
 
     const handleDragEnd = (event, info) => {
@@ -326,6 +345,11 @@ const PracticeQuestion = () => {
                 transition={{ duration: 0.5 }}
             >
                 <div className="intro-header">
+                    {/* {currentQuestion?.map((question) => (
+                        <>
+                        <h1>New Question</h1>
+                        </>
+                    ))} */}
                     <h1>Prepare for your interview</h1>
                     <p>{industry?.name} 😊 {businessSector?.name}</p>
                 </div>
@@ -490,23 +514,37 @@ const PracticeQuestion = () => {
         </div>
     )}
 </div>
-
-                {/* <div className="box-content">
-                    <div className="box-row">
-                        <h4>Question Overview</h4>
-                    </div>
+<div className="dropdown mb-3">
+    <button 
+        className="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+        type="button" 
+        id="questionOverviewDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false"
+    >
+        <span>Question Overview</span>
+        <i className="bi bi-chevron-down"></i>
+    </button>
+    <ul className="dropdown-menu w-100" aria-labelledby="questionOverviewDropdown">
+            <li>
+                {question?.speech}
+            </li>
+    </ul>
+</div>
+                {/* 
                     <div className="box-row">
                         <h4>View Feedback History</h4>
                     </div>
                 </div> */}
                 <div className="box-footer">
-                    {/* <motion.button 
+                    <motion.button 
+                        disabled={nextQuestion == null}
                         onClick={handleSkipQuestion}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         Skip to next question
-                    </motion.button> */}
+                    </motion.button>
                     <motion.button 
                         onClick={handleExitInterview}
                         whileHover={{ scale: 1.05 }}
