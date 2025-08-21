@@ -42,7 +42,7 @@ const userRoutes = [
   { path: "/dashboard/question-feedback", component: <QuestionFeedback /> , name: "dashboard" },
   { path: "/dashboard/practice-question/:id", component: <PracticeQuestion /> , name: "normal" },
   { path: "/dashboard/interview-questions", component: <InterviewQuestions />  , name: "dashboard"},
-  { path: "/job-search", component: <JobSearchPage />  , name: "normal"},
+  { path: "/dashboard/job-search", component: <JobSearchPage />  , name: "dashboard"},
 
 
 

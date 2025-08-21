@@ -72,7 +72,7 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
       </svg>
       ,
       label: 'Job Search',
-      to: '#'
+      to: '/dashboard/job-search'
     },
     {
       key: 'Events',

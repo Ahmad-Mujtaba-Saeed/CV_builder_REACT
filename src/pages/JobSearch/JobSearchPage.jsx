@@ -168,7 +168,6 @@ const JobSearchPage = () => {
                     </>
                 )}
             </Container>
-            <Footer />
             
             <style>{`
                 .text-truncate-3 {
