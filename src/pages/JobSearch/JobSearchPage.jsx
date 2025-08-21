@@ -11,14 +11,14 @@ const JobSearchPage = () => {
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('software developer');
     const [location, setLocation] = useState('New York');
-    const [numResults, setNumResults] = useState(10);
+
     const [country, setCountry] = useState('us');
 
     const fetchJobs = async () => {
         setLoading(true);
         setError(null);
         try {
-                        const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' jobs')}&num=${numResults}&gl=${country}&location=${encodeURIComponent(location)}`);
+                        const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' job')}&gl=${country}&location=${encodeURIComponent(location)}`);
             setJobs(response.data.organic || []);
         } catch (error) {
             console.error('Error fetching jobs:', error);
@@ -80,20 +80,6 @@ const JobSearchPage = () => {
                                                     value={location}
                                                     onChange={(e) => setLocation(e.target.value)}
                                                 />
-                                            </Form.Group>
-                                        </Col>
-                                        <Col md={3}>
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>Number of Results</Form.Label>
-                                                <Form.Select
-                                                    value={numResults}
-                                                    onChange={(e) => setNumResults(parseInt(e.target.value))}
-                                                >
-                                                    <option value="5">5 results</option>
-                                                    <option value="10">10 results</option>
-                                                    <option value="15">15 results</option>
-                                                    <option value="20">20 results</option>
-                                                </Form.Select>
                                             </Form.Group>
                                         </Col>
                                         <Col md={2} className="d-flex align-items-end">

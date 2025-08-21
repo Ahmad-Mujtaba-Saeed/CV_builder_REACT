@@ -55,7 +55,7 @@ const UploadPage = () => {
   const onDrop = useCallback(async (acceptedFiles) => {
     setIsDragging(false);
     const pdfFile = acceptedFiles[0];
-    if (pdfFile && pdfFile.type === "application/pdf") {
+    if (pdfFile && /^(application\/pdf|image\/(jpeg|jpg|png))$/.test(pdfFile.type)) {
       setFile(pdfFile);
       setIsParsing(true);
       let interval;
