@@ -24,6 +24,7 @@ import PracticeQuestion from "../pages/dashboard/PracticeQuestion/PracticeQuesti
 import QuestionFeedback from "../pages/dashboard/QuestionFeedback/QuestionFeedback.jsx";
 import ManageCategories from "../pages/dashboard/ManageCategories/ManageCategories.jsx";
 import DashboardLanding from "../pages/dashboard/DashboardLanding/DashboardLanding.jsx";
+import JobSearchPage from "../pages/JobSearch/JobSearchPage";
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -41,6 +42,8 @@ const userRoutes = [
   { path: "/dashboard/question-feedback", component: <QuestionFeedback /> , name: "dashboard" },
   { path: "/dashboard/practice-question/:id", component: <PracticeQuestion /> , name: "normal" },
   { path: "/dashboard/interview-questions", component: <InterviewQuestions />  , name: "dashboard"},
+  { path: "/job-search", component: <JobSearchPage />  , name: "normal"},
+
 
 
   { path: "/upload", component: <UploadPage /> },

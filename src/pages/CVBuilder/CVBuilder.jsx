@@ -522,8 +522,10 @@ const CVBuilder = () => {
     const [suggestedParagraph, setSuggestedParagraph] = useState('');
     const [analysisResult, setAnalysisResult] = useState(null);
     const [analysisRequestLoading, setAnalysisRequestLoading] = useState(false);
+    const [suggestedParagraphApplied, setSuggestedParagraphApplied] = useState(false);
     const handleAnalysis = async () => {
         try {
+            setSuggestedParagraphApplied(false);
             setAnalysisRequestLoading(true);
             const formData = new FormData();
             formData.append('paragraph', parsedResume?.summary || '');
@@ -572,6 +574,7 @@ const CVBuilder = () => {
     // }, [activeTab]);
 
     const handleApplyChanges = (suggestedParagraph) => {
+        setSuggestedParagraphApplied(true);
         setParsedResume({
             ...parsedResume,
             summary: suggestedParagraph
@@ -1003,7 +1006,7 @@ const CVBuilder = () => {
                 pdf.addImage(imgData, 'PNG', 0, yPos > 0 ? yPos : 0, imgWidth, imgHeight);
             }
 
-            pdf.save('professional_cv.pdf');
+            pdf.save(`${parsedResume?.candidateName?.[0]?.firstName||'CV'}.pdf`);
         } catch (error) {
             console.error('Error generating PDF:', error);
         } finally {
@@ -1186,6 +1189,7 @@ const CVBuilder = () => {
                                     </Row>
 
                                     {/* Addable Fields */}
+                                    {/* 
                                     <div className="d-flex flex-wrap gap-2 mt-3">
                                         {[
                                             'Date of birth', 'Place of birth', "Driver's license", 'Gender',
@@ -1196,7 +1200,8 @@ const CVBuilder = () => {
                                                 {label}
                                             </Button>
                                         ))}
-                                    </div>
+                                    </div> 
+                                    */}
                                 </Card>
                             </Accordion.Body>
                         </Accordion.Item>
@@ -1997,7 +2002,7 @@ const CVBuilder = () => {
                                 Resolve Manually
                             </Button>
                             <Button variant="primary" className="action-btn" onClick={() => handleApplyChanges(suggestedParagraph)}>
-                                Apply Suggested Changes
+                            {suggestedParagraphApplied ? "Applied" : "Apply Suggested Changes"}
                             </Button>
                         </div>
                     </Card.Body>

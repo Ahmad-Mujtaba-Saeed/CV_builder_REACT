@@ -3,8 +3,10 @@ import axios from 'axios';
 // http://localhost:8000
 // Create axios instance with base URL
 
+const baseURL = 'http://13.53.164.183';
+
 // const baseURL = 'https://deepskyblue-donkey-692108.hostingersite.com';
-const baseURL = 'http://localhost:8000';
+// const baseURL = 'http://localhost:8000';
 
 const instance = axios.create({
     baseURL: baseURL,

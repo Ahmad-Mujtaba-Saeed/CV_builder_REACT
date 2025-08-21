@@ -344,7 +344,7 @@ const UploadPage = () => {
                   <Button
                     variant="secondary"
                     onClick={handleManualCV}
-                    className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button"
+                    className="d-flex align-items-center gap-2 cv-build-from-scratch-btn custom-button text-black"
                   >
                     <FiEdit2 /> Build from scratch
                   </Button>

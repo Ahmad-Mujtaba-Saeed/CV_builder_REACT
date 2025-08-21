@@ -203,6 +203,16 @@
       }
     }
 
+    & .add-btn:hover,
+    & .down-btn:hover {
+      border: 1px solid var(--primary-color);
+      background-color: transparent;
+
+      & svg {
+        stroke: var(--primary-color);
+      }
+    }
+
     & .add-btn {
       display: none;
     }
@@ -219,7 +229,7 @@
       & .add-btn,
       & .down-btn {
         border: 1px solid var(--primary-color);
-        background-color: var(--primary-hover-color);
+        background-color: transparent;
 
         & svg {
           stroke: var(--primary-color);
