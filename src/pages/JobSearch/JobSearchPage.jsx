@@ -7,7 +7,7 @@ import axios from '../../utils/axios';
 const JobSearchPage = () => {
     const navigate = useNavigate();
     const [jobs, setJobs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('software developer');
     const [location, setLocation] = useState('New York');
@@ -27,10 +27,6 @@ const JobSearchPage = () => {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchJobs();
-    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -116,17 +112,17 @@ const JobSearchPage = () => {
                 {/* Results */}
                 {!loading && !error && (
                     <>
-                        <Row className="mb-3">
+                        {/* <Row className="mb-3">
                             <Col>
                                 <h4>Found {jobs.length} job results</h4>
                             </Col>
-                        </Row>
+                        </Row> */}
                         
                         {jobs.length === 0 ? (
                             <Row>
                                 <Col>
                                     <Alert variant="info">
-                                        No jobs found. Try adjusting your search criteria.
+                                        Please try searching again!
                                     </Alert>
                                 </Col>
                             </Row>
