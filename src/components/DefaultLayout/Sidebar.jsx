@@ -162,7 +162,7 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
         </svg>
       ,
       label: 'Pricing',
-      to: '#'
+      to: '/dashboard/plan-management'
     },
     {
       key: 'Notifications',

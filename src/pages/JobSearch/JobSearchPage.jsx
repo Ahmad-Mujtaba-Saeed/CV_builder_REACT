@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Card, Form, InputGroup, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card, Form, InputGroup, Spinner, Alert, Modal, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Partials/Footer';
 import axios from '../../utils/axios';
@@ -11,15 +11,16 @@ const JobSearchPage = () => {
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('software developer');
     const [location, setLocation] = useState('New York');
-
     const [country, setCountry] = useState('us');
+    const [selectedJob, setSelectedJob] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     const fetchJobs = async () => {
         setLoading(true);
         setError(null);
         try {
-                        const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' job')}&gl=${country}&location=${encodeURIComponent(location)}`);
-            setJobs(response.data.organic || []);
+            const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' job')}&gl=${country}&location=${encodeURIComponent(location)}`);
+            setJobs(response.data.data || []);
         } catch (error) {
             console.error('Error fetching jobs:', error);
             setError('Failed to fetch jobs. Please try again later.');
@@ -33,10 +34,27 @@ const JobSearchPage = () => {
         fetchJobs();
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
+    const formatDate = (timestamp) => {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
         return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    };
+
+    const handleJobClick = (job) => {
+        setSelectedJob(job);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedJob(null);
+    };
+
+    const formatSalary = (job) => {
+        if (job.job_min_salary && job.job_max_salary) {
+            return `$${job.job_min_salary.toLocaleString()} - $${job.job_max_salary.toLocaleString()} ${job.job_salary_period?.toLowerCase() || 'year'}`;
+        }
+        return 'Salary not specified';
     };
 
     return (
@@ -78,6 +96,17 @@ const JobSearchPage = () => {
                                                 />
                                             </Form.Group>
                                         </Col>
+                                        <Col md={3}>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Country</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="Enter country"
+                                                    value={country}
+                                                    onChange={(e) => setCountry(e.target.value)}
+                                                />
+                                            </Form.Group>
+                                        </Col>
                                         <Col md={2} className="d-flex align-items-end">
                                             <Button variant="primary" type="submit" className="w-100">
                                                 Search
@@ -112,11 +141,6 @@ const JobSearchPage = () => {
                 {/* Results */}
                 {!loading && !error && (
                     <>
-                        {/* <Row className="mb-3">
-                            <Col>
-                                <h4>Found {jobs.length} job results</h4>
-                            </Col>
-                        </Row> */}
                         
                         {jobs.length === 0 ? (
                             <Row>
@@ -132,27 +156,48 @@ const JobSearchPage = () => {
                                     <Col md={6} lg={4} key={index} className="mb-4">
                                         <Card className="h-100 job-card">
                                             <Card.Body>
-                                                <Card.Title className="h6">{job.title}</Card.Title>
-                                                {job.date && (
-                                                    <Card.Subtitle className="mb-2 text-muted small">
-                                                        {formatDate(job.date)}
+                                                <Card.Title className="h6">{job.job_title}</Card.Title>
+                                                <div className="d-flex align-items-center mb-2">
+                                                    {job.employer_logo && (
+                                                        <img 
+                                                            src={job.employer_logo} 
+                                                            alt={job.employer_name}
+                                                            className="me-2"
+                                                            style={{ width: '30px', height: '30px', objectFit: 'contain' }}
+                                                        />
+                                                    )}
+                                                    <Card.Subtitle className="text-muted small">
+                                                        {job.employer_name}
                                                     </Card.Subtitle>
-                                                )}
+                                                </div>
+                                                <div className="mb-2">
+                                                    <Badge bg="secondary" className="me-1">
+                                                        {job.job_employment_type}
+                                                    </Badge>
+                                                    {job.job_is_remote && (
+                                                        <Badge bg="success">Remote</Badge>
+                                                    )}
+                                                </div>
                                                 <Card.Text className="text-truncate-3">
-                                                    {job.snippet}
+                                                    {job.job_description}
                                                 </Card.Text>
+                                                {job.job_posted_at && (
+                                                    <small className="text-muted">
+                                                        Posted: {job.job_posted_at}
+                                                    </small>
+                                                )}
                                             </Card.Body>
                                             <Card.Footer className="bg-transparent">
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <small className="text-muted">
-                                                        Position: {job.position}
+                                                        {job.job_location}
                                                     </small>
                                                     <Button 
                                                         variant="outline-primary" 
                                                         size="sm"
-                                                        onClick={() => window.open(job.link, '_blank')}
+                                                        onClick={() => handleJobClick(job)}
                                                     >
-                                                        View Job
+                                                        View Details
                                                     </Button>
                                                 </div>
                                             </Card.Footer>
@@ -164,6 +209,85 @@ const JobSearchPage = () => {
                     </>
                 )}
             </Container>
+
+            {/* Job Details Modal */}
+            <Modal show={showModal} style={{ zIndex: 1050 }} onHide={handleCloseModal} size="lg" centered>
+                {selectedJob && (
+                    <>
+                        <Modal.Header closeButton>
+                            <Modal.Title>{selectedJob.job_title}</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div className="mb-3">
+                                <h5>{selectedJob.employer_name}</h5>
+                                <div className="d-flex flex-wrap gap-2 mb-2">
+                                    <Badge bg="primary">{selectedJob.job_employment_type}</Badge>
+                                    {selectedJob.job_is_remote && (
+                                        <Badge bg="success">Remote</Badge>
+                                    )}
+                                    <Badge bg="info">{selectedJob.job_location}</Badge>
+                                </div>
+                                {selectedJob.job_posted_at && (
+                                    <p className="text-muted">Posted: {selectedJob.job_posted_at}</p>
+                                )}
+                                {(selectedJob.job_min_salary || selectedJob.job_max_salary) && (
+                                    <p className="fw-bold">{formatSalary(selectedJob)}</p>
+                                )}
+                            </div>
+
+                            <div className="mb-3">
+                                <h6>Job Description</h6>
+                                <p>{selectedJob.job_description}</p>
+                            </div>
+
+                            {selectedJob.job_highlights && Object.keys(selectedJob.job_highlights).length > 0 && (
+                                <div className="mb-3">
+                                    <h6>Highlights</h6>
+                                    {Object.entries(selectedJob.job_highlights).map(([key, values]) => (
+                                        <div key={key} className="mb-2">
+                                            <strong>{key}:</strong>
+                                            <ul className="mb-1">
+                                                {values.map((value, i) => (
+                                                    <li key={i}>{value}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="mb-3">
+                                <h6>Apply Options</h6>
+                                <div className="d-grid gap-2">
+                                    {selectedJob.apply_options && selectedJob.apply_options.map((option, index) => (
+                                        <Button 
+                                            key={index}
+                                            variant="outline-primary" 
+                                            size="sm"
+                                            onClick={() => window.open(option.apply_link, '_blank')}
+                                        >
+                                            Apply via {option.publisher}
+                                        </Button>
+                                    ))}
+                                    {selectedJob.job_apply_link && (
+                                        <Button 
+                                            variant="primary"
+                                            onClick={() => window.open(selectedJob.job_apply_link, '_blank')}
+                                        >
+                                            Apply Now
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleCloseModal}>
+                                Close
+                            </Button>
+                        </Modal.Footer>
+                    </>
+                )}
+            </Modal>
             
             <style>{`
                 .text-truncate-3 {
@@ -174,6 +298,7 @@ const JobSearchPage = () => {
                 }
                 .job-card {
                     transition: transform 0.2s;
+                    cursor: pointer;
                 }
                 .job-card:hover {
                     transform: translateY(-5px);

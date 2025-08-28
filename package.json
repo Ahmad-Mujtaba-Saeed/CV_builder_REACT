@@ -11,6 +11,7 @@
     "start": "react-scripts start"
   },
   "dependencies": {
+    "@revolut/checkout": "^1.1.23",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "dotenv": "^16.5.0",
