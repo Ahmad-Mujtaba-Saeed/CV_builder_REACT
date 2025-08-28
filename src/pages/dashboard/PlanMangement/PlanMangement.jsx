@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import RevolutCheckout from "@revolut/checkout";
 import axios from '../../../utils/axios';
 
+
 const PlanManagement = () => {
+    const containerRef = useRef(null);
     const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -13,7 +15,86 @@ const PlanManagement = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentPlan, setCurrentPlan] = useState(null);
     
-    const containerRef = useRef(null);
+
+
+
+    const initRevolutPay = async () => {
+        try {
+          // Initialize Revolut Pay with your static public API key
+          const { revolutPay } = await RevolutCheckout.payments({
+            locale: 'en',
+            mode: 'sandbox', // Switch to 'production' for live
+            publicToken: 'pk_HSkjhkcgVbq2HNgkJ5z51SKm21PNWBDBlqGM12utU6OzQ98d', // <-- IMPORTANT: Use your public key here
+          });
+
+          const paymentOptions = {
+            currency: 'USD',
+            totalAmount: 10000,
+            customer: { email: 'customer@example.com' },
+            savePaymentMethodForMerchant: true,
+            // This function is called by the widget when the user clicks the button
+            createOrder: async () => {
+              const response = await axios.post('/api/subscription/create-order', {
+                amount: 10000,
+                email: 'customer@example.com',
+              });
+
+              console.log(response);
+            //   if (!response.ok) {
+            //     throw new Error(`Backend error: ${response.statusText}`);
+            //   }
+              
+              const data = response.data;
+              if (!data.token) {
+                throw new Error('No token returned from backend');
+              }
+              // Return the token to the widget as publicId
+              return { publicId: data.token };
+            },
+          };
+
+          // Mount Revolut Pay widget
+          revolutPay.mount(containerRef.current, paymentOptions);
+
+          // Set up event listeners
+          revolutPay.on('payment', async (event) => {
+            switch (event.type) {
+              case 'success':
+                console.log('✅ Payment success:', event);
+                // You can now confirm the payment status on your backend if needed
+                // await confirmPaymentStatus(event.orderId);
+                break;
+              case 'error':
+                console.error('❌ Payment failed:', event.error);
+                break;
+              case 'cancel':
+                console.log('⚠️ Payment cancelled');
+                break;
+            }
+          });
+          
+        } catch (error) {
+          console.error('Error initializing Revolut Pay:', error);
+          alert('Failed to initialize payment. Please try again.');
+        }
+      };
+    
+      // Optional: Poll backend to confirm payment status
+      const confirmPaymentStatus = async (orderId) => {
+        try {
+          const response = await axios.get(`/api/subscription/order/${orderId}/payments`);
+          const payments = response.data;
+          console.log('Payment Status:', payments);
+          // Check if payment is completed and update UI accordingly
+          if (payments[0]?.state === 'completed') {
+            console.log('Payment confirmed as completed');
+          }
+        } catch (error) {
+          console.error('Error checking payment status:', error);
+        }
+      };
+      
+
 
     const navigate = useNavigate();
 
@@ -43,6 +124,7 @@ const PlanManagement = () => {
         setIsEditing(!!plan);
         setShowEditModal(true);
     };
+
 
     const handleCloseModals = () => {
         setShowSubscriptionModal(false);
@@ -126,92 +208,9 @@ const PlanManagement = () => {
         );
     }
 
-    const initRevolutPay = async () => {
-        try {
-          // Initialize Revolut Pay with your static public API key
-          const { revolutPay } = await RevolutCheckout.payments({
-            locale: 'en',
-            mode: 'sandbox', // Switch to 'production' for live
-            publicToken: 'pk_HSkjhkcgVbq2HNgkJ5z51SKm21PNWBDBlqGM12utU6OzQ98d', // <-- IMPORTANT: Use your public key here
-          });
 
-          const paymentOptions = {
-            currency: 'USD',
-            totalAmount: 1000,
-            customer: { email: 'customer@example.com' },
-            savePaymentMethodForMerchant: true,
-            // This function is called by the widget when the user clicks the button
-            createOrder: async () => {
-              const response = await fetch('http://localhost:8000/api/subscription/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  amount: 1000,
-                  email: 'customer@example.com',
-                }),
-              });
 
-              if (!response.ok) {
-                throw new Error(`Backend error: ${response.statusText}`);
-              }
-              
-              const data = await response.json();
-              
-              if (!data.token) {
-                throw new Error('No token returned from backend');
-              }
-              alert(data);
-
-              // Return the token to the widget as publicId
-              return { publicId: data.token };
-            },
-          };
-
-          // Mount Revolut Pay widget
-          revolutPay.mount(containerRef.current, paymentOptions);
-
-          // Set up event listeners
-          revolutPay.on('payment', async (event) => {
-            switch (event.type) {
-              case 'success':
-                console.log('✅ Payment success:', event);
-                // You can now confirm the payment status on your backend if needed
-                // await confirmPaymentStatus(event.orderId);
-                break;
-              case 'error':
-                console.error('❌ Payment failed:', event.error);
-                break;
-              case 'cancel':
-                console.log('⚠️ Payment cancelled');
-                break;
-            }
-          });
-          
-        } catch (error) {
-          console.error('Error initializing Revolut Pay:', error);
-          alert('Failed to initialize payment. Please try again.');
-        }
-      };
-    
-      // Optional: Poll backend to confirm payment status
-      const confirmPaymentStatus = async (orderId) => {
-        try {
-          const response = await fetch(`http://localhost:8000/api/subscription/order/${orderId}/payments`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          });
-          const payments = await response.json();
-          console.log('Payment Status:', payments);
-          // Check if payment is completed and update UI accordingly
-          if (payments[0]?.state === 'completed') {
-            console.log('Payment confirmed as completed');
-          }
-        } catch (error) {
-          console.error('Error checking payment status:', error);
-        }
-      };
       
-  
 
     return (
         <>
@@ -222,7 +221,7 @@ const PlanManagement = () => {
                         
                         {/* <p className="lead text-muted">Add, edit, or remove subscription plans.</p> */}
                         <div ref={containerRef}></div>
-                        <Button variant="primary" size="lg" onClick={() => initRevolutPay(null)}>Subscribe</Button>
+                        <button className="btn btn-primary" onClick={initRevolutPay}>Payment link</button>
                     </Col>
                 </Row>
 
