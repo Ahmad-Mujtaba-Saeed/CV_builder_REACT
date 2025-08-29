@@ -16,40 +16,66 @@ import { FaSearch,FaArrowRight  } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Partials/Footer";
 import axios from "../../utils/axios";
+import avatar from "../../assets/images/2.jpg";
+
+
 const JobSearchPage = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("software developer");
-  const [location, setLocation] = useState("New York");
-  const [country, setCountry] = useState("us");
+  const [searchQuery, setSearchQuery] = useState("frontend developer");
+  const [location, setLocation] = useState("uk");
+  const [country, setCountry] = useState("uk");
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [salaryRange, setSalaryRange] = useState("");
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [showSalaryFilter, setShowSalaryFilter] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const jobss = [
-    {
-      id: 1,
-      title: "Team Developer",
-      location: "Manchester",
-      date: "01/08/2025",
-      salary: "£53,000+",
-    },
-    {
-      id: 2,
-      title: "Team Leader",
-      location: "Stockport",
-      date: "01/08/2025",
-      salary: "£60,000+",
-    },
-  ];
-  const filteredJobss = jobss.filter((job) =>
-    job.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const ukCities = [
+    "All",
+    "London",
+    "Birmingham",
+    "Manchester",
+    "Leeds",
+    "Liverpool",
+    "Newcastle upon Tyne",
+    "Sheffield",
+    "Bristol",
+    "Nottingham",
+    "Leicester",
+    "Coventry",
+    "Cardiff",
+    "Glasgow",
+    "Edinburgh",
+    "Belfast",
+    "Southampton",
+    "Portsmouth",
+    "Stoke-on-Trent",
+    "Sunderland",
+    "Derby",
+];
+
+
+const [salaryRanges, setSalaryRanges] = useState([
+    { label: "All Salaries", value: "0-0" },
+    { label: "£20,000 +", value: "20000-1000000" },
+    { label: "£25,000 +", value: "25000-1000000" },
+    { label: "£30,000 +", value: "30000-1000000" },
+    { label: "£35,000 +", value: "35000-1000000" },
+    { label: "£40,000 +", value: "40000-1000000" },
+    { label: "£50,000 +", value: "50000-1000000" },
+    { label: "£60,000 +", value: "60000-1000000" },
+    { label: "£70,000 +", value: "70000-1000000" },
+    { label: "£80,000 +", value: "80000-1000000" },
+    { label: "£100,000 +", value: "100000-1000000" },
+    { label: "£150,000+", value: "150000-1000000" }
+  ]);
+  
+  // Update the fetchJobs function
   const fetchJobs = async () => {
     setLoading(true);
     setError(null);
@@ -59,9 +85,24 @@ const JobSearchPage = () => {
           searchQuery + " job"
         )}&gl=${country}&location=${encodeURIComponent(location)}`
       );
-      const jobsData = response.data.data || [];
-      setJobs(jobsData);
-      setFilteredJobs(jobsData); // Initialize filtered jobs with all jobs
+      
+      // Process the jobs data to include salary information
+      const jobsWithSalary = (response.data.jobs || []).map(job => {
+        const salaryInfo = (response.data.data?.jobs || []).find(
+          j => j.job_id === job.job_id
+        )?.salary_data;
+        
+        return {
+          ...job,
+          job_min_salary: salaryInfo?.min_amount || 0,
+          job_max_salary: salaryInfo?.max_amount || 0,
+          job_salary_currency: salaryInfo?.currency || 'GBP',
+          job_salary_period: salaryInfo?.period || 'year'
+        };
+      });
+  
+      setJobs(jobsWithSalary);
+      setFilteredJobs(jobsWithSalary);
     } catch (error) {
       console.error("Error fetching jobs:", error);
       setError("Failed to fetch jobs. Please try again later.");
@@ -69,6 +110,7 @@ const JobSearchPage = () => {
       setLoading(false);
     }
   };
+  
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -91,6 +133,7 @@ const JobSearchPage = () => {
   };
 
   const handleCloseModal = () => {
+    setShowFullDescription(false);
     setShowModal(false);
     setSelectedJob(null);
   };
@@ -150,7 +193,7 @@ const JobSearchPage = () => {
 
         {/* Search Form */}
         <Row className="mb-4">
-          <Col className="col-4">
+          <Col xl={3}>
             <Card className="mb-3">
                 <Card.Body>
                     <div className="flex items-center justify-between p-0 bg-white rounded-2xl shadow-md relative w-80">
@@ -162,7 +205,7 @@ const JobSearchPage = () => {
                             width={50}
                             height={50}
                             style={{ borderRadius: "25px" }}
-                            src="/assets/images/2.jpg" // replace with real image
+                            src={avatar} // replace with real image
                             alt="Profile"
                             className="w-12 h-12 rounded-full"
                             />
@@ -205,27 +248,19 @@ const JobSearchPage = () => {
                 <Form onSubmit={handleSearch}>
                   <Row>
                     <Col md={12}>
-                      <Form.Group className="mb-3">
-                        <Form.Label
-                          style={{ fontSize: "11px", marginLeft: "-8px" }}
-                        >
-                          Industry
-                        </Form.Label>
-                        <Form.Select
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          required
-                          style={{ fontSize: "14px" }}
-                        >
-                          <option value="">Tech</option>
-                          <option value="frontend">Frontend Developer</option>
-                          <option value="backend">Backend Developer</option>
-                          <option value="fullstack">
-                            Full Stack Developer
-                          </option>
-                          <option value="designer">UI/UX Designer</option>
-                        </Form.Select>
-                      </Form.Group>
+                    <Form.Group className="mb-3">
+  <Form.Label style={{ fontSize: "11px", marginLeft: "-8px" }}>
+    Job Title
+  </Form.Label>
+  <Form.Control
+    type="text"
+    placeholder="e.g. Frontend Developer, Backend Engineer"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    required
+    style={{ fontSize: "14px" }}
+  />
+</Form.Group>
                     </Col>
                     <Col md={12}>
                       <Form.Group className="mb-3">
@@ -235,18 +270,20 @@ const JobSearchPage = () => {
                           Location
                         </Form.Label>
                         <Form.Select
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
                           required
                           style={{ fontSize: "14px" }}
                         >
-                          <option value="">London</option>
-                          <option value="frontend">Manchester</option>
-                          <option value="backend">Lords</option>
+                          {ukCities.map((city, index) => (
+                            <option key={index} value={city.toLowerCase()=="all"?"uk":city.toLowerCase()}>
+                              {city}
+                            </option>
+                          ))}
                         </Form.Select>
                       </Form.Group>
                     </Col>
-                    <Col md={12}>
+                    {/* <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label
                           style={{ fontSize: "11px", marginLeft: "-8px" }}
@@ -259,11 +296,11 @@ const JobSearchPage = () => {
                           required
                           style={{ fontSize: "14px" }}
                         >
-                          <option value="">Anytime</option>
-                          <option value="frontend">Yesterday</option>
+                          <option value="anytime">Anytime</option>
+                          <option value="yesterday">Yesterday</option>
                         </Form.Select>
                       </Form.Group>
-                    </Col>
+                    </Col> */}
                     <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label
@@ -272,61 +309,63 @@ const JobSearchPage = () => {
                           Salary Expectation
                         </Form.Label>
                         <Form.Select
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          required
-                          style={{ fontSize: "14px" }}
-                        >
-                          <option value="">£50,000 - £60,000</option>
-                          <option value="frontend">£60,000 - £100,000</option>
-                        </Form.Select>
-                        {showSalaryFilter && (
-                          <Form.Select
-                            value={salaryRange}
-                            onChange={(e) => {
-                              setSalaryRange(e.target.value);
-                              if (e.target.value === "") {
-                                setFilteredJobs(jobs);
-                                return;
-                              }
-                              const [min, max] = e.target.value
-                                .split("-")
-                                .map(Number);
-                              const filtered = jobs.filter((job) => {
-                                const salary =
-                                  job.job_max_salary || job.job_min_salary || 0;
-                                return salary >= min && salary <= max;
-                              });
-                              setFilteredJobs(filtered);
-                            }}
-                          >
-                            <option value="">All Salaries</option>
-                            <option value="0-50000">$0 - $50,000</option>
-                            <option value="50000-100000">
-                              $50,000 - $100,000
-                            </option>
-                            <option value="100000-150000">
-                              $100,000 - $150,000
-                            </option>
-                            <option value="150000-200000">
-                              $150,000 - $200,000
-                            </option>
-                            <option value="200000-1000000">$200,000+</option>
-                          </Form.Select>
-                        )}
+  value={salaryRange}
+  onChange={(e) => {
+    setSalaryRange(e.target.value);
+    if (e.target.value === "0-0") {
+      // For "All Salaries" option, show all jobs with 0/null at bottom
+      const sortedJobs = [...jobs].sort((a, b) => {
+        const aSalary = a.job_max_salary ?? a.job_min_salary ?? 0;
+        const bSalary = b.job_max_salary ?? b.job_min_salary ?? 0;
+        if (aSalary === 0 && bSalary === 0) return 0;
+        if (aSalary === 0) return 1;
+        if (bSalary === 0) return -1;
+        return bSalary - aSalary; // Sort by salary in descending order
+      });
+      setFilteredJobs(sortedJobs);
+      return;
+    }
+    
+    const [min, max] = e.target.value.split("-").map(Number);
+    // First filter, then sort
+    const filteredAndSorted = [...jobs]
+      .filter(job => {
+        const salary = job.job_max_salary ?? job.job_min_salary ?? 0;
+        // Include jobs within range OR jobs with 0/null salary
+        return (salary >= min && salary <= max) || salary === 0;
+      })
+      .sort((a, b) => {
+        const aSalary = a.job_max_salary ?? a.job_min_salary ?? 0;
+        const bSalary = b.job_max_salary ?? b.job_min_salary ?? 0;
+        // Push 0/null salaries to bottom
+        if (aSalary === 0 && bSalary === 0) return 0;
+        if (aSalary === 0) return 1;
+        if (bSalary === 0) return -1;
+        // Sort by salary in descending order
+        return bSalary - aSalary;
+      });
+      
+    setFilteredJobs(filteredAndSorted);
+  }}
+  style={{ fontSize: "14px" }}
+>
+  {salaryRanges.map((range, index) => (
+    <option key={index} value={range.value}>
+      {range.label}
+    </option>
+  ))}
+</Form.Select>
                       </Form.Group>
                     </Col>
-                    {/* <Col md={2} className="d-flex align-items-end">
-                                            <Button variant="primary" type="submit" className="w-100">
-                                                Search
-                                            </Button>
-                                        </Col> */}
                   </Row>
+                  <Button variant="primary" type="submit" className="w-100" onClick={handleSearch}>
+                    Search
+                  </Button>
                 </Form>
               </Card.Body>
             </Card>
           </Col>
-          <Col className="col-8">
+          <Col xl={9}>
             <div className="p-6 bg-gray-50 min-h-screen">
       {/* Search box */}
       <div className="relative w-full max-w-md mb-4">
@@ -341,159 +380,216 @@ const JobSearchPage = () => {
         value={search}
         
         onChange={(e) => setSearch(e.target.value)}
-        className=" p-1 py-2 pl-7 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none"
+        className=" p-1 py-2 pl-7 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none bg-transparent"
       />
     </div>
 
       {/* Job table */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="mx-4 w-95 text-left">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
-            <tr style={{ fontSize: "11px"}} className="border-bottom">
-              <th className="py-3 px-4">Job Position</th>
-              <th className="py-3 px-4">Location</th>
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Salary</th>
-              <th className="py-3 px-4"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredJobss.map((job) => (
-              <tr
-              style={{ fontSize: "11px" }}
-                key={job.id}
-                className="border-t hover:bg-gray-50 transition border-bottom"
-              >
-                <td className="py-3 px-4 text-purple-600 font-medium cursor-pointer" style={{color:'#BA67EF'}}>
-                  {job.title}
-                </td>
-                <td className="py-3 px-4">{job.location}</td>
-                <td className="py-3 px-4">{job.date}</td>
-                <td className="py-3 px-4">{job.salary}</td>
-                <td className="py-3 px-4 d-flex gap-2">
-                  <button className="d-flex align-items-center gap-1 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300" style={{color:'#000',fontSize:'9px',border:'unset'}}>
-                    APPLY NOW <FaArrowRight/>
-                  </button>
-                  <button className="d-flex align-items-center gap-1 py-1 text-sm rounded bg-purple-200 text-purple-700 hover:bg-purple-300" style={{color:'#BA67EF',fontSize:'9px',border:'unset'}}>
-                    APPLY WITH MFP CV <FaArrowRight/>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          
-        </table>
-        
-        
-      {/* Footer */}
-      <div className="mx-4 mb-2 d-flex justify-content-between items-center mt-4 text-sm text-gray-600" style={{fontSize:'11px'}}>
-        <p>
-          1 to {filteredJobss.length} Items of {jobs.length}{" "}
-          <span className="text-purple-600 cursor-pointer" style={{color:'#BA67EF'}}>View all</span>
-        </p>
-        <div className="d-flex items-center gap-2" style={{fontSize:'11px'}}>
-          <button className="px-2 py-1 border rounded">&lt;</button>
-          <span className="px-3 py-2 text-white rounded" style={{background:'#BA67EF'}}>1</span>
-          <button className="px-2 py-1 border rounded">&gt;</button>
+{/* Replace the entire Results section with this */}
+{/* Loading State */}
+{loading && (
+    <center>
+  <tr>
+    <td colSpan="6" className="py-8">
+      <div className="d-flex justify-content-center w-100">
+        <div className="text-center" style={{ width: '100%', maxWidth: '300px', margin: '0 auto' }}>
+          <Spinner 
+            animation="border" 
+            role="status" 
+            variant="primary"
+            className="mb-2 d-block mx-auto"
+            style={{ 
+              width: '2rem', 
+              height: '2rem',
+              color: '#BA67EF'
+            }}
+          />
+          <p className="text-muted mb-0">Searching for jobs...</p>
         </div>
       </div>
+    </td>
+  </tr>
+  </center>
+)}
+{!loading && !error && (
+  <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <table className="w-100 text-left">
+      <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
+        <tr style={{ fontSize: "11px"}} className="border-bottom">
+          <th className="py-3 px-2">Job Position</th>
+          <th className="py-3 px-2">Company</th>
+          <th className="py-3 px-2">Location</th>
+          <th className="py-3 px-2">Salary</th>
+          <th className="py-3 px-2">Posted</th>
+          <th className="py-3 px-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+{/* Loading State */}
+
+{/* Error State */}
+{!loading && error && (
+  <tr>
+    <td colSpan="6" className="py-4 text-center">
+      <Alert variant="danger" className="mb-0">
+        {error}
+      </Alert>
+    </td>
+  </tr>
+)}
+
+{/* No Results State */}
+{!loading && !error && filteredJobs.length === 0 && (
+  <tr>
+    <td colSpan="6" className="py-8 text-center">
+      <div className="d-flex flex-column align-items-center">
+        <i className="bi bi-search mb-3" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
+        <h5 className="text-muted">No jobs found</h5>
+        <p className="text-muted">Try adjusting your search filters</p>
       </div>
+    </td>
+  </tr>
+)}
+
+{/* Results */}
+{!loading && !error && filteredJobs.length > 0 && filteredJobs.map((job) => (
+  <tr
+    key={job.job_id}
+    className="border-top"
+    style={{ fontSize: "11px" }}
+  >
+    <td 
+      className="py-3 px-2 font-medium" 
+      style={{color:'#BA67EF'}}
+    >
+      <div 
+        className="d-flex align-items-center cursor-pointer"
+        onClick={() => handleJobClick(job)}
+      >
+        {job.employer_logo && (
+          <img 
+            src={job.employer_logo} 
+            alt={job.employer_name}
+            className="me-2"
+            style={{ 
+              width: '24px', 
+              height: '24px', 
+              objectFit: 'contain',
+              borderRadius: '4px'
+            }}
+          />
+        )}
+        <span>{job.job_title}</span>
+      </div>
+    </td>
+    <td className="py-3 px-2 align-middle">{job.employer_name}</td>
+    <td className="py-3 px-2 align-middle">
+      <div className="d-flex align-items-center">
+        <i className="bi bi-geo-alt me-1 text-muted"></i>
+        {job.job_location}
+      </div>
+    </td>
+    <td className="py-3 px-2 align-middle">
+      {job.job_min_salary || job.job_max_salary ? (
+        <div className="d-flex align-items-center">
+          <i className="bi bi-cash-coin me-1 text-muted"></i>
+          <span>
+            {job.job_salary_currency} 
+            {job.job_min_salary === job.job_max_salary
+              ? job.job_min_salary.toLocaleString()
+              : `${job.job_min_salary?.toLocaleString() || '0'} - ${job.job_max_salary?.toLocaleString()}`}
+            /year
+          </span>
+        </div>
+      ) : (
+        <span className="text-muted">Not specified</span>
+      )}
+    </td>
+    <td className="py-3 px-2 align-middle">
+      {job.job_posted_at ? (
+        <div className="d-flex align-items-center">
+          <i className="bi bi-clock-history me-1 text-muted"></i>
+          {job.job_posted_at}
+        </div>
+      ) : 'N/A'}
+    </td>
+    <td className="py-3 px-2 align-middle">
+      <div className="d-flex gap-2 flex-wrap flex-xxxl-nowrap">
+        <button 
+          className="d-flex align-items-center gap-1 px-2 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"  
+          style={{
+            color: '#000',
+            fontSize: '9px',
+            border: 'none',
+            transition: 'all 0.2s',
+            minWidth: 'fit-content'
+          }}
+          onClick={() => handleJobClick(job)}
+        >
+          APPLY NOW 
+          <FaArrowRight size={10} />
+        </button>
+        <button 
+          className="d-flex align-items-center gap-1 px-2 py-1 text-sm rounded" 
+          style={{
+            background: 'rgba(186, 103, 239, 0.1)',
+            color: '#BA67EF',
+            fontSize: '9px',
+            border: '1px solid rgba(186, 103, 239, 0.3)',
+            transition: 'all 0.2s',
+            minWidth: 'fit-content'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(186, 103, 239, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(186, 103, 239, 0.1)';
+          }}
+        >
+          APPLY WITH CV 
+          <FaArrowRight size={10} />
+        </button>
+      </div>
+    </td>
+  </tr>
+))}
+      </tbody>
+    </table>
+    
+    {/* Pagination */}
+    {filteredJobs.length > 0 && (
+      <div className="mx-4 mb-2 d-flex justify-content-between items-center mt-4 text-sm text-gray-600" style={{fontSize:'11px'}}>
+        <p>
+          Showing {Math.min(filteredJobs.length, 10)} of {filteredJobs.length} jobs
+        </p>
+        <div className="d-flex items-center gap-2" style={{fontSize:'11px'}}>
+          <button 
+            className="px-2 py-1 border rounded" 
+            disabled={page === 1}
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+          >
+            &lt;
+          </button>
+          <span className="px-3 py-1 rounded" style={{background:'#BA67EF', color: 'white'}}>
+            {page}
+          </span>
+          <button 
+            className="px-2 py-1 border rounded"
+            onClick={() => setPage(p => p + 1)}
+          >
+            &gt;
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
       
 
     </div>
           </Col>
         </Row>
 
-        {/* Loading State */}
-        {loading && (
-          <Row className="justify-content-center my-5">
-            <Col md={6} className="text-center">
-              <Spinner animation="border" role="status" variant="primary" />
-              <p className="mt-2">Loading jobs...</p>
-            </Col>
-          </Row>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <Row className="my-4">
-            <Col>
-              <Alert variant="danger">{error}</Alert>
-            </Col>
-          </Row>
-        )}
-
-        {/* Results */}
-        {!loading && !error && (
-          <>
-            {filteredJobs.length === 0 ? (
-              <Row>
-                <Col>
-                  <Alert variant="info">Please try searching again!</Alert>
-                </Col>
-              </Row>
-            ) : (
-              <Row>
-                {filteredJobs.map((job, index) => (
-                  <Col md={6} lg={4} key={index} className="mb-4">
-                    <Card className="h-100 job-card">
-                      <Card.Body>
-                        <Card.Title className="h6">{job.job_title}</Card.Title>
-                        <div className="d-flex align-items-center mb-2">
-                          {job.employer_logo && (
-                            <img
-                              src={job.employer_logo}
-                              alt={job.employer_name}
-                              className="me-2"
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                objectFit: "contain",
-                              }}
-                            />
-                          )}
-                          <Card.Subtitle className="text-muted small">
-                            {job.employer_name}
-                          </Card.Subtitle>
-                        </div>
-                        <div className="mb-2">
-                          <Badge bg="secondary" className="me-1">
-                            {job.job_employment_type}
-                          </Badge>
-                          {job.job_is_remote && (
-                            <Badge bg="success">Remote</Badge>
-                          )}
-                        </div>
-                        <Card.Text className="text-truncate-3">
-                          {job.job_description}
-                        </Card.Text>
-                        {job.job_posted_at && (
-                          <small className="text-muted">
-                            Posted: {job.job_posted_at}
-                          </small>
-                        )}
-                      </Card.Body>
-                      <Card.Footer className="bg-transparent">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <small className="text-muted">
-                            {job.job_location}
-                          </small>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => handleJobClick(job)}
-                          >
-                            View Details
-                          </Button>
-                        </div>
-                      </Card.Footer>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            )}
-          </>
-        )}
       </Container>
 
       {/* Job Details Modal */}
@@ -524,15 +620,56 @@ const JobSearchPage = () => {
                     Posted: {selectedJob.job_posted_at}
                   </p>
                 )}
-                {(selectedJob.job_min_salary || selectedJob.job_max_salary) && (
-                  <p className="fw-bold">{formatSalary(selectedJob)}</p>
-                )}
+{(selectedJob.job_min_salary || selectedJob.job_max_salary) ? (
+  <div className="mt-2">
+    <span className="fw-bold">
+      {selectedJob.job_salary_currency} {selectedJob.job_min_salary === selectedJob.job_max_salary
+        ? `${selectedJob.job_min_salary.toLocaleString()}/year`
+        : `${selectedJob.job_min_salary.toLocaleString()} - ${selectedJob.job_max_salary.toLocaleString()}/year`}
+    </span>
+  </div>
+) : (
+  <span className="text-muted">Salary not specified</span>
+)}
               </div>
 
               <div className="mb-3">
-                <h6>Job Description</h6>
-                <p>{selectedJob.job_description}</p>
-              </div>
+  <h6>Job Description</h6>
+  <div 
+    style={{ 
+      maxHeight: showFullDescription ? 'none' : '150px', 
+      overflow: 'hidden',
+      position: 'relative'
+    }}
+  >
+    <p style={{ whiteSpace: 'pre-line' }}>{selectedJob.job_description}</p>
+    {!showFullDescription && (
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '50px',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 100%)'
+        }}
+      />
+    )}
+  </div>
+  {selectedJob.job_description && selectedJob.job_description.split(/\s+/).length > 100 && (
+    <button 
+      onClick={() => setShowFullDescription(!showFullDescription)}
+      className="btn btn-link p-0 text-primary mt-2"
+      style={{ 
+        textDecoration: 'none',
+        fontSize: '0.875rem',
+        fontWeight: 500
+      }}
+    >
+      {showFullDescription ? 'Show Less' : 'Read More'}
+    </button>
+  )}
+</div>
 
               {selectedJob.job_highlights &&
                 Object.keys(selectedJob.job_highlights).length > 0 && (
