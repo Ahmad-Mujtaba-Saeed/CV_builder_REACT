@@ -16,13 +16,16 @@ import { FaSearch,FaArrowRight  } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Partials/Footer";
 import axios from "../../utils/axios";
+import avatar from "../../assets/images/2.jpg";
+
+
 const JobSearchPage = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("software developer");
-  const [location, setLocation] = useState("New York");
+  const [searchQuery, setSearchQuery] = useState("frontend developer");
+  const [location, setLocation] = useState("uk");
   const [country, setCountry] = useState("uk");
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -31,31 +34,45 @@ const JobSearchPage = () => {
   const [showSalaryFilter, setShowSalaryFilter] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const jobss = [
-    {
-      id: 1,
-      title: "Team Developer",
-      location: "Manchester",
-      date: "01/08/2025",
-      salary: "£53,000+",
-    },
-    {
-      id: 2,
-      title: "Team Leader",
-      location: "Stockport",
-      date: "01/08/2025",
-      salary: "£60,000+",
-    },
-  ];
-  const filteredJobss = jobss.filter((job) =>
-    job.title.toLowerCase().includes(search.toLowerCase())
-  );
-  const [salaryRanges, setSalaryRanges] = useState([
+  const ukCities = [
+    "All",
+    "London",
+    "Birmingham",
+    "Manchester",
+    "Leeds",
+    "Liverpool",
+    "Newcastle upon Tyne",
+    "Sheffield",
+    "Bristol",
+    "Nottingham",
+    "Leicester",
+    "Coventry",
+    "Cardiff",
+    "Glasgow",
+    "Edinburgh",
+    "Belfast",
+    "Southampton",
+    "Portsmouth",
+    "Stoke-on-Trent",
+    "Sunderland",
+    "Derby",
+];
+
+
+const [salaryRanges, setSalaryRanges] = useState([
     { label: "All Salaries", value: "0-0" },
-    { label: "£0 - £30,000", value: "0-30000" },
-    { label: "£30,000 - £50,000", value: "30000-50000" },
-    { label: "£50,000 - £80,000", value: "50000-80000" },
-    { label: "£80,000+", value: "80000-1000000" }
+    { label: "Up to £20,000", value: "0-20000" },
+    { label: "£20,000 - £25,000", value: "20000-25000" },
+    { label: "£25,000 - £30,000", value: "25000-30000" },
+    { label: "£30,000 - £35,000", value: "30000-35000" },
+    { label: "£35,000 - £40,000", value: "35000-40000" },
+    { label: "£40,000 - £50,000", value: "40000-50000" },
+    { label: "£50,000 - £60,000", value: "50000-60000" },
+    { label: "£60,000 - £70,000", value: "60000-70000" },
+    { label: "£70,000 - £80,000", value: "70000-80000" },
+    { label: "£80,000 - £100,000", value: "80000-100000" },
+    { label: "£100,000 - £150,000", value: "100000-150000" },
+    { label: "£150,000+", value: "150000-1000000" }
   ]);
   
   // Update the fetchJobs function
@@ -187,7 +204,7 @@ const JobSearchPage = () => {
                             width={50}
                             height={50}
                             style={{ borderRadius: "25px" }}
-                            src="/assets/images/2.jpg" // replace with real image
+                            src={avatar} // replace with real image
                             alt="Profile"
                             className="w-12 h-12 rounded-full"
                             />
@@ -242,7 +259,6 @@ const JobSearchPage = () => {
                           required
                           style={{ fontSize: "14px" }}
                         >
-                          <option value="tech developer">Tech</option>
                           <option value="frontend developer">Frontend Developer</option>
                           <option value="backend developer">Backend Developer</option>
                           <option value="fullstack developer">
@@ -260,14 +276,16 @@ const JobSearchPage = () => {
                           Location
                         </Form.Label>
                         <Form.Select
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
                           required
                           style={{ fontSize: "14px" }}
                         >
-                          <option value="london">London</option>
-                          <option value="manchester">Manchester</option>
-                          <option value="lords">Lords</option>
+                          {ukCities.map((city, index) => (
+                            <option key={index} value={city.toLowerCase()=="all"?"uk":city.toLowerCase()}>
+                              {city}
+                            </option>
+                          ))}
                         </Form.Select>
                       </Form.Group>
                     </Col>
@@ -321,11 +339,6 @@ const JobSearchPage = () => {
 </Form.Select>
                       </Form.Group>
                     </Col>
-                    {/* <Col md={2} className="d-flex align-items-end">
-                                            <Button variant="primary" type="submit" className="w-100">
-                                                Search
-                                            </Button>
-                                        </Col> */}
                   </Row>
                   <Button variant="primary" type="submit" className="w-100" onClick={handleSearch}>
                     Search
@@ -349,15 +362,40 @@ const JobSearchPage = () => {
         value={search}
         
         onChange={(e) => setSearch(e.target.value)}
-        className=" p-1 py-2 pl-7 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none"
+        className=" p-1 py-2 pl-7 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none bg-transparent"
       />
     </div>
 
       {/* Job table */}
 {/* Replace the entire Results section with this */}
+{/* Loading State */}
+{loading && (
+    <center>
+  <tr>
+    <td colSpan="6" className="py-8">
+      <div className="d-flex justify-content-center w-100">
+        <div className="text-center" style={{ width: '100%', maxWidth: '300px', margin: '0 auto' }}>
+          <Spinner 
+            animation="border" 
+            role="status" 
+            variant="primary"
+            className="mb-2 d-block mx-auto"
+            style={{ 
+              width: '2rem', 
+              height: '2rem',
+              color: '#BA67EF'
+            }}
+          />
+          <p className="text-muted mb-0">Searching for jobs...</p>
+        </div>
+      </div>
+    </td>
+  </tr>
+  </center>
+)}
 {!loading && !error && (
   <div className="bg-white shadow-md rounded-lg overflow-hidden">
-    <table className="w-full text-left">
+    <table className="w-100 text-left">
       <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
         <tr style={{ fontSize: "11px"}} className="border-bottom">
           <th className="py-3 px-4">Job Position</th>
@@ -369,66 +407,134 @@ const JobSearchPage = () => {
         </tr>
       </thead>
       <tbody>
-        {filteredJobs.length === 0 ? (
-          <tr>
-            <td colSpan="6" className="py-4 text-center">
-              <Alert variant="info">No jobs found. Please try different search criteria.</Alert>
-            </td>
-          </tr>
-        ) : (
-          filteredJobs.map((job) => (
-            <tr
-              key={job.job_id}
-              className="border-t hover:bg-gray-50 transition"
-              style={{ fontSize: "11px" }}
-            >
-              <td 
-                className="py-3 px-4 font-medium cursor-pointer" 
-                style={{color:'#BA67EF'}}
-                onClick={() => handleJobClick(job)}
-              >
-                {job.job_title}
-              </td>
-              <td className="py-3 px-4">{job.employer_name}</td>
-              <td className="py-3 px-4">{job.job_location}</td>
-              <td className="py-3 px-4">
-                {job.job_min_salary || job.job_max_salary ? (
-                  <>
-                    {job.job_salary_currency} 
-                    {job.job_min_salary === job.job_max_salary
-                      ? job.job_min_salary.toLocaleString()
-                      : `${job.job_min_salary?.toLocaleString() || '0'} - ${job.job_max_salary?.toLocaleString()}`}
-                    /year
-                  </>
-                ) : 'Not specified'}
-              </td>
-              <td className="py-3 px-4">
-                {job.job_posted_at ? new Date(job.job_posted_at).toLocaleDateString() : 'N/A'}
-              </td>
-              <td className="py-3 px-4 d-flex gap-2">
-                <button 
-                  className="d-flex align-items-center gap-1 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300" 
-                  style={{color:'#000',fontSize:'9px',border:'unset'}}
-                  onClick={() => window.open(job.job_apply_link, '_blank')}
-                >
-                  APPLY NOW <FaArrowRight/>
-                </button>
-                <button 
-                  className="d-flex align-items-center gap-1 py-1 text-sm rounded" 
-                  style={{
-                    background: 'rgba(186, 103, 239, 0.2)',
-                    color: '#BA67EF',
-                    fontSize: '9px',
-                    border: 'none'
-                  }}
-                  onClick={() => {/* Handle MFP CV application */}}
-                >
-                  APPLY WITH MFP CV <FaArrowRight/>
-                </button>
-              </td>
-            </tr>
-          ))
+{/* Loading State */}
+
+{/* Error State */}
+{!loading && error && (
+  <tr>
+    <td colSpan="6" className="py-4 text-center">
+      <Alert variant="danger" className="mb-0">
+        {error}
+      </Alert>
+    </td>
+  </tr>
+)}
+
+{/* No Results State */}
+{!loading && !error && filteredJobs.length === 0 && (
+  <tr>
+    <td colSpan="6" className="py-8 text-center">
+      <div className="d-flex flex-column align-items-center">
+        <i className="bi bi-search mb-3" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
+        <h5 className="text-muted">No jobs found</h5>
+        <p className="text-muted">Try adjusting your search filters</p>
+      </div>
+    </td>
+  </tr>
+)}
+
+{/* Results */}
+{!loading && !error && filteredJobs.length > 0 && filteredJobs.map((job) => (
+  <tr
+    key={job.job_id}
+    className="border-top"
+    style={{ fontSize: "11px" }}
+  >
+    <td 
+      className="py-3 px-4 font-medium" 
+      style={{color:'#BA67EF'}}
+    >
+      <div 
+        className="d-flex align-items-center cursor-pointer"
+        onClick={() => handleJobClick(job)}
+      >
+        {job.employer_logo && (
+          <img 
+            src={job.employer_logo} 
+            alt={job.employer_name}
+            className="me-2"
+            style={{ 
+              width: '24px', 
+              height: '24px', 
+              objectFit: 'contain',
+              borderRadius: '4px'
+            }}
+          />
         )}
+        <span>{job.job_title}</span>
+      </div>
+    </td>
+    <td className="py-3 px-4 align-middle">{job.employer_name}</td>
+    <td className="py-3 px-4 align-middle">
+      <div className="d-flex align-items-center">
+        <i className="bi bi-geo-alt me-1 text-muted"></i>
+        {job.job_location}
+      </div>
+    </td>
+    <td className="py-3 px-4 align-middle">
+      {job.job_min_salary || job.job_max_salary ? (
+        <div className="d-flex align-items-center">
+          <i className="bi bi-cash-coin me-1 text-muted"></i>
+          <span>
+            {job.job_salary_currency} 
+            {job.job_min_salary === job.job_max_salary
+              ? job.job_min_salary.toLocaleString()
+              : `${job.job_min_salary?.toLocaleString() || '0'} - ${job.job_max_salary?.toLocaleString()}`}
+            /year
+          </span>
+        </div>
+      ) : (
+        <span className="text-muted">Not specified</span>
+      )}
+    </td>
+    <td className="py-3 px-4 align-middle">
+      {job.job_posted_at ? (
+        <div className="d-flex align-items-center">
+          <i className="bi bi-clock-history me-1 text-muted"></i>
+          {new Date(job.job_posted_at).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          })}
+        </div>
+      ) : 'N/A'}
+    </td>
+    <td className="py-3 px-4 align-middle">
+      <div className="d-flex gap-2">
+        <button 
+          className="d-flex align-items-center gap-1 px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300" 
+          style={{
+            color: '#000',
+            fontSize: '10px',
+            border: 'none',
+            transition: 'all 0.2s'
+          }}
+          onClick={() => window.open(job.job_apply_link, '_blank')}
+        >
+          APPLY NOW <FaArrowRight size={10} />
+        </button>
+        <button 
+          className="d-flex align-items-center gap-1 px-3 py-1 text-sm rounded" 
+          style={{
+            background: 'rgba(186, 103, 239, 0.1)',
+            color: '#BA67EF',
+            fontSize: '10px',
+            border: '1px solid rgba(186, 103, 239, 0.3)',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(186, 103, 239, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(186, 103, 239, 0.1)';
+          }}
+        >
+          APPLY WITH CV <FaArrowRight size={10} />
+        </button>
+      </div>
+    </td>
+  </tr>
+))}
       </tbody>
     </table>
     
