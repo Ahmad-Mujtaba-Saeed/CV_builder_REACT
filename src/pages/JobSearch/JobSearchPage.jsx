@@ -23,7 +23,8 @@ const JobSearchPage = () => {
         setError(null);
         try {
             const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' job')}&gl=${country}&location=${encodeURIComponent(location)}`);
-            const jobsData = response.data.data || [];
+            const jobsData = response.data.jobs || [];
+            const filteredJobsData = response.data.data.jobs || [];
             setJobs(jobsData);
             setFilteredJobs(jobsData); // Initialize filtered jobs with all jobs
         } catch (error) {
