@@ -14,13 +14,18 @@ const JobSearchPage = () => {
     const [country, setCountry] = useState('us');
     const [selectedJob, setSelectedJob] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [salaryRange, setSalaryRange] = useState('');
+    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [showSalaryFilter, setShowSalaryFilter] = useState(false);
 
     const fetchJobs = async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await axios.get(`/api/fetch-jobs?q=${encodeURIComponent(searchQuery + ' job')}&gl=${country}&location=${encodeURIComponent(location)}`);
-            setJobs(response.data.data || []);
+            const jobsData = response.data.data || [];
+            setJobs(jobsData);
+            setFilteredJobs(jobsData); // Initialize filtered jobs with all jobs
         } catch (error) {
             console.error('Error fetching jobs:', error);
             setError('Failed to fetch jobs. Please try again later.');
@@ -51,9 +56,40 @@ const JobSearchPage = () => {
     };
 
     const formatSalary = (job) => {
-        if (job.job_min_salary && job.job_max_salary) {
-            return `$${job.job_min_salary.toLocaleString()} - $${job.job_max_salary.toLocaleString()} ${job.job_salary_period?.toLowerCase() || 'year'}`;
+        if (!job.job_min_salary && !job.job_max_salary) {
+            return 'Salary not specified';
         }
+
+        // Convert to yearly amounts if needed
+        const period = job.job_salary_period?.toLowerCase() || 'year';
+        
+        const convertToYearly = (amount, period) => {
+            if (!amount) return 0;
+            switch(period) {
+                case 'hour' || 'hourly' || 'hr' || 'hrly':
+                    return amount * 40 * 52; // 40 hours/week * 52 weeks
+                case 'week' || 'weekly' || 'wk' || 'wkl':
+                    return amount * 52; // 52 weeks/year
+                case 'month' || 'monthly' || 'mnth' || 'mnthly':
+                    return amount * 12; // 12 months/year
+                case 'year' || 'yearly' || 'yr' || 'yrly':
+                default:
+                    return amount;
+            }
+        };
+
+        const minYearly = job.job_min_salary ? convertToYearly(job.job_min_salary, period) : 0;
+        const maxYearly = job.job_max_salary ? convertToYearly(job.job_max_salary, period) : 0;
+
+        // Format the display string
+        if (minYearly && maxYearly) {
+            return `$${Math.round(minYearly).toLocaleString()} - $${Math.round(maxYearly).toLocaleString()}/year`;
+        } else if (minYearly) {
+            return `From $${Math.round(minYearly).toLocaleString()}/year`;
+        } else if (maxYearly) {
+            return `Up to $${Math.round(maxYearly).toLocaleString()}/year`;
+        }
+        
         return 'Salary not specified';
     };
 
@@ -107,6 +143,46 @@ const JobSearchPage = () => {
                                                 />
                                             </Form.Group>
                                         </Col>
+                                        <Col md={3}>
+                                            <Form.Group className="mb-3">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <Form.Label>Salary Range</Form.Label>
+                                                    <Button 
+                                                        variant="link" 
+                                                        size="sm" 
+                                                        onClick={() => setShowSalaryFilter(!showSalaryFilter)}
+                                                        className="p-0"
+                                                    >
+                                                        {showSalaryFilter ? 'Hide' : 'Filter'}
+                                                    </Button>
+                                                </div>
+                                                {showSalaryFilter && (
+                                                    <Form.Select 
+                                                        value={salaryRange} 
+                                                        onChange={(e) => {
+                                                            setSalaryRange(e.target.value);
+                                                            if (e.target.value === '') {
+                                                                setFilteredJobs(jobs);
+                                                                return;
+                                                            }
+                                                            const [min, max] = e.target.value.split('-').map(Number);
+                                                            const filtered = jobs.filter(job => {
+                                                                const salary = job.job_max_salary || job.job_min_salary || 0;
+                                                                return salary >= min && salary <= max;
+                                                            });
+                                                            setFilteredJobs(filtered);
+                                                        }}
+                                                    >
+                                                        <option value="">All Salaries</option>
+                                                        <option value="0-50000">$0 - $50,000</option>
+                                                        <option value="50000-100000">$50,000 - $100,000</option>
+                                                        <option value="100000-150000">$100,000 - $150,000</option>
+                                                        <option value="150000-200000">$150,000 - $200,000</option>
+                                                        <option value="200000-1000000">$200,000+</option>
+                                                    </Form.Select>
+                                                )}
+                                            </Form.Group>
+                                        </Col>
                                         <Col md={2} className="d-flex align-items-end">
                                             <Button variant="primary" type="submit" className="w-100">
                                                 Search
@@ -141,8 +217,7 @@ const JobSearchPage = () => {
                 {/* Results */}
                 {!loading && !error && (
                     <>
-                        
-                        {jobs.length === 0 ? (
+                        {filteredJobs.length === 0 ? (
                             <Row>
                                 <Col>
                                     <Alert variant="info">
@@ -152,7 +227,7 @@ const JobSearchPage = () => {
                             </Row>
                         ) : (
                             <Row>
-                                {jobs.map((job, index) => (
+                                {filteredJobs.map((job, index) => (
                                     <Col md={6} lg={4} key={index} className="mb-4">
                                         <Card className="h-100 job-card">
                                             <Card.Body>
