@@ -30,6 +30,7 @@ const JobSearchPage = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [salaryRange, setSalaryRange] = useState("");
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [showSalaryFilter, setShowSalaryFilter] = useState(false);
   const [search, setSearch] = useState("");
@@ -61,17 +62,16 @@ const JobSearchPage = () => {
 
 const [salaryRanges, setSalaryRanges] = useState([
     { label: "All Salaries", value: "0-0" },
-    { label: "Up to £20,000", value: "0-20000" },
-    { label: "£20,000 - £25,000", value: "20000-25000" },
-    { label: "£25,000 - £30,000", value: "25000-30000" },
-    { label: "£30,000 - £35,000", value: "30000-35000" },
-    { label: "£35,000 - £40,000", value: "35000-40000" },
-    { label: "£40,000 - £50,000", value: "40000-50000" },
-    { label: "£50,000 - £60,000", value: "50000-60000" },
-    { label: "£60,000 - £70,000", value: "60000-70000" },
-    { label: "£70,000 - £80,000", value: "70000-80000" },
-    { label: "£80,000 - £100,000", value: "80000-100000" },
-    { label: "£100,000 - £150,000", value: "100000-150000" },
+    { label: "£20,000 +", value: "20000-1000000" },
+    { label: "£25,000 +", value: "25000-1000000" },
+    { label: "£30,000 +", value: "30000-1000000" },
+    { label: "£35,000 +", value: "35000-1000000" },
+    { label: "£40,000 +", value: "40000-1000000" },
+    { label: "£50,000 +", value: "50000-1000000" },
+    { label: "£60,000 +", value: "60000-1000000" },
+    { label: "£70,000 +", value: "70000-1000000" },
+    { label: "£80,000 +", value: "80000-1000000" },
+    { label: "£100,000 +", value: "100000-1000000" },
     { label: "£150,000+", value: "150000-1000000" }
   ]);
   
@@ -133,6 +133,7 @@ const [salaryRanges, setSalaryRanges] = useState([
   };
 
   const handleCloseModal = () => {
+    setShowFullDescription(false);
     setShowModal(false);
     setSelectedJob(null);
   };
@@ -247,26 +248,19 @@ const [salaryRanges, setSalaryRanges] = useState([
                 <Form onSubmit={handleSearch}>
                   <Row>
                     <Col md={12}>
-                      <Form.Group className="mb-3">
-                        <Form.Label
-                          style={{ fontSize: "11px", marginLeft: "-8px" }}
-                        >
-                          Industry
-                        </Form.Label>
-                        <Form.Select
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          required
-                          style={{ fontSize: "14px" }}
-                        >
-                          <option value="frontend developer">Frontend Developer</option>
-                          <option value="backend developer">Backend Developer</option>
-                          <option value="fullstack developer">
-                            Full Stack Developer
-                          </option>
-                          <option value="ui/ux designer">UI/UX Designer</option>
-                        </Form.Select>
-                      </Form.Group>
+                    <Form.Group className="mb-3">
+  <Form.Label style={{ fontSize: "11px", marginLeft: "-8px" }}>
+    Job Title
+  </Form.Label>
+  <Form.Control
+    type="text"
+    placeholder="e.g. Frontend Developer, Backend Engineer"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    required
+    style={{ fontSize: "14px" }}
+  />
+</Form.Group>
                     </Col>
                     <Col md={12}>
                       <Form.Group className="mb-3">
@@ -319,15 +313,39 @@ const [salaryRanges, setSalaryRanges] = useState([
   onChange={(e) => {
     setSalaryRange(e.target.value);
     if (e.target.value === "0-0") {
-      setFilteredJobs(jobs);
+      // For "All Salaries" option, show all jobs with 0/null at bottom
+      const sortedJobs = [...jobs].sort((a, b) => {
+        const aSalary = a.job_max_salary ?? a.job_min_salary ?? 0;
+        const bSalary = b.job_max_salary ?? b.job_min_salary ?? 0;
+        if (aSalary === 0 && bSalary === 0) return 0;
+        if (aSalary === 0) return 1;
+        if (bSalary === 0) return -1;
+        return bSalary - aSalary; // Sort by salary in descending order
+      });
+      setFilteredJobs(sortedJobs);
       return;
     }
+    
     const [min, max] = e.target.value.split("-").map(Number);
-    const filtered = jobs.filter((job) => {
-      const salary = job.job_max_salary || job.job_min_salary || 0;
-      return salary >= min && salary <= max;
-    });
-    setFilteredJobs(filtered);
+    // First filter, then sort
+    const filteredAndSorted = [...jobs]
+      .filter(job => {
+        const salary = job.job_max_salary ?? job.job_min_salary ?? 0;
+        // Include jobs within range OR jobs with 0/null salary
+        return (salary >= min && salary <= max) || salary === 0;
+      })
+      .sort((a, b) => {
+        const aSalary = a.job_max_salary ?? a.job_min_salary ?? 0;
+        const bSalary = b.job_max_salary ?? b.job_min_salary ?? 0;
+        // Push 0/null salaries to bottom
+        if (aSalary === 0 && bSalary === 0) return 0;
+        if (aSalary === 0) return 1;
+        if (bSalary === 0) return -1;
+        // Sort by salary in descending order
+        return bSalary - aSalary;
+      });
+      
+    setFilteredJobs(filteredAndSorted);
   }}
   style={{ fontSize: "14px" }}
 >
@@ -491,11 +509,7 @@ const [salaryRanges, setSalaryRanges] = useState([
       {job.job_posted_at ? (
         <div className="d-flex align-items-center">
           <i className="bi bi-clock-history me-1 text-muted"></i>
-          {new Date(job.job_posted_at).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-          })}
+          {job.job_posted_at}
         </div>
       ) : 'N/A'}
     </td>
@@ -509,7 +523,7 @@ const [salaryRanges, setSalaryRanges] = useState([
             border: 'none',
             transition: 'all 0.2s'
           }}
-          onClick={() => window.open(job.job_apply_link, '_blank')}
+          onClick={() => handleJobClick(job)}
         >
           APPLY NOW <FaArrowRight size={10} />
         </button>
@@ -617,9 +631,42 @@ const [salaryRanges, setSalaryRanges] = useState([
               </div>
 
               <div className="mb-3">
-                <h6>Job Description</h6>
-                <p>{selectedJob.job_description}</p>
-              </div>
+  <h6>Job Description</h6>
+  <div 
+    style={{ 
+      maxHeight: showFullDescription ? 'none' : '150px', 
+      overflow: 'hidden',
+      position: 'relative'
+    }}
+  >
+    <p style={{ whiteSpace: 'pre-line' }}>{selectedJob.job_description}</p>
+    {!showFullDescription && (
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '50px',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 100%)'
+        }}
+      />
+    )}
+  </div>
+  {selectedJob.job_description && selectedJob.job_description.split(/\s+/).length > 100 && (
+    <button 
+      onClick={() => setShowFullDescription(!showFullDescription)}
+      className="btn btn-link p-0 text-primary mt-2"
+      style={{ 
+        textDecoration: 'none',
+        fontSize: '0.875rem',
+        fontWeight: 500
+      }}
+    >
+      {showFullDescription ? 'Show Less' : 'Read More'}
+    </button>
+  )}
+</div>
 
               {selectedJob.job_highlights &&
                 Object.keys(selectedJob.job_highlights).length > 0 && (
