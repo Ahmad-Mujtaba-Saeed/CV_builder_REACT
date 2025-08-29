@@ -527,7 +527,7 @@ const [salaryRanges, setSalaryRanges] = useState([
           onClick={() => handleJobClick(job)}
         >
           APPLY NOW 
-          <FaArrowRight size={10} />
+          {/* <FaArrowRight size={10} /> */}
         </button>
         <button 
           className="d-flex align-items-center gap-1 px-2 py-1 text-sm rounded" 
@@ -547,7 +547,7 @@ const [salaryRanges, setSalaryRanges] = useState([
           }}
         >
           APPLY WITH CV 
-          <FaArrowRight size={10} />
+          {/* <FaArrowRight size={10} /> */}
         </button>
       </div>
     </td>
