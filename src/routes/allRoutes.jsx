@@ -26,6 +26,10 @@ import ManageCategories from "../pages/dashboard/ManageCategories/ManageCategori
 import DashboardLanding from "../pages/dashboard/DashboardLanding/DashboardLanding.jsx";
 import JobSearchPage from "../pages/JobSearch/JobSearchPage";
 import PlanManagement from "../pages/dashboard/PlanMangement/PlanMangement";
+import PaymentSuccess from "../pages/PaymentResponse/Success.jsx";
+import PaymentCancelled from "../pages/PaymentResponse/Cancelled.jsx";
+
+
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
 // import Register1 from "../pages/AuthenticationInner/Register"
@@ -55,6 +59,8 @@ const userRoutes = [
   { path: "/success", component: <Success />},
   { path: "/lock", component: <LockScreen />},
   { path: "/welcome-back", component: <WelcomeBack />},
+  { path: "/payment-success", component: <PaymentSuccess />},
+  { path: "/payment-cancelled", component: <PaymentCancelled />},
 ]
 
 const authRoutes = [

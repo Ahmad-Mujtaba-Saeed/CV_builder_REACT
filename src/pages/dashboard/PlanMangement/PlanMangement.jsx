@@ -209,6 +209,16 @@ const PlanManagement = () => {
     }
 
 
+    const handleBuyNow = (planId) => {
+        axios.get(`/api/stripe/create-subscription-session/${planId}`)
+        .then(response => {
+            window.location.href = response.data.checkoutUrl;
+        })
+        .catch(error => {
+            console.error('Error creating subscription session:', error);
+        });
+    }
+
 
       
 
@@ -221,7 +231,7 @@ const PlanManagement = () => {
                         
                         {/* <p className="lead text-muted">Add, edit, or remove subscription plans.</p> */}
                         <div ref={containerRef}></div>
-                        <button className="btn btn-primary" onClick={initRevolutPay}>Payment link</button>
+                        {/* <button className="btn btn-primary" onClick={initRevolutPay}>Payment link</button> */}
                     </Col>
                 </Row>
 
@@ -266,6 +276,8 @@ const PlanManagement = () => {
                                     </ul>
                                     
                                     <div className="mt-auto">
+                                        
+                                        <Button variant="primary" className="w-100 mb-2" onClick={() => handleBuyNow(plan.id)}>Buy Now</Button>
                                         <Button variant="secondary" className="w-100 mb-2" onClick={() => handleShowEditModal(plan)}>Edit</Button>
                                         {/* <Button variant="danger" className="w-100" onClick={() => handleDelete(plan.id)}>Delete</Button> */}
                                     </div>

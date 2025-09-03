@@ -26,7 +26,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
+    
     const getUserData = async () => {
       try {
         const response = await axios.get(`/api/user`)

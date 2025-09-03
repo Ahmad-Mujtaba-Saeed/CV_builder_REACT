@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@revolut/checkout": "^1.1.23",
+    "ant-design": "^1.0.0",
+    "antd": "^5.27.2",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "dotenv": "^16.5.0",
