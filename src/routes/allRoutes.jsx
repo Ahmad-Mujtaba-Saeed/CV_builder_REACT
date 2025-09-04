@@ -28,7 +28,8 @@ import JobSearchPage from "../pages/JobSearch/JobSearchPage";
 import PlanManagement from "../pages/dashboard/PlanMangement/PlanMangement";
 import PaymentSuccess from "../pages/PaymentResponse/Success.jsx";
 import PaymentCancelled from "../pages/PaymentResponse/Cancelled.jsx";
-
+import Subscription from "../pages/Subscription/Subscription";
+import ProfileSettings from "../pages/dashboard/ProfileSettings/ProfileSettings";
 
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
@@ -49,9 +50,11 @@ const userRoutes = [
   { path: "/dashboard/interview-questions", component: <InterviewQuestions />  , name: "dashboard"},
   { path: "/dashboard/job-search", component: <JobSearchPage />  , name: "dashboard"},
   { path: "/dashboard/plan-management", component: <PlanManagement /> , name: "dashboard"},
-
-
-
+  { path: "/dashboard/profile-settings", component: <ProfileSettings /> , name: "dashboard"},
+  
+  
+  
+  { path: "/subscription", component: <Subscription /> , name: "normal"},
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
   { path: "/build-CV-AI", component: <BuildCVAI />},

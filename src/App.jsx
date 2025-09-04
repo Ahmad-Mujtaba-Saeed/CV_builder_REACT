@@ -28,6 +28,7 @@ const App = () => {
   useEffect(() => {
     
     const getUserData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`/api/user`)
         setUserData(response.data)
@@ -35,6 +36,8 @@ const App = () => {
       } catch (err) {
         setError(err)
         setUserData(null)
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -47,7 +50,7 @@ const App = () => {
 
   return (
     <>
-      <UserContext.Provider value={{ userData, setUserData, error, setError }}>
+      <UserContext.Provider value={{ userData, loading, setUserData, error, setError }}>
         <FeedbackProvider>
           <CurrentQuestionProvider>
           <ResumeProvider>
@@ -64,7 +67,7 @@ const App = () => {
 
               {/* Protected routes */}
               {userRoutes.map((route, idx) => {
-                if (route?.name === "dashboard") {
+                if (route?.name == "dashboard") {
                   return (
                     <Route
                       key={idx}

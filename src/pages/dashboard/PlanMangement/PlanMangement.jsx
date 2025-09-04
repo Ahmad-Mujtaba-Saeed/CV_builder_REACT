@@ -3,6 +3,8 @@ import { Container, Row, Col, Button, Card, Form, InputGroup, Spinner, Alert, Mo
 import { useNavigate } from 'react-router-dom';
 import RevolutCheckout from "@revolut/checkout";
 import axios from '../../../utils/axios';
+import { UserContext } from '../../../context/UserContext';
+import { useContext } from 'react';
 
 
 const PlanManagement = () => {
@@ -14,7 +16,7 @@ const PlanManagement = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentPlan, setCurrentPlan] = useState(null);
-    
+    const { userData } = useContext(UserContext)  
 
 
 
@@ -255,7 +257,10 @@ const PlanManagement = () => {
                                 )}
                                 <Card.Body className="d-flex flex-column p-4">
                                     <div className="text-center mb-4">
-                                        <h3 className="card-title fw-bold">{plan.title}</h3>
+                                        <h3 className="card-title fw-bold">{plan.title}  </h3>
+                                        {userData?.plan_id == plan.id && (
+                                          <p className="text-success">Active</p>
+                                          )}
                                         <p className="text-muted">{plan.subdesc}</p>
                                     </div>
                                     

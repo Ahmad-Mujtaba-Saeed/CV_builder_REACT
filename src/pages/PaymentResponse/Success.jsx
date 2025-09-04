@@ -52,10 +52,10 @@ const Success = () => {
                     <Text type="secondary">Plan:</Text>
                     <Text strong>{state?.planName || 'Premium Plan'}</Text>
                   </Row>
-                  <Row justify="space-between">
+                  {/* <Row justify="space-between">
                     <Text type="secondary">Amount Paid:</Text>
                     <Text strong>${state?.amount || '0.00'}</Text>
-                  </Row>
+                  </Row> */}
                   <Row justify="space-between">
                     <Text type="secondary">Date:</Text>
                     <Text>{new Date().toLocaleDateString()}</Text>
