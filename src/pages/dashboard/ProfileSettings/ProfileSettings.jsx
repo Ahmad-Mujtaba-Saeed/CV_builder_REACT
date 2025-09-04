@@ -1,18 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Tab, Nav, Button, Modal, Alert, Spinner, Form } from 'react-bootstrap';
 import { UserContext } from '../../../context/UserContext';
-import axios from '../../../utils/axios';
+import axios , {stripe_public_key} from '../../../utils/axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useStripe, useElements, CardElement, Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from '@stripe/stripe-js';
+
+// Initialize Stripe with your publishable key
+const stripePromise = loadStripe(stripe_public_key);
 
 const ProfileSettings = () => {
   const { userData, setUserData } = useContext(UserContext);
+  const stripe = useStripe();
+  const elements = useElements();
   const [activeTab, setActiveTab] = useState('subscription');
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState(null);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showUpdatePaymentModal, setShowUpdatePaymentModal] = useState(false);
+  const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [billingInfo, setBillingInfo] = useState({
     name: '',
     email: '',
@@ -33,7 +43,22 @@ const ProfileSettings = () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/subscription/details');
-      setSubscription(response.data);
+      const { subscription } = response.data;
+      
+      if (subscription) {
+        setSubscription({
+          id: subscription.id,
+          planName: subscription.plan?.title || subscription.name,
+          amount: `$${subscription.plan?.price || '0.00'}`,
+          interval: subscription.plan?.interval || 'monthly',
+          status: subscription.status,
+          nextBillingDate: subscription.ends_at,
+          features: subscription.plan?.features || [],
+          subId: subscription.sub_id,
+          cus_id: subscription.cus_id,
+          subscriptionDetails: subscription
+        });
+      }
     } catch (error) {
       console.error('Error fetching subscription:', error);
       toast.error('Failed to load subscription details');
@@ -44,11 +69,101 @@ const ProfileSettings = () => {
 
   const fetchPaymentMethods = async () => {
     try {
-      const response = await axios.get('/api/payment-methods');
-      setPaymentMethods(response.data);
+      const response = await axios.get('/api/subscription/payment-method');
+      const paymentMethods = response.data.data.map(method => ({
+        id: method.id,
+        type: method.type,
+        card: {
+          brand: method.card.brand,
+          last4: method.card.last4,
+          expMonth: method.card.exp_month,
+          expYear: method.card.exp_year,
+          country: method.card.country
+        },
+        billing: {
+          name: method.billing_details.name,
+          email: method.billing_details.email,
+          country: method.billing_details.address?.country
+        },
+        created: new Date(method.created * 1000).toISOString()
+      }));
+      setPaymentMethods(paymentMethods);
     } catch (error) {
       console.error('Error fetching payment methods:', error);
       toast.error('Failed to load payment methods');
+    }
+  };
+
+
+  const handleRemovePaymentMethod = async (paymentMethodId) => {
+    try {
+      setLoading(true);
+      await axios.delete(`/api/subscription/payment-method/${paymentMethodId}`);
+      await fetchPaymentMethods();
+      toast.success('Payment method removed successfully');
+    } catch (error) {
+      console.error('Error removing payment method:', error);
+      toast.error('Failed to remove payment method');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddPaymentMethod = async () => {
+    alert('handleAddPaymentMethod');
+    try {
+      setLoading(true);
+      // Get the customer ID from the first subscription or user data
+      const customerId = subscription?.cus_id;
+      if (!customerId) {
+        throw new Error('Customer ID not found');
+      }
+      
+      // Get client secret for setup intent
+      const response = await axios.get(`/api/subscription/payment-method-intent/${customerId}`);
+      setClientSecret(response.data.clientSecret);
+      setShowAddPaymentModal(true);
+    } catch (error) {
+      console.error('Error setting up payment method:', error);
+      toast.error('Failed to set up payment method');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const cardElement = elements.getElement(CardElement);
+      const { setupIntent, error } = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: userData?.name || '',
+            email: userData?.email || ''
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success('Payment method added successfully');
+      setShowAddPaymentModal(false);
+      await fetchPaymentMethods();
+    } catch (error) {
+      console.error('Error adding payment method:', error);
+      toast.error(error.message || 'Failed to add payment method');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -67,12 +182,13 @@ const ProfileSettings = () => {
     }
   };
 
-  const handleUpdatePaymentMethod = async () => {
+  const handleUpdatePaymentMethod = async (paymentMethodId) => {
     try {
       setLoading(true);
-      // This would typically redirect to Stripe's payment setup
-      const response = await axios.post('/api/payment-methods/setup');
-      window.location.href = response.data.url;
+      // Here you would typically update the default payment method
+      // For example: await axios.post('/api/update-default-payment', { paymentMethodId });
+      toast.success('Payment method updated successfully');
+      await fetchPaymentMethods();
     } catch (error) {
       console.error('Error updating payment method:', error);
       toast.error('Failed to update payment method');
@@ -272,38 +388,64 @@ const ProfileSettings = () => {
                     <Button 
                       variant="outline-primary" 
                       size="sm"
-                      onClick={handleUpdatePaymentMethod}
+                      onClick={handleAddPaymentMethod}
                       disabled={loading}
                     >
                       Add Payment Method
                     </Button>
                   </Card.Header>
                   <Card.Body>
-                    {paymentMethods.length > 0 ? (
-                      paymentMethods.map((method) => (
-                        <Card key={method.id} className="mb-3">
-                          <Card.Body className="d-flex justify-content-between align-items-center">
-                            <div>
-                              <h6 className="mb-1">
-                                {method.brand} ending in {method.last4}
-                              </h6>
-                              <p className="mb-0 text-muted">
-                                Expires {method.exp_month}/{method.exp_year}
-                              </p>
-                            </div>
-                            <Button 
-                              variant="outline-danger" 
-                              size="sm"
-                              disabled={method.isDefault || loading}
-                            >
-                              Remove
-                            </Button>
-                          </Card.Body>
-                        </Card>
-                      ))
-                    ) : (
-                      <p>No payment methods found.</p>
-                    )}
+                  {paymentMethods.length > 0 ? (
+  paymentMethods.map((method) => (
+    <Card key={method.id} className="mb-3">
+      <Card.Body>
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 className="mb-1">
+              <i className={`fab fa-cc-${method.card.brand} me-2`}></i>
+              {method.card.brand.charAt(0).toUpperCase() + method.card.brand.slice(1)} 
+              ending in {method.card.last4}
+            </h6>
+            <p className="mb-1 text-muted">
+              Expires: {method.card.expMonth.toString().padStart(2, '0')}/{method.card.expYear.toString().slice(-2)}
+            </p>
+            <small className="text-muted">
+              Added on {new Date(method.created).toLocaleDateString()}
+            </small>
+          </div>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="outline-primary" 
+              size="sm"
+              onClick={() => handleUpdatePaymentMethod(method.id)}
+            >
+              Update
+            </Button>
+            <Button 
+              variant="outline-danger" 
+              size="sm"
+              onClick={() => handleRemovePaymentMethod(method.id)}
+              disabled={paymentMethods.length <= 1}
+            >
+              Remove
+            </Button>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  ))
+) : (
+  <div className="text-center py-4">
+    <i className="fas fa-credit-card fa-3x text-muted mb-3"></i>
+    <p>No payment methods found</p>
+    <Button 
+      variant="primary"
+      onClick={handleAddPaymentMethod}
+    >
+      <i className="fas fa-plus me-2"></i> Add Payment Method
+    </Button>
+  </div>
+)}
                   </Card.Body>
                 </Card>
               </Tab.Pane>
@@ -350,8 +492,49 @@ const ProfileSettings = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Add Payment Method Modal */}
+      <Modal show={showAddPaymentModal} onHide={() => setShowAddPaymentModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Payment Method</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handlePaymentSubmit}>
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                  },
+                  invalid: {
+                    color: '#9e2146',
+                  },
+                },
+              }}
+            />
+            <Button 
+              type="submit" 
+              className="mt-3"
+              disabled={!stripe || isProcessing}
+            >
+              {isProcessing ? 'Processing...' : 'Add Payment Method'}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };
 
-export default ProfileSettings;
+// Wrap the component with Elements provider
+const ProfileSettingsWrapper = () => (
+  <Elements stripe={stripePromise}>
+    <ProfileSettings />
+  </Elements>
+);
+
+export default ProfileSettingsWrapper;
