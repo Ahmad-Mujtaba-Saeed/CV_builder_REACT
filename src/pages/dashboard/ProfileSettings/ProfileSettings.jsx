@@ -6,11 +6,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useStripe, useElements, CardElement, Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from '@stripe/stripe-js';
-
+import { useNavigate } from 'react-router-dom';
 // Initialize Stripe with your publishable key
 const stripePromise = loadStripe(stripe_public_key);
 
 const ProfileSettings = () => {
+  const navigate = useNavigate();
   const { userData, setUserData } = useContext(UserContext);
   const stripe = useStripe();
   const elements = useElements();
@@ -73,6 +74,7 @@ const ProfileSettings = () => {
       const paymentMethods = response.data.data.map(method => ({
         id: method.id,
         type: method.type,
+        default: method.default,
         card: {
           brand: method.card.brand,
           last4: method.card.last4,
@@ -95,12 +97,17 @@ const ProfileSettings = () => {
   };
 
 
-  const handleRemovePaymentMethod = async (paymentMethodId) => {
+  const [paymentMethodToRemove, setPaymentMethodToRemove] = useState(null);
+
+  const handleRemovePaymentMethod = async () => {
+    if (!paymentMethodToRemove) return;
+    
     try {
       setLoading(true);
-      await axios.delete(`/api/subscription/payment-method/${paymentMethodId}`);
+      await axios.delete(`/api/subscription/payment-method/${paymentMethodToRemove}`);
       await fetchPaymentMethods();
       toast.success('Payment method removed successfully');
+      setPaymentMethodToRemove(null); // Reset the state
     } catch (error) {
       console.error('Error removing payment method:', error);
       toast.error('Failed to remove payment method');
@@ -158,6 +165,7 @@ const ProfileSettings = () => {
 
       toast.success('Payment method added successfully');
       setShowAddPaymentModal(false);
+      await axios.post(`/api/subscription/payment-method-default/${subscription?.cus_id}`, { payment_method_id: setupIntent.payment_method });
       await fetchPaymentMethods();
     } catch (error) {
       console.error('Error adding payment method:', error);
@@ -186,7 +194,22 @@ const ProfileSettings = () => {
     try {
       setLoading(true);
       // Here you would typically update the default payment method
-      // For example: await axios.post('/api/update-default-payment', { paymentMethodId });
+      await axios.post('/api/update-default-payment', { paymentMethodId });
+      toast.success('Payment method updated successfully');
+      await fetchPaymentMethods();
+    } catch (error) {
+      console.error('Error updating payment method:', error);
+      toast.error('Failed to update payment method');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleMakeDefault = async (paymentMethodId) => {
+    try {
+      setLoading(true);
+      await axios.post(`/api/subscription/payment-method-default/${subscription?.cus_id}`, { payment_method_id: paymentMethodId });
       toast.success('Payment method updated successfully');
       await fetchPaymentMethods();
     } catch (error) {
@@ -233,9 +256,6 @@ const ProfileSettings = () => {
                     <Nav.Link eventKey="subscription">Subscription</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="billing">Billing Information</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
                     <Nav.Link eventKey="payment">Payment Methods</Nav.Link>
                   </Nav.Item>
                 </Nav>
@@ -278,12 +298,14 @@ const ProfileSettings = () => {
                           >
                             Cancel Subscription
                           </Button>
+
                           <Button 
-                            variant="outline-primary"
-                            onClick={() => setShowUpdatePaymentModal(true)}
+                            variant="outline-primary" 
+                            onClick={() => navigate('/subscription')}
                           >
-                            Update Payment Method
+                            Upgrade Subscription
                           </Button>
+
                         </div>
                       </>
                     ) : (
@@ -292,7 +314,7 @@ const ProfileSettings = () => {
                   </Card.Body>
                 </Card>
               </Tab.Pane>
-
+{/* 
               <Tab.Pane eventKey="billing">
                 <Card>
                   <Card.Header>
@@ -379,7 +401,7 @@ const ProfileSettings = () => {
                     </Form>
                   </Card.Body>
                 </Card>
-              </Tab.Pane>
+              </Tab.Pane> */}
 
               <Tab.Pane eventKey="payment">
                 <Card>
@@ -405,6 +427,11 @@ const ProfileSettings = () => {
               <i className={`fab fa-cc-${method.card.brand} me-2`}></i>
               {method.card.brand.charAt(0).toUpperCase() + method.card.brand.slice(1)} 
               ending in {method.card.last4}
+              {method.default && (
+                <span className="badge bg-success ms-2">
+                  <i className="fas fa-check-circle me-1"></i> Default
+                </span>
+              )}
             </h6>
             <p className="mb-1 text-muted">
               Expires: {method.card.expMonth.toString().padStart(2, '0')}/{method.card.expYear.toString().slice(-2)}
@@ -415,16 +442,23 @@ const ProfileSettings = () => {
           </div>
           <div className="d-flex gap-2">
             <Button 
-              variant="outline-primary" 
+              variant="outline-primary disabled " 
               size="sm"
               onClick={() => handleUpdatePaymentMethod(method.id)}
             >
               Update
             </Button>
             <Button 
+              variant={`outline-warning ${method.default ? 'disabled' : ''}`} 
+              size="sm"
+              onClick={() => handleMakeDefault(method.id)}
+            >
+              Make Default
+            </Button>
+            <Button 
               variant="outline-danger" 
               size="sm"
-              onClick={() => handleRemovePaymentMethod(method.id)}
+              onClick={() => setPaymentMethodToRemove(method.id)}
               disabled={paymentMethods.length <= 1}
             >
               Remove
@@ -433,7 +467,7 @@ const ProfileSettings = () => {
         </div>
       </Card.Body>
     </Card>
-  ))
+))
 ) : (
   <div className="text-center py-4">
     <i className="fas fa-credit-card fa-3x text-muted mb-3"></i>
@@ -453,6 +487,35 @@ const ProfileSettings = () => {
           </Col>
         </Row>
       </Tab.Container>
+
+
+
+<Modal show={!!paymentMethodToRemove} onHide={() => setPaymentMethodToRemove(null)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Removal</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Are you sure you want to remove this payment method?
+  </Modal.Body>
+  <Modal.Footer>
+    <Button 
+      variant="secondary" 
+      onClick={() => setPaymentMethodToRemove(null)}
+      disabled={loading}
+    >
+      Cancel
+    </Button>
+    <Button 
+      variant="danger" 
+      onClick={handleRemovePaymentMethod}
+      disabled={loading}
+    >
+      {loading ? 'Removing...' : 'Remove'}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
 
       {/* Cancel Subscription Modal */}
       <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
