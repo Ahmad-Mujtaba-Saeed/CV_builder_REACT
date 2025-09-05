@@ -167,7 +167,7 @@ const Sidebar = ({ collapsed, isMobile, isSidebarOpen, toggleSidebar }) => {
     {
       key: 'Settings',
       icon:
-<svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_36781_3217)">
             <path d="M8.00065 14.6663C11.6825 14.6663 14.6673 11.6816 14.6673 7.99967C14.6673 4.31778 11.6825 1.33301 8.00065 1.33301C4.31875 1.33301 1.33398 4.31778 1.33398 7.99967C1.33398 11.6816 4.31875 14.6663 8.00065 14.6663Z" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M1.33398 8H14.6673" stroke="#9FA6BC" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />

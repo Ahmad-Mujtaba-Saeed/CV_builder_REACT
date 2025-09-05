@@ -44,9 +44,9 @@ const Authmiddleware = ({ children }) => {
   }
 
   // Redirect to subscription if no plan (except when already on subscription page)
-  if (userData.plan_id == null && !location.pathname.startsWith('/subscription')) {
-    console.log('Authmiddleware: No plan detected, redirecting to subscription')
-    return <Navigate to="/subscription" state={{ from: location }} replace />
+  if (userData.plan_id == null && !location.pathname.startsWith('/free-trail-plan-subscription')) {
+    console.log('Authmiddleware: No plan detected, redirecting to free-trail-plan-subscription')
+    return <Navigate to="/free-trail-plan-subscription" state={{ from: location }} replace />
   }
 
   console.log('Authmiddleware: User authenticated with plan')

@@ -30,6 +30,8 @@ import PaymentSuccess from "../pages/PaymentResponse/Success.jsx";
 import PaymentCancelled from "../pages/PaymentResponse/Cancelled.jsx";
 import Subscription from "../pages/Subscription/Subscription";
 import ProfileSettings from "../pages/dashboard/ProfileSettings/ProfileSettings";
+import FreePlanSubscription from "../pages/Subscription/freePlanSubscription";
+
 
 // // Inner Authentication
 // import Login1 from "../pages/AuthenticationInner/Login"
@@ -53,7 +55,7 @@ const userRoutes = [
   { path: "/dashboard/profile-settings", component: <ProfileSettings /> , name: "dashboard"},
   
   
-  
+  { path: "/free-trail-plan-subscription", component: <FreePlanSubscription /> , name: "normal"},
   { path: "/subscription", component: <Subscription /> , name: "normal"},
   { path: "/upload", component: <UploadPage /> },
   { path: "/cv-builder", component: <CVBuilder /> },
