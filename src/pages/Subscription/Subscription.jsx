@@ -40,14 +40,28 @@ const Subscription = () => {
     };
 
     const handleSubscribe = (planId) => {
-        axios.get(`/api/stripe/create-subscription-session/${planId}`)
+        if (userData?.plan_id == planId) {
+            navigate('/subscription');
+            return;
+        }
+
+            axios.get(`/api/subscription/change-plan/${planId}`)
             .then(response => {
-                window.location.href = response.data.checkoutUrl;
+                console.log(response);
             })
             .catch(error => {
                 console.error('Error creating subscription session:', error);
                 setError('Failed to initiate subscription. Please try again.');
             });
+
+        // axios.get(`/api/stripe/create-subscription-session/${planId}`)
+        //     .then(response => {
+        //         window.location.href = response.data.checkoutUrl;
+        //     })
+        //     .catch(error => {
+        //         console.error('Error creating subscription session:', error);
+        //         setError('Failed to initiate subscription. Please try again.');
+        //     });
     };
 
     if (loading) {
