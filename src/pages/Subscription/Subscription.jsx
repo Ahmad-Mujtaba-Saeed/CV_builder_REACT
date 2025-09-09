@@ -44,14 +44,16 @@ const Subscription = () => {
             navigate('/subscription');
             return;
         }
-
-            axios.get(`/api/subscription/change-plan/${planId}`)
+        // setLoading(true);
+            axios.post(`/api/subscription/change-plan/${planId}`)
             .then(response => {
                 console.log(response);
+                // setLoading(false);
             })
             .catch(error => {
                 console.error('Error creating subscription session:', error);
-                setError('Failed to initiate subscription. Please try again.');
+                 setError('Failed to initiate subscription. Please try again.');
+                // setLoading(false);
             });
 
         // axios.get(`/api/stripe/create-subscription-session/${planId}`)

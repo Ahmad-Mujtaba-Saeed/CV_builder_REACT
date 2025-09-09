@@ -7,6 +7,7 @@ import { FiEdit2, FiCpu, FiFileText } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+
 import './CVBuilder.css';
 import Header from '../../components/Partials/Header';
 import {
