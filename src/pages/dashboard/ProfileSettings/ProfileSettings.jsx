@@ -117,7 +117,6 @@ const ProfileSettings = () => {
   };
 
   const handleAddPaymentMethod = async () => {
-    alert('handleAddPaymentMethod');
     try {
       setLoading(true);
       // Get the customer ID from the first subscription or user data
@@ -294,7 +293,7 @@ const ProfileSettings = () => {
                           <Button 
                             variant="outline-danger" 
                             onClick={() => setShowCancelModal(true)}
-                            disabled={subscription.status !== 'active'}
+                            disabled={subscription.status != 'canceled'}
                           >
                             Cancel Subscription
                           </Button>
