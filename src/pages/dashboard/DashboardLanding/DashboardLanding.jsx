@@ -14,7 +14,6 @@ const DashboardLanding = () => {
     const { parsedFeedback , setParsedFeedback} = useContext(FeedbackContext);
     const { parsedResume , setParsedResume} = useResume();
     const [interviewHistory, setInterviewHistory] = useState([]);
-    // const [coachingSessions, setCoachingSessions] = useState([]);
     const [recentActivities, setRecentActivities] = useState([]);
 
 

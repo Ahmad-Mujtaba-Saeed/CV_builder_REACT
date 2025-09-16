@@ -425,7 +425,6 @@ const [salaryRanges, setSalaryRanges] = useState([
         </tr>
       </thead>
       <tbody>
-{/* Loading State */}
 
 {/* Error State */}
 {!loading && error && (
@@ -592,7 +591,7 @@ const [salaryRanges, setSalaryRanges] = useState([
 
       </Container>
 
-      {/* Job Details Modal */}
+
       <Modal
         show={showModal}
         style={{ zIndex: 1050 }}
