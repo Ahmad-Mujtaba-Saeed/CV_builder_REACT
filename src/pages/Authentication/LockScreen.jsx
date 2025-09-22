@@ -21,7 +21,7 @@ const Signin = () => {
             </div>
             <div className="lock-content">
               <h4 className="title text-center">Come back soon!</h4>
-              <p className="content text-center">Thanks for using MyPathfinder. You are now successfully signed out.</p>
+              <p className="content text-center">Thanks for using Mypathfinder. You are now successfully signed out.</p>
               <Button
                 variant="dark"
                 className="w-100 py-1 mt-5 sign-in-btn d-flex align-items-center gap-2 justify-content-center"

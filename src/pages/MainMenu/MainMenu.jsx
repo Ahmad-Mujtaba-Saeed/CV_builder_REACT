@@ -104,7 +104,7 @@ const PathfinderLanding = () => {
                 </div>
                 <h4 className="fw-bold mb-2 heading">Where do you want to start?</h4>
                 <p className="text-muted mb-5 sub-heading">
-                    MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
+                    Mypathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                 </p>
 
                 <Container>

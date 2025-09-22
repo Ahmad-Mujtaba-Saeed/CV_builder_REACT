@@ -89,7 +89,7 @@ const Signin = () => {
         <Card className="signin-card upload-profile border-0">
           <div className="text-center mb-4">
             <h4 className="mb-1 fw-semibold">Let’s get to know you a bit first, Scott.</h4>
-            <p className="text-muted small">MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.</p>
+            <p className="text-muted small">Mypathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.</p>
           </div>
           <Card.Body className="border rounded">
 

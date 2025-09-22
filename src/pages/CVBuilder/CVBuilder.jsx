@@ -2066,7 +2066,7 @@ const CVBuilder = () => {
                         >
                             <h1 className="text-center mb-2 fw-400 form-header">Smart CV Builder, tailored for the Modern Job Market.</h1>
                             <p className="text-center text-muted mb-2 heading-text">
-                                MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
+                                Mypathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
                             </p>
                         </motion.div>
 

@@ -45,7 +45,7 @@ const Signin = () => {
         <Card className="signin-card link-vacancy border-0">
           <div className="text-center mb-2">
             <h4 className="mb-1 fw-semibold">Do you have a vacancy in mind?</h4>
-            <p className="text-muted small">MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.</p>
+            <p className="text-muted small">Mypathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.</p>
           </div>
           <Card.Body>
             <div className="vacancy-image">

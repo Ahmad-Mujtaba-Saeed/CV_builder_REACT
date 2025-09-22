@@ -268,7 +268,7 @@ const UploadPage = () => {
         >
           <h1 className="text-center mb-2 display-6 fw-400">Upload existing CV or build a new one with Mypathfinder</h1>
           <p className="text-center text-muted mb-4 heading-text">
-            MyPathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
+            Mypathfinder curates job opportunities that match your profile, allowing you to apply quickly and efficiently.
           </p>
         </motion.div>
         <Row className="justify-content-center">

@@ -351,7 +351,7 @@ const QuestionFeedback = () => {
                     <div className="feedback-transcript">
                         <h2>Feedback transcript</h2>
                         <div className="transcript-item">
-                            <p className="question"><strong>Question asked by MyPathfinder</strong></p>
+                            <p className="question"><strong>Question asked by Mypathfinder</strong></p>
                             <p className="quote">{parsedFeedback?.question?.speech}</p>
                         </div>
                         
@@ -361,7 +361,7 @@ const QuestionFeedback = () => {
                         </div>
                         
                         <div className="transcript-item">
-                            <p className="ideal"><strong>Ideal Response by MyPathfinder</strong></p>
+                            <p className="ideal"><strong>MyPathfinder suggested response structure</strong></p>
                             <p className="quote">{parsedFeedback?.evaluation?.ideal_response}</p>
                         </div>
                     </div>
