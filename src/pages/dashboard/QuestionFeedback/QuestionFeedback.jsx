@@ -351,7 +351,7 @@ const QuestionFeedback = () => {
                     <div className="feedback-transcript">
                         <h2>Feedback transcript</h2>
                         <div className="transcript-item">
-                            <p className="question"><strong>Question asked by Mypathfinder</strong></p>
+                            <p className="question"><strong>Question asked by Mypathfinder </strong></p>
                             <p className="quote">{parsedFeedback?.question?.speech}</p>
                         </div>
                         
